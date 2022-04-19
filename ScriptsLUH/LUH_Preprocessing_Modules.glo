@@ -1,0 +1,62 @@
+# ******************************************************************************
+## GLOBIO - https://www.globio.info
+## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
+## Reuse permitted under Gnu Public License, GPL v3.
+# ******************************************************************************
+#-------------------------------------------------------------------------------
+#
+# LUH_Preprocessing_Modules.glo
+#
+# Defines the preprocessing modules of the Landuse Harmonization Tool.
+#
+# Modified: 12 feb 2021, ES, ARIS B.V.
+#           - Version 4.1.1
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcCellAreaRasters(
+                  IN STRING CellSizes,
+                  IN INTEGER Version,
+                  OUT DIR OutDir)
+
+  GLOBIO_CalcCellAreaRasters(
+                  $CellSizes,
+                  $Version,
+                  $OutDir)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcLandcoverRasters(
+                  IN STRING CellSizes,
+                  IN RASTER Landcover,
+                  OUT DIR OutDir)
+
+  GLOBIO_CalcLandcoverRasters(
+                  $CellSizes,
+                  $Landcover,
+                  $OutDir)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcLanduseRasters(
+                  IN STRING CellSizes,
+                  IN DIR LandcoverDir,
+                  IN FILE LandcoverLanduseLookup,
+                  OUT DIR OutDir)
+
+  GLOBIO_CalcLanduseRasters(
+                  $CellSizes,
+                  $LandcoverDir,
+                  $LandcoverLanduseLookup,
+                  $OutDir)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcSemiRandomNoiseRasters(
+                  IN STRING CellSizes,
+                  OUT DIR OutDir)
+
+  GLOBIO_CalcSemiRandomNoiseRasters(
+                  $CellSizes,
+                  $OutDir)
+END_MODULE

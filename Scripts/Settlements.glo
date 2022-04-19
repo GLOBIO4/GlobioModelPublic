@@ -1,0 +1,28 @@
+# ******************************************************************************
+## GLOBIO - https://www.globio.info
+## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
+## Reuse permitted under Gnu Public License, GPL v3.
+# ******************************************************************************
+
+# Set output directory. 
+Outdir = G:\Data\out_v5
+
+# Set input raster.
+RASTER Landuse = $InDir;\tif\glc2000_aris.tif
+
+# Set input lookup csv file.
+FILE SettlementsLookup = $LookupDir;\Settlements.csv
+
+# Set input/output raster.
+RASTER Settlements = $OutDir;\Settlements.tif
+
+#-------------------------------------------------------------------------------
+# Calculate the settlements.
+BEGIN_RUN Calculations()
+  RUN_MODULE CalcSettlements($Extent,$Landuse,$SettlementsLookup,$Settlements)
+END_RUN
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+RUN Calculations()
+

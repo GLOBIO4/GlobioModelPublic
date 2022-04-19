@@ -1,0 +1,154 @@
+# ******************************************************************************
+## GLOBIO - https://www.globio.info
+## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
+## Reuse permitted under Gnu Public License, GPL v3.
+# ******************************************************************************
+#-------------------------------------------------------------------------------
+# Run_LanduseHarmonization_Ref_30min.glo
+#-------------------------------------------------------------------------------
+
+# Include Landuse Harmonization Tool modules.
+INCLUDE LUH_Modules.glo
+
+#-------------------------------------------------------------------------------
+BEGIN_RUN Calculations()
+
+  # General settings.
+  SaveTmpData = False
+  CreateOutDir = True
+  OverwriteOutput = False
+
+  #--------------------------------------------------------------------------
+  # Main scenario settings.
+  #--------------------------------------------------------------------------
+
+  # Define base directory.
+  DIR BaseDir = G:\data
+
+  # Define base input directory.
+  DIR BaseInputDir = $BaseDir;\referentie\v411
+
+  # Set output directory.
+  OutDir = $BaseDir;\referentie\v411\imgluh_20210126_30min
+
+  # Set region extent.
+  # WHEN CHANGED, ALSO CHANGE RegionFilter SETTINGS!!!
+  #Extent = eu
+  Extent = wrld
+
+  # Set resolution.
+  # WHEN CHANGED, ALSO CHANGE CellSizeName SETTINGS!!!
+  CellSize = 30min
+  # WORKAROUND FOR CREATING CELLSIZE STRING.
+  STRING CellSizeNameA = 30
+  STRING CellSizeNameB = min
+  STRING CellSizeName = $CellSizeNameA;$CellSizeNameB;
+
+  #--------------------------------------------------------------------------
+  # Set input directories.
+  #--------------------------------------------------------------------------
+  DIR ESALanduseDir = $BaseInputDir;\esa_2015
+  DIR RegionDir = $BaseInputDir;\pbl
+  DIR LandcoverDir = $BaseInputDir;\pre\landcover
+  DIR LanduseDir = $BaseInputDir;\pre\landuse
+  DIR LookupDir = $BaseInputDir;\lookup
+  DIR ImageClaimsDir = $BaseInputDir;\pbl
+  DIR SuitDir = $BaseInputDir;\pre\suitability
+  DIR NotAllocDir = $BaseInputDir;\pre\not_alloc
+  DIR PaDirDir = $BaseInputDir;\pre\pa_reduce
+  DIR CellAreasDir = $BaseInputDir;\pre\cell_area
+  DIR SemiRandomNoiseDir = $BaseInputDir;\pre\noise
+
+  #--------------------------------------------------------------------------
+  # Set derived output directories.
+  #--------------------------------------------------------------------------
+  Dir RefOutDir = $OutDir;\ref
+  Dir AllocOutDir = $OutDir;\alloc
+
+  #--------------------------------------------------------------------------
+  # Set other input parameters.
+  #--------------------------------------------------------------------------
+
+  # Reference year also included!
+  STRING Years = 2015|2020
+
+  # CAN ALSO BE USED FOR CALCULATING THE REF. CLAIMS.
+  # RASTER ESALandcover = $ESALanduseDir;\ESACCI-LC-L4-LCCS-Map-300m-P1Y-2015-v2.0.7.tif
+  FILE LandcoverLanduseLookup = $LookupDir;\LandcoverToLanduseLUH.csv
+
+  RASTER Regions = $RegionDir;\greg_30min.asc
+  STRING RegionFilter = NONE
+  #STRING RegionFilter = 11
+  STRING RegionExcudeFilter = NONE
+
+  RASTER Landcover = $LandcoverDir;\landcover_$CellSizeName;.tif
+  RASTER Landuse = $LanduseDir;\landuse_$CellSizeName;.tif
+
+  STRING LanduseCodes = 1|2|3|4|5|0
+  STRING LanduseNames = urban|crop|pasture|forestry|secondary vegetation|undefined
+  STRING LandusePriorityCodes = 1|2|3|4
+  STRING LanduseReplaceCodes = 1|2|3|4
+  STRING LanduseReplaceWithCode = 5
+  STRING LanduseUndefinedCode = 0
+
+  FILE   ReferenceClaims = $RefOutDir;\reference_claims_2015.csv
+  RASTER ImageClaims = $ImageClaimsDir;\GLANDCOVER_30MIN.nc#ImageLandCoverNetCDF
+  STRING ImageLanduseNames = builtup|Cropland|Pasture|Forest|Other Natural Land|Undefined
+
+  RASTER NotAllocatableAreas = None
+  RASTER PAReduceFactor = None
+
+  STRING SuitRasterCodes = 1|2|3|4
+  RASTERLIST SuitRasterNames = $SuitDir;\suit_urban.tif|$SuitDir;\suit_crop.tif|$SuitDir;\suit_pasture.tif|$SuitDir;\suit_forestry.tif
+
+  RASTER CellAreasKM2 = $CellAreasDir;\cellarea_km2_v2_$CellSizeName;.tif
+  RASTER SemiRandomNoise = $SemiRandomNoiseDir;\semi_random_noise_$CellSizeName;.tif
+
+  BOOLEAN CalculateRegionAreas = True
+  BOOLEAN CalculateRegionLandcoverAreas = True
+  BOOLEAN CalculateRegionLanduseAreas = True
+  BOOLEAN CalculateRegionAllocatedLanduseAreas = True
+
+  #-------------------------------------------------------------------------------
+  # Start running.
+  #-------------------------------------------------------------------------------
+
+  RUN_MODULE CalcReferenceClaims(
+                  $Extent,$CellSize,
+                  $Landcover,
+                  $LandcoverLanduseLookup,
+                  $Regions,
+                  $RegionFilter,$RegionExcudeFilter,
+                  $CellAreasKM2,
+                  $ReferenceClaims)
+
+  RUN_MODULE CalcLanduseHarmonization(
+                  $Extent,$CellSize,
+                  $Years,
+                  $Regions,
+                  $RegionFilter,$RegionExcudeFilter,
+                  $Landcover,
+                  $Landuse,
+                  $LanduseCodes,$LanduseNames,
+                  $LandusePriorityCodes,
+                  $LanduseReplaceCodes,$LanduseReplaceWithCode,
+                  $LanduseUndefinedCode,
+                  $ReferenceClaims,
+                  $ImageClaims,
+                  $ImageLanduseNames,
+                  $NotAllocatableAreas,
+                  $PAReduceFactor,
+                  $SuitRasterCodes,$SuitRasterNames,
+                  $CellAreasKM2,
+                  $SemiRandomNoise,
+                  $CalculateRegionAreas,
+                  $CalculateRegionLandcoverAreas,
+                  $CalculateRegionLanduseAreas,
+                  $CalculateRegionAllocatedLanduseAreas,
+                  $AllocOutDir)
+
+END_RUN
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+RUN Calculations()

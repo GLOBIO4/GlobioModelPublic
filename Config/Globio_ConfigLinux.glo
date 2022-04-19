@@ -1,0 +1,151 @@
+# ******************************************************************************
+## GLOBIO - https://www.globio.info
+## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
+## Reuse permitted under Gnu Public License, GPL v3.
+# ******************************************************************************
+
+#-------------------------------------------------------------------------------
+#
+# GLOBIO_CONFIG.GLO
+#
+# In this script default values of buildin variables can be overrriden
+# or new variables can be defined.
+#
+# Also Scenarios or Modules can be defined here.
+#
+# You can use "IncludeScript" to include other scripts.
+#
+# Modified: 2 nov 2016, ES, ARIS B.V.
+#           - Version 4.0.2
+#           - INCLUDE Globio_Utilities.glo added.
+#           - Directory settings removed.
+#           31 aug 2017, ES, ARIS B.V.
+#           - Version 4.0.7.0
+#           - MonitorEnabled added.
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# Application settings.
+#-------------------------------------------------------------------------------
+
+# Set default values.
+#Debug = True
+Debug = False
+LogToFile = True
+MonitorEnabled = False
+
+#-------------------------------------------------------------------------------
+# General settings.
+#-------------------------------------------------------------------------------
+
+#### LINUX
+
+# Set default base directories.
+DIR BaseInDir = /data/shared/GLOBIO/data
+DIR BaseOutDir = /data/shared/GLOBIO/data
+
+# Set default directories.
+DIR InDir = $BaseInDir;/pbl
+DIR LookupDir = /data/shared/GLOBIO/Lookup
+DIR OutDir = $BaseOutDir;/out
+DIR TmpDir = $BaseOutDir;/tmp
+
+#-------------------------------------------------------------------------------
+# GEO settings.
+#-------------------------------------------------------------------------------
+
+# Set default geo settings.
+EXTENT Extent = world
+CELLSIZE CellSize = 30sec
+
+#-------------------------------------------------------------------------------
+# Roads settings.
+#-------------------------------------------------------------------------------
+  
+# Fieldname.
+STRING ROAD_FieldName = GP_RTP
+
+#-------------------------------------------------------------------------------
+# Infra Disturbance settings.
+#-------------------------------------------------------------------------------
+
+# Maximum distance (km).
+FLOAT INFRADIST_MaximumDistanceKM = 150
+  
+# Regression Coefficients (warm-blooded vert.).
+STRING INFRADIST_WbVertRegressionCoefficients = -1.772|1.391
+
+# Weight factor.
+FLOAT INFRADIST_WeightFactor = 0.5
+
+# Land cover exclusion codes
+STRING INFRADIST_LandcoverExlCodes = 1
+
+#-------------------------------------------------------------------------------
+# Infra Fragmentation settings.
+#-------------------------------------------------------------------------------
+
+# Regression Coefficients (warm-blooded vert.).
+STRING INFRAG_WbVertRegressionCoefficients = -0.774|0.594
+
+# Weight factor.
+FLOAT INFRAG_WeightFactor = 0.5
+
+#-------------------------------------------------------------------------------
+# N-Deposition settings.
+#-------------------------------------------------------------------------------
+
+# Regression Coefficients (warm-blooded vert.).
+STRING NDEP_PlantRegressionCoefficients = 2.195|-0.743
+    
+# Weight factor.
+FLOAT NDEP_WeightFactor = 0.5
+
+# Land cover exclusion codes
+STRING NDEP_LandcoverExlCodes = 1|2|3|4|230|231|232
+
+#-------------------------------------------------------------------------------
+# Human Encroachment settings.
+#-------------------------------------------------------------------------------
+
+# Travel time (min).
+INTEGER HUMANENC_MinimumTravelTimeMIN = 5
+INTEGER HUMANENC_MaximumTravelTimeMIN = 5270
+  
+# Landcover buffer Distance (km).
+FLOAT HUMANENC_LandcoverBufferDistanceKM = 1.0
+
+# Maximum distance (km).
+FLOAT HUMANENC_MaximumDistanceKM = 150
+
+# Regression Coefficients (warm-blooded vert.).
+STRING HUMANENC_WbVertRegressionCoefficients = -0.223|0.876
+
+# Weight factor.
+FLOAT HUMANENC_WeightFactor = 0.5
+
+# Land cover exclusion codes
+STRING HUMANENC_LandcoverExlCodes = 1|2|3|4|5|230|231|232
+
+#-------------------------------------------------------------------------------
+# Climate Change settings.
+#-------------------------------------------------------------------------------
+
+# Regression Coefficients (warm-blooded vert.).
+STRING CLIMCH_WbVertRegressionCoefficients = 3.213|3.213|3.213|-0.362|-0.362|-0.362
+
+# Regression Coefficients (plants).
+STRING CLIMCH_PlantRegressionCoefficients = 2.867|2.867|2.867|-0.467|-0.467|-0.467
+
+#-------------------------------------------------------------------------------
+# GLOBIO MODULES
+#-------------------------------------------------------------------------------
+
+INCLUDE Globio_Modules.glo
+
+#-------------------------------------------------------------------------------
+# Aditional Utilities
+#-------------------------------------------------------------------------------
+
+INCLUDE Globio_Utilities.glo
+

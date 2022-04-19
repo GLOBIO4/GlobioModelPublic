@@ -1,0 +1,259 @@
+# ******************************************************************************
+## GLOBIO - https://www.globio.info
+## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
+## Reuse permitted under Gnu Public License, GPL v3.
+# ******************************************************************************
+#===============================================================================
+# RUN_AQUATIC_PREPROCESSING_ALL.GLO
+#
+# REMARKS:
+# - The logfile is written to the directory of variable "OutDir".
+#
+# Modified: 10 sep 2020, ES, ARIS B.V.
+#           - Version 4.0.15
+#           - AquaticDrainageToRivers put in comment.
+#           - AquaticDrainageToRivers_V2 added.
+#           - Arguments of AquaticSplitRivers modified, now using $Rivers.
+#           8 oct 2020, ES, ARIS B.V.
+#           - Version 4.0.16
+#           - AquaticRiverFractions_V2, optional parameter LakesReservoirs added.
+#===============================================================================
+
+# Include aquatic preprocessing module.
+INCLUDE Globio_Aquatic_Preprocessing.glo
+
+#===============================================================================
+BEGIN_RUN Calculations()
+
+  # Set input directories.
+  DIR InDrainDir = /data/pbl_20181023/VBarbarossa/flo1k_hydrography
+  DIR InLakeDir = /data/pbl_20181023/HydroLakes/shapefile
+  DIR InShpDir = /data/referentie/v4012/vector/in_20181123
+  DIR InRasDir = /data/referentie/v4012/30sec_wrld/in_20181026
+  DIR InRas5Dir = /data/referentie/v4012/5min_wrld/in_20181026
+  DIR InCatchDir = /data/referentie/v4012/30sec_wrld/in_20181123
+
+  # Set output directories.
+  DIR OutShpDir = /data/referentie/v4012/vector/in_20181123
+  DIR OutRasDir = /data/referentie/v4012/30sec_wrld/in_20181123
+
+  # Set output for logging.
+  OutDir = $OutRasDir
+
+  # Set region.
+  #Extent = nl
+  #Extent = europe
+  Extent = wrld
+  
+  # Set resolution.
+  CellSize = 30sec
+
+  # Save temporary data? 
+  #SaveTmpData = True
+  SaveTmpData = False
+  
+  #-----------------------------------------------------------------------------
+  # Constants.
+  #-----------------------------------------------------------------------------
+  
+  # M3/s
+  FLOAT DischargeThreshold = 0.0
+  
+  FLOAT ToleranceDEG = 0.0
+
+  FLOAT RiverWidthKM = 0.1
+  FLOAT RiverWidthA = 7.2
+  FLOAT RiverWidthB = 0.5
+
+  STRING TypeFieldName = Lake_type
+  STRING LakeTypes = 1|3
+  STRING ReservoirTypes = 2
+  STRING DepthFieldName = Depth_avg
+  FLOAT DepthThresholdM = 3.0
+
+  STRING FloodplainGLWDWaterTypes = 4|5
+  STRING WetlandGLWDWaterTypes = 6|7|8|9|10|11|12
+
+  # numbers, 1 = low
+  STRING Priorities = None
+
+  #-----------------------------------------------------------------------------
+  # Input data.
+  #-----------------------------------------------------------------------------
+  
+  VECTOR Drainage = $InDrainDir;/drainage_lines24.shp
+  VECTOR Dams = $InShpDir;/dams_wrld.shp
+  VECTOR LakesReservoirs = $InLakeDir;/HydroLAKES_polys_v10.shp
+
+  RASTER ScenarioStreamflow = $InRas5Dir;/pcrglobwb_qmi_2015.tif
+  RASTER ReferenceStreamflowMean5min = $InRas5Dir;/pcrglobwb_qav_2015.tif
+  RASTER ReferenceStreamflowMin5min = $InRas5Dir;/pcrglobwb_qmi_2015.tif
+  RASTER ReferenceStreamflowMax5min = $InRas5Dir;/pcrglobwb_qma_2015.tif
+  RASTER ReferenceStreamflowMean30sec = $InRasDir;/flo1k_qav_2015.tif
+  RASTER ReferenceStreamflowMin30sec = $InRasDir;/flo1k_qmi_2015.tif
+  RASTER ReferenceStreamflowMax30sec = $InRasDir;/flo1k_qma_2015.tif
+
+  RASTER RiverDischarge = $ReferenceStreamflowMean30sec
+  RASTER GLWD = $InRasDir;/glwd.tif
+  RASTER Catchments = $InCatchDir;/catchments.tif
+
+  #-----------------------------------------------------------------------------
+  # Input/output data.
+  #-----------------------------------------------------------------------------
+
+  VECTOR Rivers = $OutShpDir;/rivers_wrld.shp
+  VECTOR SplittedRivers = $OutShpDir;/frag_rivers_wrld.shp
+  VECTOR SnappedDams = $OutShpDir;/frag_dams_wrld.shp
+  VECTOR ConnectedRivers = $OutShpDir;/frag_rivers_connected_wrld.shp
+  
+  VECTOR RiverFragments = $OutShpDir;/frag_river_fragments_wrld.shp
+
+  RASTER RiverFractions = $OutRasDir;/river_fractions.tif
+
+  RASTER LakeShallowFractions = $OutRasDir;/shallow_lake_fractions.tif
+  RASTER LakeDeepFractions = $OutRasDir;/deep_lake_fractions.tif
+  RASTER ReservoirShallowFractions = $OutRasDir;/shallow_reservoir_fractions.tif
+  RASTER ReservoirDeepFractions = $OutRasDir;/deep_reservoir_fractions.tif
+
+  RASTER AqRiverFractions = $OutRasDir;/aq_river_fractions.tif
+  RASTER AqFloodplainFractions = $OutRasDir;/aq_floodplain_fractions.tif
+  RASTER AqLakeShallowFractions = $OutRasDir;/aq_shallow_lake_fractions.tif
+  RASTER AqLakeDeepFractions = $OutRasDir;/aq_deep_lake_fractions.tif
+  RASTER AqReservoirShallowFractions = $OutRasDir;/aq_shallow_reservoir_fractions.tif
+  RASTER AqReservoirDeepFractions = $OutRasDir;/aq_deep_reservoir_fractions.tif
+  RASTER AqWetlandFractions = $OutRasDir;/aq_wetland_fractions.tif
+
+  RASTER DamDensity = $OutRasDir;/frag_dam_density.tif
+  RASTER RiverFragmentLength = $OutRasDir;/frag_fragment_length.tif
+  RASTER RCI = $OutRasDir;/frag_rci.tif
+
+  RASTER OutStreamflow = $OutRasDir;/scen_streamflow.tif
+
+  #-----------------------------------------------------------------------------
+  # Start running.
+  #-----------------------------------------------------------------------------
+
+  #RUN_MODULE AquaticDrainageToRivers(
+  #                      $Extent,$CellSize,
+  #                      $Drainage,
+  #                      $RiverDischarge,
+  #                      $DischargeThreshold,
+  #                      $NumberOfCores,
+  #                      $Rivers)
+
+  RUN_MODULE AquaticDrainageToRivers_V2(
+                        $Extent,
+                        $Drainage,
+                        $RiverDischarge,
+                        $DischargeThreshold,
+                        $NumberOfCores,
+                        $Rivers)
+
+  RUN_MODULE AquaticSplitRivers(
+                        $Extent,$CellSize,
+                        $Rivers,
+                        $Dams,
+                        $ToleranceDEG,
+                        $SplittedRivers,
+                        $SnappedDams)
+
+  RUN_MODULE AquaticConnectedRivers(
+                        $Extent,$CellSize,
+                        $SplittedRivers,
+                        $NumberOfCores,
+                        $ConnectedRivers)
+
+  RUN_MODULE AquaticRiverFragments(
+                        $Extent,$CellSize,
+                        $ConnectedRivers,
+                        $SnappedDams,
+                        $NumberOfCores,
+                        $RiverFragments)
+
+  RUN_MODULE AquaticRiverFractions(
+                        $Extent,$CellSize,
+                        $Rivers,
+                        $RiverWidthKM,
+                        $NumberOfCores,
+                        $RiverFractions)
+
+  RUN_MODULE AquaticRiverFractions_V2(
+                        $Extent,$CellSize,
+                        $Rivers,
+                        $LakesReservoirs,
+                        $RiverDischarge,
+                        $RiverWidthA,
+                        $RiverWidthB,
+                        $NumberOfCores,
+                        $RiverFractions)
+
+  RUN_MODULE AquaticLakeReservoirFractions(
+                        $Extent,$CellSize,
+                        $LakesReservoirs,
+                        $TypeFieldName,
+                        $LakeTypes,
+                        $ReservoirTypes,
+                        $DepthFieldName,
+                        $DepthThresholdM,
+                        $NumberOfCores,
+                        $LakeShallowFractions,
+                        $LakeDeepFractions,
+                        $ReservoirShallowFractions,
+                        $ReservoirDeepFractions)
+
+  RUN_MODULE AquaticFractions(
+                        $Extent,$CellSize,
+                        $RiverFractions,
+                        $LakeShallowFractions,
+                        $LakeDeepFractions,
+                        $ReservoirShallowFractions,
+                        $ReservoirDeepFractions,
+                        $GLWD,
+                        $FloodplainGLWDWaterTypes,
+                        $WetlandGLWDWaterTypes,
+                        $Priorities,
+                        $AqRiverFractions,
+                        $AqFloodplainFractions,
+                        $AqLakeShallowFractions,
+                        $AqLakeDeepFractions,
+                        $AqReservoirShallowFractions,
+                        $AqReservoirDeepFractions,
+                        $AqWetlandFractions)
+
+  RUN_MODULE AquaticFragmentationDamDensity(
+                        $Extent,$CellSize,
+                        $SnappedDams,
+                        $Catchments,
+                        $NumberOfCores,
+                        $DamDensity)
+
+  RUN_MODULE AquaticFragmentationFragmentLength(
+                        $Extent,$CellSize,
+                        $RiverFragments,
+                        $NumberOfCores,
+                        $RiverFragmentLength)
+
+  RUN_MODULE AquaticFragmentationRCI(
+                        $Extent,$CellSize,
+                        $RiverFragments,
+                        $Catchments,
+                        $NumberOfCores,
+                        $RCI)
+
+  RUN_MODULE AquaticStreamflow30sec(
+                        $Extent,
+                        $ScenarioStreamflow,
+                        $ReferenceStreamflowMean5min,
+                        $ReferenceStreamflowMin5min,
+                        $ReferenceStreamflowMax5min,
+                        $ReferenceStreamflowMean30sec,
+                        $ReferenceStreamflowMin30sec,
+                        $ReferenceStreamflowMax30sec,
+                        $OutStreamflow)
+
+END_RUN
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#RUN Calculations()
+

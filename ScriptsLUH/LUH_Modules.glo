@@ -1,0 +1,95 @@
+# ******************************************************************************
+## GLOBIO - https://www.globio.info
+## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
+## Reuse permitted under Gnu Public License, GPL v3.
+# ******************************************************************************
+#-------------------------------------------------------------------------------
+#
+# LUH_Modules.glo
+#
+# Defines the main modules of the Landuse Harmonization Tool.
+#
+# Modified: 25 jan 2021, ES, ARIS B.V.
+#           - Version 4.1.1
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcReferenceClaims(
+                  IN EXTENT Extent,
+                  IN CELLSIZE CellSize,
+                  IN RASTER Landcover,
+                  IN FILE LandcoverLanduseLookup,
+                  IN RASTER Regions,
+                  IN STRING RegionFilter,
+                  IN STRING RegionExcudeFilter,
+                  IN RASTER CellAreaKM2,
+                  OUT FILE ReferenceClaims)
+
+  GLOBIO_CalcReferenceClaims(
+                  $Extent,$CellSize,
+                  $Landcover,
+                  $LandcoverLanduseLookup,
+                  $Regions,
+                  $RegionFilter,$RegionExcudeFilter,
+                  $CellAreaKM2,
+                  $ReferenceClaims)
+
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcLanduseHarmonization(
+                  IN EXTENT Extent,
+                  IN CELLSIZE CellSize,
+                  IN STRING Years,
+                  IN RASTER Regions,
+                  IN STRING RegionFilter,
+                  IN STRING RegionExcludeFilter,
+                  IN RASTER Landcover,
+                  IN RASTER Landuse,
+                  IN STRING LanduseCodes,
+                  IN STRING LanduseNames,
+                  IN STRING LandusePriorityCodes,
+                  IN STRING LanduseReplaceCodes,
+                  IN STRING LanduseReplaceWithCode,
+                  IN STRING LanduseUndefinedCode,
+                  IN FILE ReferenceClaims,
+                  IN RASTER ImageClaims,
+                  IN STRING ImageLanduseNames,
+                  IN RASTER NotAllocatableAreas,
+                  IN RASTER PAReduceFactor,
+                  IN STRING SuitRasterCodes,
+                  IN RASTERLIST SuitRasterNames,
+                  IN RASTER CellAreasKM2,
+                  IN RASTER SemiRandomNoise,
+                  IN BOOLEAN CalculateRegionAreas,
+                  IN BOOLEAN CalculateRegionLandcoverAreas,
+                  IN BOOLEAN CalculateRegionLanduseAreas,
+                  IN BOOLEAN CalculateRegionAllocatedLanduseAreas,
+                  OUT DIR AllocatedLanduse)
+
+  GLOBIO_CalcLanduseHarmonization(
+                  $Extent,$CellSize,
+                  $Years,
+                  $Regions,
+                  $RegionFilter,$RegionExcludeFilter,
+                  $Landcover,
+                  $Landuse,
+                  $LanduseCodes,$LanduseNames,
+                  $LandusePriorityCodes,
+                  $LanduseReplaceCodes,$LanduseReplaceWithCode,
+                  $LanduseUndefinedCode,
+                  $ReferenceClaims,
+                  $ImageClaims,
+                  $ImageLanduseNames,
+                  $NotAllocatableAreas,
+                  $PAReduceFactor,
+                  $SuitRasterCodes,$SuitRasterNames,
+                  $CellAreasKM2,
+                  $SemiRandomNoise,
+                  $CalculateRegionAreas,
+                  $CalculateRegionLandcoverAreas,
+                  $CalculateRegionLanduseAreas,
+                  $CalculateRegionAllocatedLanduseAreas,
+                  $AllocatedLanduse)
+
+END_MODULE

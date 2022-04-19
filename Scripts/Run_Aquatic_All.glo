@@ -1,0 +1,393 @@
+# ******************************************************************************
+## GLOBIO - https://www.globio.info
+## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
+## Reuse permitted under Gnu Public License, GPL v3.
+# ******************************************************************************
+#===============================================================================
+# RUN_AQUATIC_ALL.GLO
+#
+# REMARKS:
+# - The logfile is written to the directory of variable "OutDir".
+#===============================================================================
+
+# Include aquatic module.
+INCLUDE Globio_Aquatic.glo
+
+#===============================================================================
+BEGIN_RUN Calculations()
+
+  # Set input directory.
+  InDir = /data/referentie/v4012/30sec_wrld/in_20190126
+  DIR InLuDir = /data/referentie/v407/10sec_wrld/landalloc_20170830
+  DIR InNPDir = /data/referentie/v4012/30min_wrld/in_20190126
+
+  # Set output directory.
+  OutDir = /data/referentie/v4012/30sec_wrld/aquatic_20190126
+
+  # Set region.
+  #Extent = nl
+  #Extent = europe
+  Extent = world
+  
+  # Set resolution.
+  CellSize = 30sec
+
+  # Save temporary data? 
+  #SaveTmpData = True
+  SaveTmpData = False
+  
+  #-----------------------------------------------------------------------------
+  # Factors.
+  #-----------------------------------------------------------------------------
+  
+  # River Fragmentation Factors.
+  FLOAT RIV_FRAG_FACTOR_A = 0.52
+  FLOAT RIV_FRAG_FACTOR_B = 0.0
+  FLOAT RIV_FRAG_FACTOR_C = 0.0
+  FLOAT RIV_FRAG_FACTOR_D = 0.0
+  FLOAT RIV_FRAG_FACTOR_E = 0.0
+  FLOAT RIV_FRAG_FACTOR_F = 0.0
+
+  # River AAPFD Factors.
+  FLOAT RIV_AAPFD_FACTOR_A = 0.1
+  FLOAT RIV_AAPFD_FACTOR_B = -0.3985
+  FLOAT RIV_AAPFD_FACTOR_C = 0.60
+  FLOAT RIV_AAPFD_FACTOR_D = 0.1
+
+  # Floodplain AAPFD Factors.
+  FLOAT FLOOD_AAPFD_FACTOR_A = 0.3518
+  FLOAT FLOOD_AAPFD_FACTOR_B = 0.5885
+  FLOAT FLOOD_AAPFD_FACTOR_C = 1.5636
+  FLOAT FLOOD_AAPFD_FACTOR_D = 0.1
+
+  # Wetland FRHLU Factors.
+  FLOAT WET_FRHLU_FACTOR_A = 0.87
+
+  # River FRHLU Factors.
+  FLOAT RIV_FRHLU_FACTOR_A = 0.70
+
+  # Cyano Bacteria Factors.
+  FLOAT CYANO_FTNTP_FACTOR_A = 3.0
+  FLOAT CYANO_FT_FACTOR_A = 0.86
+  FLOAT CYANO_FT_FACTOR_B = 0.63
+  FLOAT CYANO_FT_FACTOR_C = 1.5
+  FLOAT CYANO_FT_FACTOR_D = 1.0
+  FLOAT CYANO_FT_FACTOR_E = 1.0
+  FLOAT CYANO_FT_FACTOR_F = 3.0
+  FLOAT CYANO_CB_FACTOR_A = 0.001
+  FLOAT CYANO_CB_FACTOR_B = 5.85
+  FLOAT CYANO_CB_FACTOR_C = 1000.0
+  FLOAT CYANO_CB_FACTOR_D = 0.005
+  FLOAT CYANO_CB_FACTOR_E = 4.01
+  FLOAT CYANO_CB_FACTOR_F = 4.0
+
+  # Deep Lakes Factors.
+  FLOAT LAKEDEEP_N_FACTOR_A = 0.145
+  FLOAT LAKEDEEP_N_FACTOR_B = -4.768
+  FLOAT LAKEDEEP_N_FACTOR_C = 0.01
+  FLOAT LAKEDEEP_P_FACTOR_A = -4.002
+  FLOAT LAKEDEEP_P_FACTOR_B = -1.176
+  FLOAT LAKEDEEP_P_FACTOR_C = 0.001
+
+  # Shallow Lakes Factors.
+  FLOAT LAKESHALLOW_N_FACTOR_A = 0.264
+  FLOAT LAKESHALLOW_N_FACTOR_B = -0.998
+  FLOAT LAKESHALLOW_N_FACTOR_C = 0.01
+  FLOAT LAKESHALLOW_P_FACTOR_A = -2.089
+  FLOAT LAKESHALLOW_P_FACTOR_B = -1.048
+  FLOAT LAKESHALLOW_P_FACTOR_C = 0.001
+ 
+  # Water Temperature Threshold.
+  FLOAT TemperatureThreshold = 9.0
+
+  # Cyano Bacteria Water Temperature Threshold.
+  FLOAT CYANO_TemperatureThreshold = 15.0
+
+  #-----------------------------------------------------------------------------
+  # MSA.
+  #-----------------------------------------------------------------------------
+
+  FLOAT RESERVOIR_MSA = 0.01
+  FLOAT WETLAND_LOSS_MSA = 0.1
+
+  #-----------------------------------------------------------------------------
+  # Input rasters.
+  #-----------------------------------------------------------------------------
+
+  # Fraction rasters.
+  RASTER RiverFractions = $InDir;/aq_river_fractions.tif
+  RASTER FloodPlainFractions = $InDir;/aq_floodplain_fractions.tif
+  RASTER LakeShallowFractions = $InDir;/aq_shallow_lake_fractions.tif
+  RASTER LakeDeepFractions = $InDir;/aq_deep_lake_fractions.tif
+  RASTER ReservoirShallowFractions = $InDir;/aq_shallow_reservoir_fractions.tif
+  RASTER ReservoirDeepFractions = $InDir;/aq_deep_reservoir_fractions.tif
+  RASTER WetlandFractions = $InDir;/aq_wetland_fractions.tif
+  
+  # Fragmentation rasters.
+  RASTER DamDownstreamDistance = $InDir;/dummy_frag_downstream_distance.tif
+  RASTER DamUpstreamDistance = $InDir;/dummy_frag_upstream_distance.tif
+  RASTER RiverFragmentLength = $InDir;/dummy_frag_fragment_length.tif
+  RASTER DamDensity = $InDir;/frag_dam_density.tif
+  RASTER RCI = $InDir;/dummy_frag_rci.tif
+  
+  # Streamflow rasters.
+  RASTERLIST ScenarioStreamflowMonths = $InDir;/dummy_streamflow_scen_1.tif|$InDir;/dummy_streamflow_scen_2.tif
+  RASTERLIST ReferenceStreamflowMonths = $InDir;/dummy_streamflow_ref_1.tif|$InDir;/dummy_streamflow_ref_2.tif
+  RASTERLIST ReferenceStreamflowMonthsMean = $InDir;/dummy_streamflow_ref_mean_1.tif|$InDir;/dummy_streamflow_ref_mean_2.tif
+  
+  # Miscellaneous.
+  RASTER Landuse10sec = $InLuDir;/landuse_alloc_v2.tif
+  RASTER Catchments = $InDir;/catchments.tif
+  RASTER FlowDirections = $InDir;/river_flowdirection.tif
+  RASTERLIST WaterTemperatureMonths = $InDir;/dummy_watertemperature_1.tif|$InDir;/dummy_watertemperature_2.tif
+  RASTER ConcN = $InNPDir;/nconc_2015.tif
+  RASTER ConcP = $InNPDir;/pconc_2015.tif
+
+  #-----------------------------------------------------------------------------
+  # Input/output rasters.
+  #-----------------------------------------------------------------------------
+
+  RASTER WetlandLossFractions = $OutDir;/wetland_loss_fractions.tif
+  RASTER WetlandActualFractions = $OutDir;/wetland_actual_fractions.tif
+
+  RASTER RiverFragmentationMSA = $OutDir;/river_frag_msa.tif
+  RASTER AAPFD = $OutDir;/aapfd.tif
+  RASTER FRHLU = $OutDir;/frhlu.tif
+  RASTER WaterTemperature = $OutDir;/lakereservoir_watertemperature.tif
+
+  RASTER RiverAAPFDMSA = $OutDir;/river_aapfd_msa.tif
+  RASTER FloodplainAAPFDMSA = $OutDir;/floodplain_aapfd_msa.tif
+  RASTER WetlandFloodplainFRHLUMSA = $OutDir;/wetlandfloodplain_frhlu_msa.tif
+  RASTER RiverFRHLUMSA = $OutDir;/river_frhlu_msa.tif
+  
+  RASTER RiverMSA = $OutDir;/river_msa.tif
+  RASTER LakeShallowMSA = $OutDir;/shallow_lake_msa.tif
+  RASTER LakeDeepMSA = $OutDir;/deep_lake_msa.tif
+  RASTER ReservoirMSA = $OutDir;/reservoir_msa.tif
+  RASTER FloodplainMSA = $OutDir;/floodplain_msa.tif
+  RASTER WetlandMSA = $OutDir;/wetland_msa.tif
+
+  #-----------------------------------------------------------------------------
+  # Output rasters.
+  #-----------------------------------------------------------------------------
+
+  RASTER LakeReservoirCyanoBacteria = $OutDir;/lakereservoir_cyanobact.tif
+
+  RASTER AquaticMSA = $OutDir;/aquatic_msa.tif
+
+  RASTER CatchmentMeanMSA = $OutDir;/catchment_mean_msa.tif
+
+  #-----------------------------------------------------------------------------
+  # Start running.
+  #-----------------------------------------------------------------------------
+
+  RUN_MODULE CalcAquaticRiverFragmentationMSA(
+                        $Extent,
+                        $CellSize,
+                        $DamDownstreamDistance,
+                        $DamUpstreamDistance,
+                        $RiverFragmentLength,
+                        $DamDensity,
+                        $RCI,
+                        $RiverFractions,
+                        $RIV_FRAG_FACTOR_A,
+                        $RIV_FRAG_FACTOR_B,
+                        $RIV_FRAG_FACTOR_C,
+                        $RIV_FRAG_FACTOR_D,
+                        $RIV_FRAG_FACTOR_E,
+                        $RIV_FRAG_FACTOR_F,
+                        $RiverFragmentationMSA)
+
+  RUN_MODULE CalcAquaticAAPFD(
+                        $Extent,
+                        $CellSize,
+                        $ScenarioStreamflowMonths,
+                        $ReferenceStreamflowMonths,
+                        $ReferenceStreamflowMonthsMean,
+                        $RiverFractions,
+                        $FloodPlainFractions,
+                        $AAPFD)
+
+  RUN_MODULE CalcAquaticFRHLU(
+                        $Extent,
+                        $CellSize,
+                        $Landuse10sec,
+                        $FlowDirections,
+                        $FRHLU)
+
+  RUN_MODULE CalcAquaticLakeReservoirWaterTemperature(
+                        $Extent,
+                        $CellSize,
+                        $WaterTemperatureMonths,
+                        $TemperatureThreshold,
+                        $LakeShallowFractions,
+                        $LakeDeepFractions,
+                        $ReservoirShallowFractions,
+                        $ReservoirDeepFractions,
+                        $WaterTemperature)
+
+  RUN_MODULE CalcAquaticRiverAAPFDMSA(
+                        $Extent,
+                        $CellSize,
+                        $AAPFD,
+                        $RiverFractions,
+                        $RIV_AAPFD_FACTOR_A,
+                        $RIV_AAPFD_FACTOR_B,
+                        $RIV_AAPFD_FACTOR_C,
+                        $RIV_AAPFD_FACTOR_D,
+                        $RiverAAPFDMSA)
+
+  RUN_MODULE CalcAquaticFloodplainAAPFDMSA(
+                        $Extent,
+                        $CellSize,
+                        $AAPFD,
+                        $FloodplainFractions,
+                        $FLOOD_AAPFD_FACTOR_A,
+                        $FLOOD_AAPFD_FACTOR_B,
+                        $FLOOD_AAPFD_FACTOR_C,
+                        $FLOOD_AAPFD_FACTOR_D,
+                        $FloodplainAAPFDMSA)
+
+  RUN_MODULE CalcAquaticWetlandFloodplainFRHLUMSA(
+                        $Extent,
+                        $CellSize,
+                        $FRHLU,
+                        $WetlandFractions,
+                        $FloodplainFractions,
+                        $WET_FRHLU_FACTOR_A,
+                        $WetlandFloodplainFRHLUMSA)
+
+  RUN_MODULE CalcAquaticRiverFRHLUMSA(
+                        $Extent,
+                        $CellSize,
+                        $FRHLU,
+                        $RiverFractions,
+                        $RIV_FRHLU_FACTOR_A,
+                        $RiverFRHLUMSA)
+
+  RUN_MODULE CalcAquaticLakeReservoirCyanoBacteria(
+                        $Extent,
+                        $CellSize,
+                        $ConcN,
+                        $ConcP,
+                        $WaterTemperature,
+                        $LakeShallowFractions,
+                        $LakeDeepFractions,
+                        $ReservoirShallowFractions,
+                        $ReservoirDeepFractions,
+                        $CYANO_TemperatureThreshold,
+                        $CYANO_FTNTP_FACTOR_A,
+                        $CYANO_FT_FACTOR_A,
+                        $CYANO_FT_FACTOR_B,
+                        $CYANO_FT_FACTOR_C,
+                        $CYANO_FT_FACTOR_D,
+                        $CYANO_FT_FACTOR_E,
+                        $CYANO_FT_FACTOR_F,
+                        $CYANO_CB_FACTOR_A,
+                        $CYANO_CB_FACTOR_B,
+                        $CYANO_CB_FACTOR_C,
+                        $CYANO_CB_FACTOR_D,
+                        $CYANO_CB_FACTOR_E,
+                        $CYANO_CB_FACTOR_F,
+                        $LakeReservoirCyanoBacteria)
+
+  RUN_MODULE CalcAquaticRiverMSA(
+                        $Extent,
+                        $CellSize,
+                        $RiverFragmentationMSA,
+                        $RiverFRHLUMSA,
+                        $RiverAAPFDMSA,
+                        $RiverFractions,
+                        $RiverMSA)
+
+  RUN_MODULE CalcAquaticFloodplainMSA(
+                        $Extent,
+                        $CellSize,
+                        $WetlandFloodplainFRHLUMSA,
+                        $FloodplainAAPFDMSA,
+                        $FloodplainFractions,
+                        $FloodplainMSA)
+
+  RUN_MODULE CalcAquaticWetlandLossFractions(
+                        $Extent,
+                        $CellSize,
+                        $Landuse10sec,
+                        $WetlandFractions,
+                        $WetlandLossFractions,
+                        $WetlandActualFractions)
+
+  RUN_MODULE CalcAquaticWetlandMSA(
+                        $Extent,
+                        $CellSize,
+                        $WetlandFloodplainFRHLUMSA,
+                        $WetlandLossFractions,
+                        $WetlandActualFractions,
+                        $WETLAND_LOSS_MSA,
+                        $WetlandMSA)
+
+  RUN_MODULE CalcAquaticLakeDeepMSA(
+                        $Extent,
+                        $CellSize,
+                        $ConcN,
+                        $ConcP,
+                        $LakeDeepFractions,
+                        $LAKEDEEP_N_FACTOR_A,
+                        $LAKEDEEP_N_FACTOR_B,
+                        $LAKEDEEP_N_FACTOR_C,
+                        $LAKEDEEP_P_FACTOR_A,
+                        $LAKEDEEP_P_FACTOR_B,
+                        $LAKEDEEP_P_FACTOR_C,
+                        $LakeDeepMSA)
+
+  RUN_MODULE CalcAquaticLakeShallowMSA(
+                        $Extent,
+                        $CellSize,
+                        $ConcN,
+                        $ConcP,
+                        $LakeShallowFractions,
+                        $LAKESHALLOW_N_FACTOR_A,
+                        $LAKESHALLOW_N_FACTOR_B,
+                        $LAKESHALLOW_N_FACTOR_C,
+                        $LAKESHALLOW_P_FACTOR_A,
+                        $LAKESHALLOW_P_FACTOR_B,
+                        $LAKESHALLOW_P_FACTOR_C,
+                        $LakeShallowMSA)
+
+  RUN_MODULE CalcAquaticReservoirMSA(
+                        $Extent,
+                        $CellSize,
+                        $ReservoirShallowFractions,
+                        $ReservoirDeepFractions,
+                        $RESERVOIR_MSA,
+                        $ReservoirMSA)
+
+  RUN_MODULE CalcAquaticMSA(
+                        $Extent,
+                        $CellSize,
+                        $LakeShallowMSA,
+                        $LakeDeepMSA,
+                        $ReservoirMSA,
+                        $RiverMSA,
+                        $FloodplainMSA,
+                        $WetlandMSA,
+                        $LakeShallowFractions,
+                        $LakeDeepFractions,
+                        $ReservoirShallowFractions,
+                        $ReservoirDeepFractions,
+                        $RiverFractions,
+                        $FloodplainFractions,
+                        $WetlandFractions,
+                        $AquaticMSA)
+
+  RUN_MODULE ZonalMean(
+                        $Extent,
+                        $Catchments,
+                        $AquaticMSA,
+                        $CatchmentMeanMSA)
+
+END_RUN
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+RUN Calculations()
+

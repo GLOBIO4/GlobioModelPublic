@@ -1,0 +1,58 @@
+# ******************************************************************************
+## GLOBIO - https://www.globio.info
+## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
+## Reuse permitted under Gnu Public License, GPL v3.
+# ******************************************************************************
+#-------------------------------------------------------------------------------
+#
+# GLOBIO_UTILITIES.GLO
+#
+# In this script utility modules of GLOBIO4 are defined.
+#
+# Modified: 10 dec 2018, ES, ARIS B.V.
+#           - Version 4.0.12
+#           - ZonalMean added.
+#           14 dec 2020, ES, ARIS B.V.
+#           - Version 4.1.0
+#           - CompareShapeFiles added.
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# Compares the InRaster with the ReferenceRaster and calculates the differences
+# per cell. Shows the minimum, maximum and average difference in the cell
+# values.
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CompareRasters(
+                        IN RASTER InRaster,
+                        IN RASTER ReferenceRaster)
+  GLOBIO_CompareRasters(
+                        $InRaster,
+                        $ReferenceRaster)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+# Compares the InShapeFile with the ReferenceShapeFile and calculates the
+# differences.
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CompareShapeFiles(
+                        IN VECTOR InShapeFile,
+                        IN VECTOR ReferenceShapeFile)
+  GLOBIO_CompareShapeFiles(
+                        $InShapeFile,
+                        $ReferenceShapeFile)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+# Calculates the mean of all values from the InRaster per zone for all zones
+# in ZoneRaster.
+#BEGIN_MODULE ZonalMean(
+#                        IN EXTENT Extent,
+#                        IN RASTER ZoneRaster,
+#                        IN RASTER InRaster,
+#                        OUT RASTER MeanRaster)
+#  GLOBIO_ZonalMean(
+#                        $Extent,
+#                        $ZoneRaster,
+#                        $InRaster,
+#                        $MeanRaster)
+#END_MODULE

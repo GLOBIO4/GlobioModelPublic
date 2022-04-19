@@ -1,0 +1,125 @@
+# ******************************************************************************
+## GLOBIO - https://www.globio.info
+## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
+## Reuse permitted under Gnu Public License, GPL v3.
+# ******************************************************************************
+#-------------------------------------------------------------------------------
+# RUN_LANDUSEALLOCATION_EU.GLO
+#
+# Runs the land-use allocation module with the extent set to Europe.
+# Uses a regional filter (region 11) and some excluded regions to prevent
+# border effects. 
+# 
+#-------------------------------------------------------------------------------
+
+# Include landuse allocation module.
+INCLUDE LanduseAllocation.glo
+
+#-------------------------------------------------------------------------------
+BEGIN_RUN Calculations()
+
+  # Save temporary data? 
+  #SaveTmpData = True
+  SaveTmpData = False
+
+  # Define base directory.
+  DIR BaseDir = G:\Data\Globio4LA\data
+
+  # Set region and resolution.
+  #Extent = wrld
+  Extent = eu
+  CellSize = 30sec
+
+  # Set output directory.
+  OutDir = $BaseDir;\out\v405\30sec_eu\landalloc_20170322
+
+  # Set output raster.
+  RASTER OutAllocatedLanduse = $OutDir;\landuse_alloc.tif
+
+  # Define base input directory.
+  DIR BaseInputDir = $BaseDir;\oplevering\v405\input
+
+  # Set input directories.
+  DIR ClaimDir = $BaseInputDir;\lookup
+  DIR LcDir = $BaseInputDir;\30sec_wrld
+  DIR RegionDir = $BaseInputDir;\30sec_wrld
+  DIR PaDirDir = $BaseInputDir;\30sec_wrld
+  DIR SuitDir = $BaseInputDir;\30sec_wrld
+  DIR LuDirDir = $SuitDir;
+  DIR NotAllocDir = $SuitDir;
+
+  # Set other input parameters.
+  STRING LanduseCodes = 1|2|3|4|5|6
+  STRING LanduseNames = urban|crop|pasture|forestry|secondary vegetation|undefined
+  STRING LandusePriorityCodes = 1|2|3|4
+
+  RASTER Landcover = $LcDir;\esa_lc_2010.tif
+
+  RASTER Regions = $RegionDir;\imgregions27.tif
+  STRING RegionFilter = 11
+  STRING RegionExcudeFilter = 7|16|17
+
+  RASTER Landuse = $LuDirDir;\landcover_landuse.tif
+  STRING LanduseReplaceCodes = 1|2|3|4
+  STRING LanduseReplaceWithCode = 5
+  STRING LanduseUndefinedCode = 6
+
+  RASTER NotAllocatableAreas = $NotAllocDir;\not_allocatable_areas.tif
+  RASTER PAReduceFactor = $PaDirDir;\pa_reduce_factor.tif
+
+  STRING SuitRasterCodes = 1|2|3|4
+  RASTERLIST SuitRasterNames = $SuitDir;\suit_urban.tif|$SuitDir;\suit_crop.tif|$SuitDir;\suit_pasture.tif|$SuitDir;\suit_forestry.tif
+
+  FILE ClaimFileName = $ClaimDir;\Claims_2050.csv
+  STRING ClaimLanduseFieldName = AggLUClass
+  STRING ClaimRegionFieldName = IMGREGCD
+  STRING ClaimAreaFieldName = totalArea
+  FILE ClaimLookup = $ClaimDir;\LanduseClassToLanduseType.csv
+
+  STRING ClaimAreaMultiplierLanduseCodes = NONE
+  STRING ClaimAreaMultipliers = NONE
+
+  RASTER CellAreas = NONE
+  BOOLEAN AddNoiseFlag = True
+
+  # Set output files/raster.
+  FILE OutRegionAreasFileName = $OutDir;\regio_areas.csv
+  FILE OutRegionLandcoverAreasFileName = $OutDir;\regio_landcover_areas.csv
+  FILE OutRegionLanduseAreasFileName = $OutDir;\regio_landuse_areas.csv
+  RASTER TerrestrialMSA = $OutDir;\landuse_alloc.tif
+
+  #-------------------------------------------------------------------------------
+  # Start running.
+  #-------------------------------------------------------------------------------
+
+  RUN_MODULE CalcDiscreteLanduseAllocation(
+                  $Extent,$CellSize,
+                  $LanduseCodes,$LanduseNames,
+                  $LandusePriorityCodes,
+                  $Landcover,
+                  $Regions,
+                  $RegionFilter,$RegionExcudeFilter,
+                  $Landuse,
+                  $LanduseReplaceCodes,
+                  $LanduseReplaceWithCode,$LanduseUndefinedCode,
+                  $NotAllocatableAreas,
+                  $PAReduceFactor,
+                  $SuitRasterCodes,$SuitRasterNames,
+                  $ClaimFileName,$ClaimLanduseFieldName,
+                  $ClaimRegionFieldName,$ClaimAreaFieldName,
+                  $ClaimLookup,
+                  $ClaimAreaMultiplierLanduseCodes,
+                  $ClaimAreaMultipliers,
+                  $CellAreas,
+                  $AddNoiseFlag,
+                  $OutRegionAreasFileName,
+                  $OutRegionLandcoverAreasFileName,
+                  $OutRegionLanduseAreasFileName,
+                  $OutAllocatedLanduse)
+
+END_RUN
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+RUN Calculations()
+

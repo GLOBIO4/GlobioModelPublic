@@ -1,0 +1,104 @@
+# ******************************************************************************
+## GLOBIO - https://www.globio.info
+## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
+## Reuse permitted under Gnu Public License, GPL v3.
+# ******************************************************************************
+#-------------------------------------------------------------------------------
+# RUN_ALL.GLO
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+BEGIN_RUN Calculations()
+
+  # Set output directory.
+  Outdir = G:\Data\out_wrld
+
+  # Set region.
+  #Extent = nl
+  #Extent = europe
+  Extent = world
+  
+  # Set resolution.
+  CellSize = 30sec
+
+  # Save temporary data? 
+  #SaveTmpData = True
+  SaveTmpData = False
+  
+  # Set input rasters.
+  RASTER Landuse = $InDir;\tif\glc2000_aris.tif
+  RASTER NExceed = $InDir;\tif\nexceed2010.tif
+  RASTER Biomes = $InDir;\tif\gmnlct_2010.tif
+  RASTER TemperatureChange = $InDir;\tif\ganntmpn_2010.tif
+  RASTER RoadsRaster = $InDir;\tif\grip_vs3_aris.tif
+
+  # Set input lookup csv files.
+  FILE NaturalLanduseLookup = $LookupDir;\NaturalLanduse.csv
+  FILE DominantLanduseLookup = $LookupDir;\DominantLanduse.csv
+  FILE SettlementsLookup = $LookupDir;\Settlements.csv
+  FILE LanduseMsaLookup = $LookupDir;\LanduseMSA.csv
+  FILE LanduseBiomesMsaLookup = $LookupDir;\LanduseBiomesMSA.csv
+  FILE BiomesMSALossLookup = $LookupDir;\BiomesMSALoss.csv
+  FILE HumanEncroachmentMSALookup = $LookupDir;\HumanEncroachmentMSA.csv
+  FILE InfraDisturbanceMSALookup = $LookupDir;\InfraDisturbanceMSA.csv
+  FILE LanduseNDepFactorLookup = $LookupDir;\LanduseNDepFactor.csv
+  FILE PatchAreaMSALookup = $LookupDir;\PatchAreaMSA.csv
+
+  # Infra fragmentation setting.
+  BOOLEAN CloseRoadConnections = False
+
+  # Set input/output rasters.
+  RASTER NaturalLanduse = $OutDir;\NaturalLanduse.tif
+  RASTER DominantLanduse = $OutDir;\DominantLanduse.tif
+  RASTER Settlements = $OutDir;\Settlements.tif
+  RASTER LanduseMsa = $OutDir;\LanduseMsa.tif
+  RASTER LanduseBiomesMsa = $OutDir;\LanduseBiomesMsa.tif
+  RASTER NDepositionMSA = $OutDir;\NDepositionMSA.tif
+  RASTER HumanEncroachmentMSA = $OutDir;\HumanEncroachmentMSA.tif
+  RASTER ClimateChangeMSA = $OutDir;\ClimateChangeMSA.tif
+  RASTER InfraDisturbanceMSA = $OutDir;\InfraDisturbanceMSA.tif
+  RASTER InfraFragmentationMSA = $OutDir;\InfraFragmentationMSA.tif
+  RASTER TerrestrialMSA = $OutDir;\TerrestrialMSA.tif
+
+  #-------------------------------------------------------------------------------
+  # Start running.
+  #-------------------------------------------------------------------------------
+
+  RUN_MODULE CalcNaturalLanduse($Extent,$Landuse,$NaturalLanduseLookup,$NaturalLanduse)
+  RUN_MODULE CalcDominantLanduse($Extent,$Landuse,$DominantLanduseLookup,$DominantLanduse)
+  RUN_MODULE CalcSettlements($Extent,$Landuse,$SettlementsLookup,$Settlements)
+  
+  RUN_MODULE CalcClimateChangeMSA($Extent,$Biomes,$TemperatureChange,$BiomesMSALossLookup,
+                                  $ClimateChangeMSA)
+
+  #RUN_MODULE CalcLanduseBiomesMSA($Extent,$Landuse,$Biomes,$LanduseBiomesMSALookup,$LanduseMsa)
+  RUN_MODULE CalcLanduseMSA($Extent,$Landuse,$LanduseMSALookup,$LanduseMsa)
+
+  RUN_MODULE CalcNDepositionMSA($Extent,$Landuse,$NExceed,$LanduseNDepFactorLookup,
+                                $NDEP_WeightFactor,$NDepositionMSA)
+
+  RUN_MODULE CalcHumanEncroachmentMSA($Extent,$Settlements,$NaturalLanduse,
+                                      $Biomes,$HumanEncroachmentMSALookup,
+                                      $HUMANENC_BufferDistanceKM,
+                                      $HumanEncroachmentMSA)
+
+  RUN_MODULE CalcInfraFragmentationMSA($Extent,$RoadsRaster,$NaturalLanduse,
+                                       $PatchAreaMSALookup,$CloseRoadConnections,
+                                       $InfraFragmentationMSA)
+  
+  RUN_MODULE CalcInfraDisturbanceMSA($Extent,$RoadsRaster,
+                                     $InfraDisturbanceMSALookup,
+                                     $INFRADIST_BufferDistanceKM,
+                                     $INFRADIST_WeightFactor,
+                                     $InfraDisturbanceMSA)
+
+  RUN_MODULE CalcTerrestrialMSA($Extent,$CellSize,$LanduseMSA,$HumanEncroachmentMSA,
+                                $NDepositionMSA,$ClimateChangeMSA,$InfraDisturbanceMSA,
+                                $InfraFragmentationMSA,$DominantLanduse,$TerrestrialMSA)
+  
+END_RUN
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+RUN Calculations()
+

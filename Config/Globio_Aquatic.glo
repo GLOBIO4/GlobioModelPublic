@@ -1,0 +1,414 @@
+#-------------------------------------------------------------------------------
+#
+# GLOBIO_AQUATIC.GLO
+#
+# In this script the aquatic modules of GLOBIO4 are defined.
+#
+# Modified: 29 nov 2018, ES, ARIS B.V.
+#           - Version 4.0.12
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcAquaticRiverFragmentationMSA(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTER DamDownstreamDistance,
+                        IN RASTER DamUpstreamDistance,
+                        IN RASTER RiverFragmentLength,
+                        IN RASTER DamDensity,
+                        IN RASTER RCI,
+                        IN RASTER RiverFractions,
+                        IN FLOAT FACTOR_A,
+                        IN FLOAT FACTOR_B,
+                        IN FLOAT FACTOR_C,
+                        IN FLOAT FACTOR_D,
+                        IN FLOAT FACTOR_E,
+                        IN FLOAT FACTOR_F,
+                        OUT RASTER RiverFragmentationMSA)
+  GLOBIO_CalcAquaticRiverFragmentationMSA(
+                        $Extent,$CellSize,
+                        $DamDownstreamDistance,
+                        $DamUpstreamDistance,
+                        $RiverFragmentLength,
+                        $DamDensity,
+                        $RCI,
+                        $RiverFractions,
+                        $FACTOR_A,$FACTOR_B,$FACTOR_C,
+                        $FACTOR_D,$FACTOR_E,$FACTOR_F,
+                        $RiverFragmentationMSA)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcAquaticAAPFD(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTERLIST ScenarioStreamflowMonths,
+                        IN RASTERLIST ReferenceStreamflowMonths,
+                        IN RASTER RiverFractions,
+                        IN RASTER FloodPlainFractions,
+                        OUT RASTER AAPFD)
+  GLOBIO_CalcAquaticAAPFD(
+                        $Extent,$CellSize,
+                        $ScenarioStreamflowMonths,
+                        $ReferenceStreamflowMonths,
+                        $RiverFractions,
+                        $FloodPlainFractions,
+                        $AAPFD)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcAquaticFRHLU(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTER Landuse10sec,
+                        IN RASTER FlowDirections,
+                        OUT RASTER FRHLU)
+  GLOBIO_CalcAquaticFRHLU(
+                        $Extent,$CellSize,
+                        $Landuse10sec,
+                        $FlowDirections,
+                        $FRHLU)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcAquaticLakeReservoirWaterTemperature(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTERLIST WaterTemperatureMonths,
+                        IN FLOAT TemperatureThreshold,
+                        IN RASTER LakeShallowFractions,
+                        IN RASTER LakeDeepFractions,
+                        IN RASTER ReservoirShallowFractions,
+                        IN RASTER ReservoirDeepFractions,
+                        OUT RASTER WaterTemperature)
+  GLOBIO_CalcAquaticLakeReservoirWaterTemperature(
+                        $Extent,$CellSize,
+                        $WaterTemperatureMonths,
+                        $TemperatureThreshold,
+                        $LakeShallowFractions,
+                        $LakeDeepFractions,
+                        $ReservoirShallowFractions,
+                        $ReservoirDeepFractions,
+                        $WaterTemperature)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcAquaticRiverAAPFDMSA(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTER AAPFD,
+                        IN RASTER RiverFractions,
+                        IN FLOAT FACTOR_A,
+                        IN FLOAT FACTOR_B,
+                        IN FLOAT FACTOR_C,
+                        IN FLOAT FACTOR_D,
+                        OUT RASTER RiverAAPFDMSA)
+  GLOBIO_CalcAquaticRiverAAPFDMSA(
+                        $Extent,$CellSize,
+                        $AAPFD,$RiverFractions,
+                        $FACTOR_A,$FACTOR_B,$FACTOR_C,$FACTOR_D,
+                        $RiverAAPFDMSA)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcAquaticFloodplainAAPFDMSA(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTER AAPFD,
+                        IN RASTER FloodplainFractions,
+                        IN FLOAT FACTOR_A,
+                        IN FLOAT FACTOR_B,
+                        IN FLOAT FACTOR_C,
+                        IN FLOAT FACTOR_D,
+                        OUT RASTER FloodplainAAPFDMSA)
+  GLOBIO_CalcAquaticFloodplainAAPFDMSA(
+                        $Extent,$CellSize,
+                        $AAPFD,$FloodplainFractions,
+                        $FACTOR_A,$FACTOR_B,$FACTOR_C,$FACTOR_D,
+                        $FloodplainAAPFDMSA)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcAquaticWetlandFloodplainFRHLUMSA(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTER FRHLU,
+                        IN RASTER WetlandFractions,
+                        IN RASTER FloodplainFractions,
+                        IN FLOAT FACTOR_A,
+                        OUT RASTER WetlandFloodplainFRHLUMSA)
+  GLOBIO_CalcAquaticWetlandFloodplainFRHLUMSA(
+                        $Extent,$CellSize,
+                        $FRHLU,
+                        $WetlandFractions,
+                        $FloodplainFractions,
+                        $FACTOR_A,
+                        $WetlandFloodplainFRHLUMSA)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcAquaticRiverFRHLUMSA(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTER FRHLU,
+                        IN RASTER RiverFractions,
+                        IN FLOAT FACTOR_A,
+                        OUT RASTER RiverFRHLUMSA)
+  GLOBIO_CalcAquaticRiverFRHLUMSA(
+                        $Extent,$CellSize,
+                        $FRHLU,
+                        $RiverFractions,
+                        $FACTOR_A,
+                        $RiverFRHLUMSA)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcAquaticLakeReservoirCyanoBacteria(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTER ConcN,
+                        IN RASTER ConcP,
+                        IN RASTER WaterTemperature,
+                        IN RASTER LakeShallowFractions,
+                        IN RASTER LakeDeepFractions,
+                        IN RASTER ReservoirShallowFractions,
+                        IN RASTER ReservoirDeepFractions,
+                        IN FLOAT TemperatureThreshold,
+			IN FLOAT NP_threshold,
+                        IN FLOAT FTNTP_FACTOR_A,
+                        IN FLOAT FT_FACTOR_A,
+                        IN FLOAT FT_FACTOR_B,
+                        IN FLOAT FT_FACTOR_C,
+                        IN FLOAT FT_FACTOR_D,
+                        IN FLOAT FT_FACTOR_E,
+                        IN FLOAT FT_FACTOR_F,
+                        IN FLOAT CB_FACTOR_A,
+                        IN FLOAT CB_FACTOR_B,
+                        IN FLOAT CB_FACTOR_C,
+                        IN FLOAT CB_FACTOR_D,
+                        IN FLOAT CB_FACTOR_E,
+                        IN FLOAT CB_FACTOR_F,                        
+                        OUT RASTER LakeCyanoBacteria)
+  GLOBIO_CalcAquaticLakeReservoirCyanoBacteria(
+                        $Extent,$CellSize,
+                        $ConcN,
+                        $ConcP,
+                        $WaterTemperature,
+                        $LakeShallowFractions,
+                        $LakeDeepFractions,
+                        $ReservoirShallowFractions,
+                        $ReservoirDeepFractions,
+                        $TemperatureThreshold,
+                        $NP_threshold,
+                        $FTNTP_FACTOR_A,
+                        $FT_FACTOR_A,$FT_FACTOR_B,$FT_FACTOR_C,
+                        $FT_FACTOR_D,$FT_FACTOR_E,$FT_FACTOR_F,
+                        $CB_FACTOR_A,$CB_FACTOR_B,$CB_FACTOR_C,
+                        $CB_FACTOR_D,$CB_FACTOR_E,$CB_FACTOR_F,
+                        $LakeCyanoBacteria)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcAquaticRiverMSA(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTER RiverFragmentationMSA,
+                        IN RASTER RiverLanduseMSA,
+                        IN RASTER RiverAAPFDMSA,
+                        IN RASTER RiverFractions,
+                        OUT RASTER RiverMSA)
+  GLOBIO_CalcAquaticRiverMSA(
+                        $Extent,$CellSize,
+                        $RiverFragmentationMSA,
+                        $RiverLanduseMSA,
+                        $RiverAAPFDMSA,
+                        $RiverFractions,
+                        $RiverMSA)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcAquaticRiverMSAwithNutrients(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTER ConcN,
+                        IN RASTER ConcP,
+                        IN RASTER RiverFragmentationMSA,
+                        IN RASTER RiverLanduseMSA,
+                        IN RASTER RiverAAPFDMSA,
+                        IN RASTER RiverFractions,
+                        IN FLOAT N_FACTOR_Alpha,
+                        IN FLOAT N_FACTOR_Beta,
+                        IN FLOAT N_FACTOR_C,
+                        IN FLOAT P_FACTOR_Alpha,
+                        IN FLOAT P_FACTOR_Beta,
+                        IN FLOAT P_FACTOR_C,
+                        OUT RASTER RiverMSA)
+  GLOBIO_CalcAquaticRiverMSAwithNutrients(
+                        $Extent,$CellSize,
+                        $ConcN,
+                        $ConcP,
+                        $RiverFragmentationMSA,
+                        $RiverLanduseMSA,
+                        $RiverAAPFDMSA,
+                        $RiverFractions,
+                        $N_FACTOR_Alpha,$N_FACTOR_Beta,$N_FACTOR_C,
+                        $P_FACTOR_Alpha,$P_FACTOR_Beta,$P_FACTOR_C,
+                        $RiverMSA)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcAquaticFloodplainMSA(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTER WetlandFloodplainLanduseMSA,
+                        IN RASTER FloodplainAAPFDMSA,
+                        IN RASTER FloodplainFractions,
+                        OUT RASTER FloodplainMSA)
+  GLOBIO_CalcAquaticFloodplainMSA(
+                        $Extent,$CellSize,
+                        $WetlandFloodplainLanduseMSA,
+                        $FloodplainAAPFDMSA,
+                        $FloodplainFractions,
+                        $FloodplainMSA)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcAquaticWetlandLossFractions(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTER Landuse10sec,
+                        IN RASTER WetlandFractions,
+                        OUT RASTER WetlandLossFractions,
+                        OUT RASTER WetlandActualFractions)
+  GLOBIO_CalcAquaticWetlandLossFractions(
+                        $Extent,$CellSize,
+                        $Landuse10sec,
+                        $WetlandFractions,
+                        $WetlandLossFractions,
+                        $WetlandActualFractions)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcAquaticWetlandMSA(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTER WetlandFloodplainLanduseMSA,
+                        IN RASTER WetlandLossFractions,
+                        IN RASTER WetlandActualFractions,
+                        IN FLOAT LOSS_MSA,
+                        OUT RASTER WetlandMSA)
+  GLOBIO_CalcAquaticWetlandMSA(
+                        $Extent,$CellSize,
+                        $WetlandFloodplainLanduseMSA,
+                        $WetlandLossFractions,
+                        $WetlandActualFractions,
+                        $LOSS_MSA,
+                        $WetlandMSA)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcAquaticLakeDeepMSA(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTER ConcN,
+                        IN RASTER ConcP,
+                        IN RASTER LakeDeepFractions,
+                        IN FLOAT N_FACTOR_A,
+                        IN FLOAT N_FACTOR_B,
+                        IN FLOAT N_FACTOR_C,
+                        IN FLOAT P_FACTOR_A,
+                        IN FLOAT P_FACTOR_B,
+                        IN FLOAT P_FACTOR_C,
+                        OUT RASTER LakeDeepMSA,
+			OUT RASTER LakeDeepMSA_N,
+    			OUT RASTER LakeDeepMSA_P)
+  GLOBIO_CalcAquaticLakeDeepMSA(
+                        $Extent,$CellSize,
+                        $ConcN,
+                        $ConcP,
+                        $LakeDeepFractions,
+                        $N_FACTOR_A,$N_FACTOR_B,$N_FACTOR_C,
+                        $P_FACTOR_A,$P_FACTOR_B,$P_FACTOR_C,
+                        $LakeDeepMSA,
+			$LakeDeepMSA_N,$LakeDeepMSA_P)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcAquaticLakeShallowMSA(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTER ConcN,
+                        IN RASTER ConcP,
+                        IN RASTER LakeShallowFractions,
+                        IN FLOAT N_FACTOR_A,
+                        IN FLOAT N_FACTOR_B,
+                        IN FLOAT N_FACTOR_C,
+                        IN FLOAT P_FACTOR_A,
+                        IN FLOAT P_FACTOR_B,
+                        IN FLOAT P_FACTOR_C,
+                        OUT RASTER LakeShallowMSA,
+			OUT RASTER LakeShallowMSA_N,
+    			OUT RASTER LakeShallowMSA_P)
+  GLOBIO_CalcAquaticLakeShallowMSA(
+                        $Extent,$CellSize,
+                        $ConcN,
+                        $ConcP,
+                        $LakeShallowFractions,
+                        $N_FACTOR_A,$N_FACTOR_B,$N_FACTOR_C,
+                        $P_FACTOR_A,$P_FACTOR_B,$P_FACTOR_C,
+                        $LakeShallowMSA,
+			$LakeShallowMSA_N,$LakeShallowMSA_P)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcAquaticReservoirMSA(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTER ReservoirShallowFractions,
+                        IN RASTER ReservoirDeepFractions,
+                        IN FLOAT RESERVOIR_MSA,
+                        OUT RASTER ReservoirMSA)
+  GLOBIO_CalcAquaticReservoirMSA(
+                        $Extent,$CellSize,
+                        $ReservoirShallowFractions,
+                        $ReservoirDeepFractions,
+                        $RESERVOIR_MSA,
+                        $ReservoirMSA)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcAquaticMSA(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTER LakeShallowMSA,
+                        IN RASTER LakeDeepMSA,
+                        IN RASTER ReservoirMSA,
+                        IN RASTER RiverMSA,
+                        IN RASTER FloodplainMSA,
+                        IN RASTER WetlandMSA,
+                        IN RASTER LakeShallowFractions,
+                        IN RASTER LakeDeepFractions,
+                        IN RASTER ReservoirShallowFractions,
+                        IN RASTER ReservoirDeepFractions,
+                        IN RASTER RiverFractions,
+                        IN RASTER FloodplainFractions,
+                        IN RASTER WetlandFractions,
+                        OUT RASTER AquaticMSA)
+  GLOBIO_CalcAquaticMSA(
+                        $Extent,$CellSize,
+                        $LakeShallowMSA,
+                        $LakeDeepMSA,
+                        $ReservoirMSA,
+                        $RiverMSA,
+                        $FloodplainMSA,
+                        $WetlandMSA,
+                        $LakeShallowFractions,
+                        $LakeDeepFractions,
+                        $ReservoirShallowFractions,
+                        $ReservoirDeepFractions,
+                        $RiverFractions,
+                        $FloodplainFractions,
+                        $WetlandFractions,
+                        $AquaticMSA)
+END_MODULE
+

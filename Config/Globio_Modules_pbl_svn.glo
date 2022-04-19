@@ -1,0 +1,342 @@
+# ******************************************************************************
+## GLOBIO - https://www.globio.info
+## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
+## Reuse permitted under Gnu Public License, GPL v3.
+# ******************************************************************************
+#-------------------------------------------------------------------------------
+#
+# GLOBIO_MODULES.GLO
+#
+# In this script the main modules of GLOBIO4 are defined.
+#
+# Modified: 4 sep 2017, ES, ARIS B.V.
+#           - Version 4.0.8
+#           - CalcHumanEncroachmentMSA_V2 added, now using settlement shapefiles
+#             as input.
+#           11 sep 2017, ES, ARIS B.V.
+#           - Version 4.0.9
+#           - CalcHumanEncroachmentMSA_V2 modified, use of ecoregions removed.
+#           28 sep 2017, ES, ARIS B.V.
+#           - Version 4.0.10
+#           - CalcHumanEncroachmentMSA_V2 modified, SettlementDistance added.
+#           - GLOBIO_CalcSettlementDistance added.
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcNaturalLanduse(IN EXTENT Extent,
+                                IN RASTER LandUse,
+                                IN FILE NaturalLanduseLookup,
+                                OUT RASTER NaturalLanduse)
+  GLOBIO_CalcNaturalLanduse($Extent,$LandUse,$NaturalLanduseLookup,$NaturalLanduse)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcDominantLanduse(IN EXTENT Extent,
+                                 IN RASTER LandUse,
+                                 IN FILE DominantLanduseLookup,
+                                 OUT RASTER DominantLanduse)
+  GLOBIO_CalcDominantLanduse($Extent,$LandUse,$DominantLanduseLookup,$DominantLanduse)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcSettlements(IN EXTENT Extent,
+                             IN RASTER LandUse,
+                             IN FILE SettlementsLookup,
+                             OUT RASTER Settlements)
+  GLOBIO_CalcSettlements($Extent,$LandUse,$SettlementsLookup,$Settlements)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcLanduseMSA(IN EXTENT Extent,
+                            IN RASTER LandUse,
+                            IN FILE LanduseMSALookup_WBvert,
+                            IN FILE LanduseMSALookup_Plants,
+                            OUT RASTER LanduseMSA)
+  GLOBIO_CalcLanduseMSA($Extent,$LandUse,$LanduseMSALookup_WBvert,$LanduseMSALookup_Plants,$LanduseMsa)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcLanduseBiomesMSA(IN EXTENT Extent,
+                                  IN RASTER LandUse,
+                                  IN RASTER Biomes,
+                                  IN FILE LanduseBiomesMSALookup,
+                                  OUT RASTER LanduseMSA)
+  GLOBIO_CalcLanduseBiomesMSA($Extent,$LandUse,$Biomes,$LanduseBiomesMSALookup,$LanduseMsa)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcClimateChangeMSA(IN EXTENT Extent,
+                                  IN RASTER LandUse,
+                                  IN FILE WaterLookupFile,
+                                  IN FLOAT TemperatureChange,
+                                  IN STRING CLIMCH_WbVertRegressionCoefficients,
+                                  IN STRING CLIMCH_PlantRegressionCoefficients,
+                                  OUT RASTER ClimateChangeMSA)
+  GLOBIO_CalcClimateChangeMSA($Extent,$LandUse,$WaterLookupFile,$TemperatureChange,
+                              $CLIMCH_WbVertRegressionCoefficients,
+                              $CLIMCH_PlantRegressionCoefficients,$ClimateChangeMSA)
+END_MODULE
+ 
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcNDepositionMSA(IN EXTENT Extent,
+                                IN RASTER LandUse,
+                                IN STRING NDEP_LandcoverExlCodes,
+                                IN FILE WaterLookupFile,
+                                IN RASTER Ndep,
+                                IN STRING NDEP_PlantRegressionCoefficients,
+                                IN FLOAT NDEP_WeightFactor,
+                                OUT RASTER NDepositionMSA)
+  GLOBIO_CalcNDepositionMSA($Extent,$LandUse,$NDEP_LandcoverExlCodes,$WaterLookupFile,$Ndep,
+                            $NDEP_PlantRegressionCoefficients,
+                            $NDEP_WeightFactor,$NDepositionMSA)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcSettlementDistance(IN EXTENT Extent,
+                                    IN DIR SettlementsDir,
+                                    IN RASTER TravelTime,
+                                    IN FLOAT MinimumTravelTimeMIN,
+                                    IN FLOAT MaximumTravelTimeMIN,
+                                    IN RASTER Landcover,
+                                    IN STRING LandcoverCodes,
+                                    IN FLOAT LandcoverBufferDistanceKM,
+                                    IN FLOAT MaximumDistanceKM,
+                                    OUT RASTER SettlementDistance)
+  GLOBIO_CalcSettlementDistance($Extent,
+                                $SettlementsDir,$TravelTime,
+                                $MinimumTravelTimeMIN,$MaximumTravelTimeMIN,
+                                $Landcover,$LandcoverCodes,$LandcoverBufferDistanceKM,
+                                $MaximumDistanceKM,
+                                $SettlementDistance)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcSettlementDistance_V2(IN EXTENT Extent,
+                                       IN DIR SettlementsDir,
+                                       IN RASTER TropBiome,
+                                       IN RASTER Landcover,
+                                       IN STRING LandcoverCodes,
+                                       IN FLOAT LandcoverBufferDistanceKM,
+                                       OUT RASTER SettlementDistance)
+  GLOBIO_CalcSettlementDistance_V2($Extent,
+                                   $SettlementsDir,$TropBiome,
+                                   $Landcover,$LandcoverCodes,$LandcoverBufferDistanceKM,
+                                   $SettlementDistance)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcHumanEncroachmentMSA_V2b(IN EXTENT Extent,
+                                          IN RASTER Landuse,
+                                          IN STRING HUMANENC_LandcoverExlCodes,
+                                          IN FILE WaterLookupFile,
+                                          IN RASTER SettlementDistance,
+                                          IN DIR SettlementsDir,
+                                          IN RASTER TropBiome,
+                                          IN STRING LandcoverCodes,
+                                          IN FLOAT HUMANENC_LandcoverBufferDistanceKM,
+                                          IN STRING HUMANENC_WbVertRegressionCoefficients,
+                                          IN FLOAT HUMANENC_WeightFactor,
+                                          IN STRING MASK_Global_LU_ExlCode,
+                                          IN RASTER SettlementRaster,
+                                          OUT RASTER HumanEncroachmentMSA)
+  GLOBIO_CalcHumanEncroachmentMSA_V2b($Extent,
+                                      $LandUse,$HUMANENC_LandcoverExlCodes,$WaterLookupFile,$SettlementDistance,
+                                      $SettlementsDir,$TropBiome,
+                                      $LandcoverCodes,$HUMANENC_LandcoverBufferDistanceKM,
+                                      $HUMANENC_WbVertRegressionCoefficients,$HUMANENC_WeightFactor,
+                                      $MASK_Global_LU_ExlCode,
+                                      $SettlementRaster,
+                                      $HumanEncroachmentMSA)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcInfraDisturbanceMSA(IN EXTENT Extent,
+                                     IN RASTER LandUse,
+                                     IN STRING INFRADIST_LandcoverExlCodes,
+                                     IN FILE WaterLookupFile,
+                                     IN RASTER RoadDistance,
+                                     IN RASTER Roads,
+                                     IN FLOAT MaximumDistanceKM,
+                                     IN STRING INFRADIST_WbVertRegressionCoefficients,
+                                     IN FLOAT INFRADIST_WeightFactor,
+                                     OUT RASTER InfraDisturbanceMSA)
+  GLOBIO_CalcInfraDisturbanceMSA($Extent,$LandUse,$INFRADIST_LandcoverExlCodes,$WaterLookupFile,$RoadDistance,$Roads,$MaximumDistanceKM,
+                                 $INFRADIST_WbVertRegressionCoefficients,$INFRADIST_WeightFactor,
+                                 $InfraDisturbanceMSA)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcInfraFragmentationMSA(IN EXTENT Extent,
+                                       IN RASTER LandUse,
+                                       IN FILE WaterLookupFile,
+                                       IN RASTER RoadsRaster,
+                                       IN RASTER NaturalLanduse,
+                                       IN STRING INFRAG_WbVertRegressionCoefficients,
+                                       IN FLOAT INFRAG_WeightFactor,
+                                       IN BOOLEAN CloseRoadConnections,
+                                       OUT RASTER InfraFragmentationMSA)
+  GLOBIO_CalcInfraFragmentationMSA($Extent,
+                                   $LandUse,
+                                   $WaterLookupFile,
+                                   $RoadsRaster,
+                                   $NaturalLanduse,
+                                   $INFRAG_WbVertRegressionCoefficients,
+                                   $INFRAG_WeightFactor,
+                                   $CloseRoadConnections,
+                                   $InfraFragmentationMSA)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcTerrestrialMSA(IN EXTENT Extent,
+                                IN CELLSIZE CellSize, 
+                                IN RASTER LanduseMSA,
+                                IN RASTER HumanEncroachmentMSA,
+                                IN RASTER NDepositionMSA,
+                                IN RASTER ClimateChangeMSA,
+                                IN RASTER InfraDisturbanceMSA,
+                                IN RASTER InfraFragmentationMSA,
+                                OUT RASTER TerrestrialMSA)
+  GLOBIO_CalcTerrestrialMSA($Extent,$CellSize,
+                            $LanduseMSA,$HumanEncroachmentMSA,$NDepositionMSA,
+                            $ClimateChangeMSA,$InfraDisturbanceMSA,$InfraFragmentationMSA,
+                            $TerrestrialMSA)
+END_MODULE
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcOverallTerrestrialMSA(IN EXTENT Extent,
+                                      IN CELLSIZE CellSize,
+                                      IN RASTER TerrestrialMSA_wbvert,
+  				                            IN RASTER TerrestrialMSA_plants,
+  				                            IN RASTER AreaRaster,
+  				                            OUT RASTER TerrestrialMSA,
+  				                            OUT RASTER TerrestrialMSA_area)
+ GLOBIO_CalcOverallTerrestrialMSA($Extent,$CellSize,
+  				       $TerrestrialMSA_wbvert,
+  				       $TerrestrialMSA_plants,
+  				       $AreaRaster,
+  				       $TerrestrialMSA,
+  				       $TerrestrialMSA_area)
+END_MODULE
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcSplitImpactsMSA(IN EXTENT Extent,
+                              IN CELLSIZE CellSize, 
+                              IN RASTER LanduseMSA,
+                              IN RASTER HumanEncroachmentMSA,
+                              IN RASTER NDepositionMSA,
+                              IN RASTER ClimateChangeMSA,
+                              IN RASTER InfraDisturbanceMSA,
+                              IN RASTER InfraFragmentationMSA,
+                              IN RASTER TerrestrialMSA,
+                              OUT RASTER LanduseMSA_contribution,
+                              OUT RASTER HumanEncroachmentMSA_contribution,
+                              OUT RASTER NDepositionMSA_contribution,
+                              OUT RASTER ClimateChangeMSA_contribution,
+                              OUT RASTER InfraDisturbanceMSA_contribution,
+                              OUT RASTER InfraFragmentationMSA_contribution,
+                              OUT RASTER TotalLossTerrestrialMSA)
+  GLOBIO_CalcSplitImpactsMSA($Extent,$CellSize,
+                            $LanduseMSA,$HumanEncroachmentMSA,$NDepositionMSA,
+                            $ClimateChangeMSA,$InfraDisturbanceMSA,$InfraFragmentationMSA,
+                            $TerrestrialMSA,$LanduseMSA_contribution,$HumanEncroachmentMSA_contribution,
+                            $NDepositionMSA_contribution,$ClimateChangeMSA_contribution,$InfraDisturbanceMSA_contribution,
+                            $InfraFragmentationMSA_contribution,$TotalLossTerrestrialMSA)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcMSAregion_V2(IN EXTENT Extent,
+                              IN CELLSIZE CellSize, 
+                              IN RASTER AreaRaster,
+                              IN RASTER LandUse,
+                              IN RASTER RegionRaster,
+                              IN STRING RegionFilter,
+                              IN STRING RegionExcludeFilter,
+                              IN RASTER MSARaster,
+                              IN RASTER LURasterSplit,
+                              IN RASTER HERasterSplit,
+                              IN RASTER NDepRasterSplit,
+                              IN RASTER CCRasterSplit,
+                              IN RASTER IDRasterSplit,
+                              IN RASTER IFRasterSplit,
+                              OUT FILE OutRegionAreasFileName,
+                              OUT FILE OutRegionLandUseAreasFileName,
+                              OUT FILE OutRegionMSAAreasFileName,
+                              OUT FILE OutRegionLUAreasFileName, 
+                              OUT FILE OutRegionHEAreasFileName, 
+                              OUT FILE OutRegionNDepAreasFileName, 
+                              OUT FILE OutRegionCCAreasFileName, 
+                              OUT FILE OutRegionIDAreasFileName, 
+                              OUT FILE OutRegionIFAreasFileName)
+  GLOBIO_CalcMSAregion_V2($Extent,$CellSize,
+                          $AreaRaster,$LandUse,$RegionRaster,
+                          $RegionFilter,$RegionExcludeFilter,$MSARaster,$LURasterSplit,
+                          $HERasterSplit,$NDepRasterSplit,$CCRasterSplit,$IDRasterSplit,$IFRasterSplit,                      
+                          $OutRegionAreasFileName,$OutRegionLandUseAreasFileName,$OutRegionMSAAreasFileName,
+                          $OutRegionLUAreasFileName,$OutRegionHEAreasFileName,$OutRegionNDepAreasFileName,
+                          $OutRegionCCAreasFileName,$OutRegionIDAreasFileName,$OutRegionIFAreasFileName)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcMSAregion_V2_percentile(IN EXTENT Extent,
+                              			IN CELLSIZE CellSize, 
+                              			IN RASTER AreaRaster,
+                              			IN RASTER LandUse,
+                              			IN RASTER RegionRaster,
+                              			IN STRING RegionFilter,
+                              			IN STRING RegionExcludeFilter,
+                              			IN RASTER MSARaster2015,
+		              			IN RASTER MSARasterSSP1,
+		              			IN RASTER MSARasterSSP3,
+		              			IN RASTER MSARasterSSP5,
+                              			OUT FILE OutRegionMSAAreasFileName2015,
+                              			OUT FILE OutRegionMSAAreasFileNameSSP1,
+                              			OUT FILE OutRegionMSAAreasFileNameSSP3,
+                              			OUT FILE OutRegionMSAAreasFileNameSSP5)
+
+  GLOBIO_CalcMSAregion_V2_percentile($Extent,$CellSize,
+                          	     $AreaRaster,$LandUse,$RegionRaster,
+                          	     $RegionFilter,$RegionExcludeFilter,$MSARaster2015,$MSARasterSSP1,$MSARasterSSP3,$MSARasterSSP5,
+                          	     $OutRegionMSAAreasFileName2015,$OutRegionMSAAreasFileNameSSP1,$OutRegionMSAAreasFileNameSSP3,$OutRegionMSAAreasFileNameSSP5)
+END_MODULE
+#-------------------------------------------------------------------------------
+BEGIN_MODULE Histogram(IN EXTENT Extent,
+                       IN CELLSIZE CellSize,
+                       IN RASTER HumanEncroachmentMSA,
+    		       IN RASTER NDepositionMSA,
+    		       IN RASTER InfraDisturbanceMSA,
+    		       IN RASTER InfraFragmentationMSA,
+    		       OUT FILE HistHE, 
+    		       OUT FILE HistNdep,
+    		       OUT FILE HistID,
+    		       OUT FILE HistIF)
+
+  GLOBIO_Histogram($Extent,$CellSize,
+                   $HumanEncroachmentMSA,$NDepositionMSA,$InfraDisturbanceMSA,$InfraFragmentationMSA,
+                   $HistHE,$HistNdep,$HistID,$HistIF)
+END_MODULE
+#-------------------------------------------------------------------------------
+BEGIN_MODULE CalcESH(IN EXTENT Extent,
+		     IN FILE SpeciesData,
+		     IN FILE TransformationMatrix,
+		     IN FILE ElevationData,
+		     IN FILE HabitatData,    
+		     IN DIR RangesDir,
+		     IN STRING SpeciesIDs,
+		     IN STRING SuitabilityStr,
+		     IN STRING PresenceCodes,
+		     IN STRING OriginCodes,
+		     IN STRING SeasonalityCodes,
+		     IN BOOLEAN addMCPflag, 
+		     IN RASTER LandUse,
+		     IN RASTER AreaRaster,
+		     IN RASTER ElevationRaster,
+		     OUT FILE OutESHFileName,
+		     OUT FILE OutAOOFileName,
+		     OUT FILE OutESHPatchesFileName,
+		     IN INTEGER BatchNumber)
+
+  GLOBIO_CalcESH($Extent,$SpeciesData,$TransformationMatrix,$ElevationData,
+                 $HabitatData,$RangesDir,$SpeciesIDs,$SuitabilityStr,$PresenceCodes,$OriginCodes,$SeasonalityCodes,
+                 $addMCPflag,$LandUse,$AreaRaster,$ElevationRaster,$OutESHFileName,$OutAOOFileName,$OutESHPatchesFileName,$BatchNumber)
+END_MODULE
+
+#-------------------------------------------------------------------------------

@@ -1,0 +1,317 @@
+#-------------------------------------------------------------------------------
+#
+# GLOBIO_AQUATIC_PREPROCESSING.GLO
+#
+# In this script the aquatic preprocessing modules of GLOBIO4 are defined.
+#
+# Modified: 5 jan 2019, ES, ARIS B.V.
+#           - Version 4.0.12
+#           10 sep 2020, ES, ARIS B.V.
+#           - Version 4.0.15
+#           - AquaticDrainageToRivers_V2 added.
+#           - AquaticRiverFractions_V2 added.
+#           8 oct 2020, ES, ARIS B.V.
+#           - Version 4.0.16
+#           - AquaticRiverFractions_V2, optional parameter LakesReservoirs added.
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE AquaticConnectedRivers(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN VECTOR SplittedRivers,
+                        IN INTEGER NumberOfCores,
+                        OUT VECTOR ConnectedRivers)
+  GLOBIO_AquaticConnectedRivers(
+                        $Extent,$CellSize,
+                        $SplittedRivers,
+                        $NumberOfCores,
+                        $ConnectedRivers)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE AquaticDrainageToRivers(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN VECTOR Drainage,
+                        IN RASTER RiverDischarge,
+                        IN FLOAT DischargeThreshold,
+                        IN INTEGER NumberOfCores,
+                        OUT VECTOR Rivers)
+  GLOBIO_AquaticDrainageToRivers(
+                        $Extent,$CellSize,
+                        $Drainage,
+                        $RiverDischarge,
+                        $DischargeThreshold,
+                        $NumberOfCores,
+                        $Rivers)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE AquaticDrainageToRivers_V2(
+                        IN EXTENT Extent,
+                        IN VECTOR Drainage,
+                        IN RASTER RiverDischarge,
+                        IN FLOAT DischargeThreshold,
+                        IN INTEGER NumberOfCores,
+                        OUT VECTOR Rivers)
+  GLOBIO_AquaticDrainageToRivers_V2(
+                        $Extent,
+                        $Drainage,
+                        $RiverDischarge,
+                        $DischargeThreshold,
+                        $NumberOfCores,
+                        $Rivers)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+# Priorities: numbers, 1 = low
+BEGIN_MODULE AquaticFractions(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTER RiverFractions,
+                        IN RASTER LakeShallowFractions,
+                        IN RASTER LakeDeepFractions,
+                        IN RASTER ReservoirShallowFractions,
+                        IN RASTER ReservoirDeepFractions,
+                        IN RASTER GLWD,
+                        IN STRING FloodplainGLWDWaterTypes,
+                        IN STRING WetlandGLWDWaterTypes,
+                        IN STRING Priorities,
+                        OUT RASTER AqRiverFractions,
+                        OUT RASTER AqFloodplainFractions,
+                        OUT RASTER AqLakeShallowFractions,
+                        OUT RASTER AqLakeDeepFractions,
+                        OUT RASTER AqReservoirShallowFractions,
+                        OUT RASTER AqReservoirDeepFractions,
+                        OUT RASTER AqWetlandFractions)
+  GLOBIO_AquaticFractions(
+                        $Extent,$CellSize,
+                        $RiverFractions,
+                        $LakeShallowFractions,
+                        $LakeDeepFractions,
+                        $ReservoirShallowFractions,
+                        $ReservoirDeepFractions,
+                        $GLWD,
+                        $FloodplainGLWDWaterTypes,
+                        $WetlandGLWDWaterTypes,
+                        $Priorities,
+                        $AqRiverFractions,
+                        $AqFloodplainFractions,
+                        $AqLakeShallowFractions,
+                        $AqLakeDeepFractions,
+                        $AqReservoirShallowFractions,
+                        $AqReservoirDeepFractions,
+                        $AqWetlandFractions)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+# Priorities: numbers, 1 = low
+BEGIN_MODULE AquaticFractions_V2(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTER RiverFractions,
+                        IN RASTER LakeShallowFractions,
+                        IN RASTER LakeDeepFractions,
+                        IN RASTER ReservoirShallowFractions,
+                        IN RASTER ReservoirDeepFractions,
+                        IN RASTER GLWDfloodplainFractions,
+                        IN RASTER GLWDwetlandFractions,
+                        IN STRING Priorities,
+                        OUT RASTER AqRiverFractions,
+                        OUT RASTER AqFloodplainFractions,
+                        OUT RASTER AqLakeShallowFractions,
+                        OUT RASTER AqLakeDeepFractions,
+                        OUT RASTER AqReservoirShallowFractions,
+                        OUT RASTER AqReservoirDeepFractions,
+                        OUT RASTER AqWetlandFractions)
+  GLOBIO_AquaticFractions_V2(
+                        $Extent,$CellSize,
+                        $RiverFractions,
+                        $LakeShallowFractions,
+                        $LakeDeepFractions,
+                        $ReservoirShallowFractions,
+                        $ReservoirDeepFractions,
+                        $GLWDfloodplainFractions,
+                        $GLWDwetlandFractions,
+                        $Priorities,
+                        $AqRiverFractions,
+                        $AqFloodplainFractions,
+                        $AqLakeShallowFractions,
+                        $AqLakeDeepFractions,
+                        $AqReservoirShallowFractions,
+                        $AqReservoirDeepFractions,
+                        $AqWetlandFractions)
+END_MODULE
+
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE AquaticFragmentationDamDensity(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN VECTOR SnappedDams,
+                        IN Raster Catchments,
+                        IN INTEGER NumberOfCores,
+                        OUT Raster DamDensity)
+  GLOBIO_AquaticFragmentationDamDensity(
+                        $Extent,$CellSize,
+                        $SnappedDams,
+                        $Catchments,
+                        $NumberOfCores,
+                        $DamDensity)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE AquaticFragmentationFragmentLength(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN VECTOR RiverFragments,
+                        IN INTEGER NumberOfCores,
+                        OUT RASTER RiverFragmentLength)
+  GLOBIO_AquaticFragmentationFragmentLength(
+                        $Extent,$CellSize,
+                        $RiverFragments,
+                        $NumberOfCores,
+                        $RiverFragmentLength)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE AquaticFragmentationRCI(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN VECTOR RiverFragments,
+                        IN Raster Catchments,
+                        IN INTEGER NumberOfCores,
+                        OUT Raster RCI)
+  GLOBIO_AquaticFragmentationRCI(
+                        $Extent,$CellSize,
+                        $RiverFragments,
+                        $Catchments,
+                        $NumberOfCores,
+                        $RCI)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE AquaticLakeReservoirFractions(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN VECTOR LakesReservoirs,
+                        IN STRING TypeFieldName,
+                        IN STRING LakeTypes,
+                        IN STRING ReservoirTypes,
+                        IN STRING DepthFieldName,
+                        IN FLOAT DepthThresholdM,
+                        IN INTEGER NumberOfCores,
+                        OUT RASTER LakeShallowFractions,
+                        OUT RASTER LakeDeepFractions,
+                        OUT RASTER ReservoirShallowFractions,
+                        OUT RASTER ReservoirDeepFractions)
+  GLOBIO_AquaticLakeReservoirFractions(
+                        $Extent,$CellSize,
+                        $LakesReservoirs,
+                        $TypeFieldName,
+                        $LakeTypes,
+                        $ReservoirTypes,
+                        $DepthFieldName,
+                        $DepthThresholdM,
+                        $NumberOfCores,
+                        $LakeShallowFractions,
+                        $LakeDeepFractions,
+                        $ReservoirShallowFractions,
+                        $ReservoirDeepFractions)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE AquaticRiverFractions(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN VECTOR Rivers,
+                        IN FLOAT RiverWidthKM,
+                        IN INTEGER NumberOfCores,
+                        OUT RASTER RiverFractions)
+  GLOBIO_AquaticRiverFractions(
+                        $Extent,$CellSize,
+                        $Rivers,
+                        $RiverWidthKM,
+                        $NumberOfCores,
+                        $RiverFractions)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE AquaticRiverFractions_V2(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN VECTOR Rivers,
+                        IN VECTOR LakesReservoirs,
+                        IN RASTER RiverDischarge,
+                        IN FLOAT RiverWidthA,
+                        IN FLOAT RiverWidthB,
+                        IN INTEGER NumberOfCores,
+                        OUT RASTER RiverFractions)
+  GLOBIO_AquaticRiverFractions_V2(
+                        $Extent,$CellSize,
+                        $Rivers,
+                        $LakesReservoirs,
+                        $RiverDischarge,
+                        $RiverWidthA,
+                        $RiverWidthB,
+                        $NumberOfCores,
+                        $RiverFractions)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE AquaticRiverFragments(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN VECTOR ConnectedRivers,
+                        IN VECTOR SnappedDams,
+                        IN INTEGER NumberOfCores,
+                        OUT VECTOR RiverFragments)
+  GLOBIO_AquaticRiverFragments(
+                        $Extent,$CellSize,
+                        $ConnectedRivers,
+                        $SnappedDams,
+                        $NumberOfCores,
+                        $RiverFragments)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE AquaticSplitRivers(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN VECTOR Rivers,
+                        IN VECTOR Dams,
+                        IN FLOAT ToleranceDEG,
+                        OUT VECTOR SplittedRivers,
+                        OUT VECTOR SnappedDams)
+  GLOBIO_AquaticSplitRivers(
+                        $Extent,$CellSize,
+                        $Rivers,
+                        $Dams,
+                        $ToleranceDEG,
+                        $SplittedRivers,
+                        $SnappedDams)
+END_MODULE
+
+#-------------------------------------------------------------------------------
+BEGIN_MODULE AquaticStreamflow30sec(
+                        IN EXTENT Extent,
+                        IN RASTER ScenarioStreamflow,
+                        IN RASTER ReferenceStreamflowMean5min,
+                        IN RASTER ReferenceStreamflowMin5min,
+                        IN RASTER ReferenceStreamflowMax5min,
+                        IN RASTER ReferenceStreamflowMean30sec,
+                        IN RASTER ReferenceStreamflowMin30sec,
+                        IN RASTER ReferenceStreamflowMax30sec,
+                        OUT RASTER OutStreamflow) 
+  GLOBIO_AquaticStreamflow30sec(
+                        $Extent,
+                        $ScenarioStreamflow,
+                        $ReferenceStreamflowMean5min,
+                        $ReferenceStreamflowMin5min,
+                        $ReferenceStreamflowMax5min,
+                        $ReferenceStreamflowMean30sec,
+                        $ReferenceStreamflowMin30sec,
+                        $ReferenceStreamflowMax30sec,
+                        $OutStreamflow)
+END_MODULE

@@ -1,0 +1,62 @@
+# ******************************************************************************
+## GLOBIO - https://www.globio.info
+## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
+## Reuse permitted under Gnu Public License, GPL v3.
+# ******************************************************************************
+#-------------------------------------------------------------------------------
+# scenario_30sec_globio.glo
+#-------------------------------------------------------------------------------
+
+INCLUDE scenario_30sec_globio_incl.glo
+
+#-------------------------------------------------------------------------------
+BEGIN_RUN Calculation_eu_list()
+  DIR GlobioInDir = /data/test/20170927_in
+  DIR OutDir = /data/kanweg/20170927_v1
+  EXTENT Extent = eu
+  LIST STRING Year = 2010|2020|2030
+
+    RUN_SCENARIO Scen_Globio_LUH($Extent,$Year,$GlobioInDir,$OutDir)
+
+  END_LIST
+END_RUN
+
+#-------------------------------------------------------------------------------
+BEGIN_RUN Calculation_eu_2010()
+
+  DIR GlobioInDir = /data/test/20170927_in
+  DIR OutDir = /data/kanweg/20170927_v1
+
+  EXTENT Extent = eu
+
+  STRING Year = 2010
+
+  RUN_SCENARIO Scen_Globio_LUH($Extent,$Year,$GlobioInDir,$OutDir)
+
+END_RUN
+
+#-------------------------------------------------------------------------------
+BEGIN_RUN Calculation_eu_2020()
+
+  DIR GlobioInDir = /data/test/20170927_in
+  DIR OutDir = /data/kanweg/20170927_v1
+
+  EXTENT Extent = eu
+
+  STRING Year = 2020
+
+  RUN_SCENARIO Scen_Globio_LUH($Extent,$Year,$GlobioInDir,$OutDir)
+
+END_RUN
+
+#-------------------------------------------------------------------------------
+# MET EEN LIST
+#-------------------------------------------------------------------------------
+#RUN Calculation_eu_list()
+
+#-------------------------------------------------------------------------------
+# 2010 EN 2020 APART (ALS BV EEN LIST NIET HANDIG IS)
+#-------------------------------------------------------------------------------
+RUN Calculation_eu_2010()
+RUN Calculation_eu_2020()
+
