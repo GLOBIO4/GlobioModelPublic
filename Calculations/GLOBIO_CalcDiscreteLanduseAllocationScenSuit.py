@@ -366,6 +366,8 @@ class GLOBIO_CalcDiscreteLanduseAllocationScenSuit(CalculationBase):
       # Get landuse types in region.
       luTypes = np.unique(landuseRaster.r[regionMask])
       # Calculate sum of areas per landuse type.
+      if luTypes.nbytes==0:
+        continue
       areaSum = scipy.ndimage.labeled_comprehension(areaRaster.r[regionMask],
                                                     landuseRaster.r[regionMask],
                                                     luTypes,np.sum,np.float64,0)
@@ -1467,7 +1469,7 @@ class GLOBIO_CalcDiscreteLanduseAllocationScenSuit(CalculationBase):
     notAllocatedMask = (outRaster.r == outRaster.noDataValue)
     
     # Fill output with land-cover.
-    outRaster.r[notAllocatedMask] = landcoverRaster.r[notAllocatedMask]
+    # outRaster.r[notAllocatedMask] = landcoverRaster.r[notAllocatedMask] # TODO: temporarily disabled
 
     # Close and free the land-cover raster.
     landcoverRaster.close()
