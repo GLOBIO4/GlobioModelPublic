@@ -20,6 +20,7 @@
 #-------------------------------------------------------------------------------
 
 import os
+from datetime import datetime
 
 import GlobioModel.Core.Error as Err
 import GlobioModel.Core.Globals as GLOB
@@ -188,7 +189,10 @@ class Logger(object):
       with open(fileName,"a") as logFile:
         if not s.endswith("\n"):
           s += "\n"
-        logFile.write(s)
+
+        message_time = datetime.now()
+        
+        logFile.write(message_time.strftime("%Y-%m-%d %H:%M:%S") + s)
     except:
       pass
 
