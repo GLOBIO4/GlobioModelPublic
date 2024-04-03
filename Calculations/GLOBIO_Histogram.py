@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under Gnu Public License, GPL v3.
+## Reuse permitted under European Union Public License,  EUPL v1.2
 # ******************************************************************************
 #--------------------------------------------------------------------------------------
 # Script to obtain histograms of the input values of the pressures: JH, PBL
