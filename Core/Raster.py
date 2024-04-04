@@ -1328,15 +1328,15 @@ class Raster(object):
     #Log.dbg("Overlap NrCols/NrRows: %s %s" % (overlapNrCols,overlapNrRows))
 
     # Calculate upper left col/row of overlap extent in raster.
-    minC1,minR1 = RU.calcColRowFromXY(overlapExtent[0],overlapExtent[3]-self.cellSize,
+    minC1,minR1 = RU.calcColRowFromXY(overlapExtent[0],overlapExtent[3],
                                       self.extent,self.cellSize) 
 
     #Log.dbg("Org rows/cols: %s,%s %s,%s" % (minR1,minC1,minR1+overlapNrRows,minC1+overlapNrCols))
 
     # Calculate upper left col/row of overlap extent in new raster.
-    minC2,minR2 = RU.calcColRowFromXY(overlapExtent[0],overlapExtent[3]-self.cellSize,
+    minC2,minR2 = RU.calcColRowFromXY(overlapExtent[0],overlapExtent[3],
                                       toExtent,self.cellSize) 
-  
+    
     #Log.dbg("Org rows/cols: %s,%s %s,%s" % (minR2,minC2,minR2+overlapNrRows,minC2+overlapNrCols))
     #Log.dbg("[%s:%s,%s:%s] [%s:%s,%s:%s]" % (minR2,minR2+overlapNrRows,minC2,minC2+overlapNrCols,
     #                                         minR1,minR1+overlapNrRows,minC1,minC1+overlapNrCols))
