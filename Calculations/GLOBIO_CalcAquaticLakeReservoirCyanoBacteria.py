@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 
 import os
@@ -353,10 +353,8 @@ if __name__ == "__main__":
     # Enable the monitor.    
     GLOB.monitorEnabled = True
 
-    inDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181026"
-    outDir = r"C:\Temp\_Globio4\out"
-    if not os.path.isdir(outDir):
-      outDir = r"G:\data\Globio4LA\data\kanweg\20181031_v1"
+    inDir = r""
+    outDir = r""
 
     pCalc = GLOBIO_CalcAquaticLakeReservoirCyanoBacteria()
     

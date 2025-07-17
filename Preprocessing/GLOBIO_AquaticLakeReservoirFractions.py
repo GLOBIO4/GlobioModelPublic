@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 18 jan 2019, ES, ARIS B.V.
@@ -256,10 +256,10 @@ if __name__ == "__main__":
       cs = GLOB.constants[cellSizeName].value
 
       if extentName == "nl":
-        inDir = r"G:\Data\Globio4LA\data\referentie\v4012\vector\test_20181109"
+        inDir = r""
         lakes = "lakes_nl_wgs84.shp"
       else:
-        inDir = r"G:\data\Globio4LA\data\pbl_20181023\HydroLakes\shapefile"
+        inDir = r""
         lakes = "HydroLAKES_polys_v10.shp"
 
       lsfrac = "shallow_lake_fractions.tif"
@@ -267,7 +267,7 @@ if __name__ == "__main__":
       rsfrac = "shallow_reservoir_fractions.tif"
       rdfrac = "deep_reservoir_fractions.tif"
 
-      outDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_%s\in_20181123" % extentName
+      outDir = r""
 
       tyField = "Lake_type"
       laTypes = "1|3"  
@@ -321,11 +321,10 @@ if __name__ == "__main__":
       cs = GLOB.constants[cellSizeName].value
 
       if extentName == "nl":
-        inDir = r"G:\Data\Globio4LA\data\referentie\v4012\vector\test_20181109"
+        inDir = r""
         lakes = "lakes_nl_wgs84.shp"
       else:
-        #inDir = r"G:\data\Globio4LA\data\pbl_20181023\HydroLakes\shapefile"
-        inDir = r"G:\data\Globio4LA\data\pbl_20200806\HydroLAKES_polys_v10_shp"
+        inDir = r""
         lakes = "HydroLAKES_polys_v10.shp"
 
       lsfrac = "shallow_lake_fractions.tif"
@@ -333,8 +332,7 @@ if __name__ == "__main__":
       rsfrac = "shallow_reservoir_fractions.tif"
       rdfrac = "deep_reservoir_fractions.tif"
 
-      #outDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_%s\in_20181123" % extentName
-      outDir = r"G:\data\Globio4LA\data\referentie\v4015\30sec_%s\in_20200909" % extentName
+      outDir = r""
 
       tyField = "Lake_type"
       laTypes = "1|3"  

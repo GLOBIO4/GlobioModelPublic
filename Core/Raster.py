@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Remarks:
@@ -1609,7 +1609,7 @@ if __name__ == "__main__":
       extent = [-26.0,-56.0,180.0,84.0]
       extents.append(extent)
 
-      outDir = r"G:\data\Globio4LA\data\kanweg"
+      outDir = r""
       inRasName = os.path.join(outDir,"esa_copy_30sec.tif")
       
       inRas = Raster(inRasName)
@@ -1668,7 +1668,7 @@ if __name__ == "__main__":
   def testRasterReadWrite():
     try:
 
-      inDir = r"G:\data\Globio4LA\data\kanweg"
+      inDir = r""
       fn = os.path.join(inDir,"esa_copy_30sec.tif")
       fn2 = os.path.join(inDir,"test2.tif")
 
@@ -1693,220 +1693,10 @@ if __name__ == "__main__":
   #-------------------------------------------------------------------------------
   def testRasterWrite():
     pass
-    # 20201118
-    # try:
-    #   import Test.Core.TestData as TD
-
-    #   td = TD.TestData()
-
-    #   outDir = r"G:\data\Globio4LA\data\kanweg"
-    #   outRasterName = os.path.join(outDir,"test_big.tif")
-
-    #   if not os.path.isdir(outDir):
-    #     os.makedirs(outDir)
-
-    #   #RU.rasterDelete(outRasterName)
-      
-    #   outRaster = Raster(outRasterName)
-      
-    #   regRas = td.createRasterRegion_v2()
-      
-    #   outRaster.initRasterEmpty(td.extent,td.cellSize,regRas.dtype,255)
-
-    #   outRaster.r = regRas
-    #   print(outRaster.r)
-
-    #   print("Writing %s..." % outRasterName)
-    #   outRaster.write()
-
-    #   outRaster.close()
-    #   outRaster = None
-      
-    #   print("Ready")
-    # except:
-    #   Err.showError()        
 
   #-------------------------------------------------------------------------------
   def testRasterWriteReadMem():
-    pass
-    # 20201118
-    # from Test.Core.TestData import TestData
-    # try:
-      
-    #   td = TestData()
-
-    #   outDir = r"G:\data\Globio4LA\data\kanweg"
-
-    #   if not os.path.isdir(outDir):
-    #     os.makedirs(outDir)
-
-    #   #---------------------------------------------------------------------------
-    #   # Write
-    #   #---------------------------------------------------------------------------
-
-    #   outRasterName = os.path.join(outDir,"testras_readwrite1.tif")
-      
-    #   RU.rasterDelete(outRasterName)
-      
-    #   pRaster = Raster(outRasterName)
-      
-    #   regRas = td.createRasterRegion_v2()
-      
-    #   pRaster.initRasterEmpty(td.extent,td.cellSize,regRas.dtype,255)
-
-    #   pRaster.r = regRas
-    #   print(pRaster.r)
-
-    #   pRaster.r += 10
-    #   print(pRaster.r)
-
-    #   ras = pRaster.r
-    #   pRaster.r = ras + 10  
-    #   print(pRaster.r)
-
-    #   print("Writing: %s" % outRasterName        )
-    #   pRaster.write()
-      
-    #   print("Closing..."        )
-    #   pRaster.close()
-    #   pRaster = None
-
-    #   #---------------------------------------------------------------------------
-    #   # Read
-    #   #---------------------------------------------------------------------------
-      
-    #   pRaster = Raster(outRasterName)
-      
-    #   print("Reading: %s" % outRasterName)
-    #   pRaster.read()
-               
-    #   print(pRaster.r)
-
-    #   pRaster.r += 10
-    #   print(pRaster.r)
-
-    #   #---------------------------------------------------------------------------
-    #   # WriteAs
-    #   #---------------------------------------------------------------------------
-
-    #   outRasterName = os.path.join(outDir,"testras_readwrite2.tif")
-      
-    #   RU.rasterDelete(outRasterName)
-
-    #   print("Writing as: %s" % outRasterName        )
-    #   pRaster.writeAs(outRasterName)
-      
-    #   pRaster.r += 10
-    #   print(pRaster.r)
-
-    #   #---------------------------------------------------------------------------
-    #   # Write
-    #   #---------------------------------------------------------------------------
-
-    #   print("Writing: %s" % outRasterName        )
-    #   pRaster.write()
-      
-    #   print("Closing..."        )
-    #   pRaster.close()
-    #   pRaster = None
-
-    #   #---------------------------------------------------------------------------
-    #   # Read
-    #   #---------------------------------------------------------------------------
-      
-    #   pRaster = Raster(outRasterName)
-      
-    #   print("Reading: %s" % outRasterName)
-    #   pRaster.read()
-               
-    #   print(pRaster.r)
-
-    #   print("Closing..."        )
-    #   pRaster.close()
-    #   pRaster = None
-
-    #   #---------------------------------------------------------------------------
-    #   # MEM
-    #   #---------------------------------------------------------------------------
-
-    #   print("Creating in-memory raster..."        )
-    #   pRaster = Raster()
-      
-    #   regRas = td.createRasterRegion_v2()
-      
-    #   pRaster.initRasterEmpty(td.extent,td.cellSize,regRas.dtype,255)
-
-    #   pRaster.r = regRas
-    #   print(pRaster.r)
-
-    #   pRaster.r += 10
-    #   print(pRaster.r)
-
-    #   #---------------------------------------------------------------------------
-    #   # WriteAs
-    #   #---------------------------------------------------------------------------
-
-    #   outRasterName = os.path.join(outDir,"testras_readwrite3.tif")
-      
-    #   RU.rasterDelete(outRasterName)
-      
-    #   print("Writing as: %s" % outRasterName        )
-    #   pRaster.writeAs(outRasterName)
-      
-    #   print("Closing..."        )
-    #   pRaster.close()
-    #   pRaster = None
-
-    #   #---------------------------------------------------------------------------
-    #   # Read
-    #   #---------------------------------------------------------------------------
-      
-    #   pRaster = Raster(outRasterName)
-      
-    #   print("Reading: %s" % outRasterName)
-    #   pRaster.read()
-               
-    #   print(pRaster.r)
-
-    #   print("Closing..."        )
-    #   pRaster.close()
-    #   pRaster = None
-
-    #   #---------------------------------------------------------------------------
-    #   # MEM
-    #   #---------------------------------------------------------------------------
-
-    #   print("Creating in-memory raster..."        )
-    #   pRaster = Raster()
-      
-    #   regRas = td.createRasterRegion_v2()
-      
-    #   pRaster.initRasterEmpty(td.extent,td.cellSize,regRas.dtype,255)
-
-    #   pRaster.r = regRas
-    #   print(pRaster.r)
-
-    #   print("reading info...")
-    #   try:
-    #     pRaster.readInfo()
-    #   except:                
-    #     Err.showError()        
-
-    #   print("writing with error...")
-    #   try:
-    #     pRaster.write()
-    #   except:                
-    #     Err.showError()
-                
-    #   print("reading with error...")
-    #   try:
-    #     pRaster.read()
-    #   except:                
-    #     Err.showError()        
-
-    #   print("Ready"        )
-    # except:
-    #   Err.showError()        
+    pass  
 
   #-------------------------------------------------------------------------------
   def testRasterReadRow():
@@ -1918,7 +1708,7 @@ if __name__ == "__main__":
   #-------------------------------------------------------------------------------
   def testAsciiGridRaster():
 
-    inFileName = r"G:\data\imgluh_20201118\GREG_30min.asc"
+    inFileName = "GREG_30min.asc"
 
     try:
       print("Reading raster: %s" % inFileName)
@@ -1931,7 +1721,7 @@ if __name__ == "__main__":
       Err.showError()
 
     print()
-    outFileName = r"C:\Temp\test.asc"
+    outFileName = "test.asc"
     try:
 
       nrCols = 6
@@ -2133,7 +1923,7 @@ if __name__ == "__main__":
   #-------------------------------------------------------------------------------
   def testNetCDFRasterRead():
 
-    inRasterName = r"G:\data\imgluh_20201118\GLANDCOVER_30MIN.nc"
+    inRasterName = "GLANDCOVER_30MIN.nc"
     inRasterName += "#ImageLandCoverNetCDF"
     inRasterName += "|1970|Cropland"
 
@@ -2157,47 +1947,18 @@ if __name__ == "__main__":
     except:
       Err.showErrorWithTraceback()
 
-    # return
-    # print()
-    # outFileName = r"C:\Temp\test.asc"
-    # try:
-    #
-    #   nrCols = 6
-    #   nrRows = 4
-    #   extent = [0.0,0.0,60.0,40.0]
-    #   cellSize = 10.0
-    #
-    #   zoneRas = np.array([
-    #     0,  0,  0,  0, 0, 25,
-    #     0, 26, 26, 26, 0, 25,
-    #     0,  0, 26, 26, 0, 25,
-    #     0,  0,  0,  0, 0, 25
-    #   ]).reshape(nrRows,nrCols)
-    #
-    #   print(RU.isNetCDFGridName(outFileName))
-    #
-    #   print("Writing raster: %s" % outFileName)
-    #   pRaster = Raster(outFileName)
-    #   pRaster.initRasterEmpty(extent,cellSize,np.uint8)
-    #   pRaster.r = zoneRas
-    #   pRaster.write()
-    #   pRaster.close()
-    #   del pRaster
-    # except:
-    #   Err.showError()
-
   #-------------------------------------------------------------------------------
   def testRasterReadExtent():
 
     GLOB.debug = True
 
-    ncRasterName = r"G:\data\imgluh_20201118\GLANDCOVER_30MIN.nc"
+    ncRasterName = "GLANDCOVER_30MIN.nc"
     ncRasterName += "#ImageLandCoverNetCDF"
     ncRasterName += "|1970|Cropland"
 
     inRasterName = ncRasterName
 
-    outDir = r"G:\data\imgluh_out"
+    outDir = r""
     outRasterName = os.path.join(outDir,"glandcover_30min.tif")
 
     extRasterName1 = os.path.join(outDir,"extent_nc_30min.tif")
@@ -2406,7 +2167,7 @@ if __name__ == "__main__":
     GLOB.debug = True
     from GlobioModel.Core.CalculationBase import  CalculationBase
 
-    rasterName = r"G:\data\imgluh_20201118\GREG_30min.asc"
+    rasterName = "GREG_30min.asc"
     region = 12
 
     extent = [-25.0, 33.0, 45.0, 72.0]
@@ -2419,7 +2180,7 @@ if __name__ == "__main__":
                                              "region",
                                              calcSumDiv=False)
 
-    savRasterName = r"G:\data\imgluh_out\20210121e\kanweg_region.tif"
+    savRasterName = "tmp.tif"
     if not RU.rasterExists(savRasterName):
       RU.rasterDelete(savRasterName)
       savRaster = Raster(savRasterName)
@@ -2484,45 +2245,6 @@ if __name__ == "__main__":
       return
     print("#"*40)
 
-    # #
-    # subRasterName = r"G:\data\imgluh_out\20210121e\kanweg_region_12.tif"
-    # RU.rasterDelete(subRasterName)
-    # subRas = raster.getDataByExtent(ext)
-    # print(subRas)
-    # print(subRas.shape)
-    # subRaster = Raster(subRasterName)
-    # subRaster.initRasterEmpty(ext,cellSize,raster.dataType,0)
-    # subRaster.r = subRas
-    # print("Writing %s..." % subRasterName)
-    # subRaster.write()
-    # del subRaster
-    # #del raster
-    #
-    # def getExtentByValue(raster,value):
-    #   print("getExtentByValue")
-    #   print("(%s,%s)" % (raster.nrRows,raster.nrCols))
-    #   minX = raster.extent[0]
-    #   minY = raster.extent[1]
-    #   print(RU.calcExtentFromColsRows(minX,minY,raster.cellSize,
-    #                                   0,0,raster.nrCols,raster.nrRows))
-    #   # Get rows/cols coordinates.
-    #   rowscols = np.where(raster.raster==value)
-    #   # Get min/max coordinates.
-    #   row1 = rowscols[0].min()
-    #   row2 = rowscols[0].max()
-    #   col1 = rowscols[1].min()
-    #   col2 = rowscols[1].max()
-    #   print("(%s,%s)" % (row2-row1,col2-col1))
-    #   # Get extent.
-    #   minX = raster.extent[0]
-    #   minY = raster.extent[1]
-    #   print("row")
-    #   print(raster.raster[row2+1])
-    #   print(raster.raster[row2+2])
-    #   return RU.calcExtentFromColsRows(minX,minY,raster.cellSize,col1,row1,col2,row2)
-    # ext = getExtentByValue(raster,region)
-    # print(ext)
-
     def getExtentByValue2(raster,value):
       print("getExtentByValue2")
       row1 = 9999
@@ -2549,7 +2271,7 @@ if __name__ == "__main__":
     ext = getExtentByValue2(raster,region)
     print(ext)
 
-    subRasterName = r"G:\data\imgluh_out\20210121e\kanweg_region_12b.tif"
+    subRasterName = "tmp.tif"
     RU.rasterDelete(subRasterName)
     subRas = raster.getDataByExtent(ext)
     print(subRas)
@@ -2567,7 +2289,7 @@ if __name__ == "__main__":
     GLOB.debug = True
     from GlobioModel.Core.CalculationBase import  CalculationBase
 
-    rasterName = r"G:\data\imgluh_20201118\GREG_30min.asc"
+    rasterName = "GREG_30min.asc"
     region = 12
 
     #extent = [-25.0, 33.0, 45.0, 72.0]
@@ -2592,77 +2314,6 @@ if __name__ == "__main__":
     print("col/row: %s %s %s %s" % (c,r,c2,r2))
 
     print("#"*40)
-    # def getExtentByValue2(raster,value):
-    #   print("getExtentByValue2")
-    #   row1 = 9999
-    #   col1 = 9999
-    #   row2 = -1
-    #   col2 = -1
-    #   for r in range(raster.nrRows):
-    #     for c in range(raster.nrCols):
-    #       if raster.r[r,c] == value:
-    #         row1 = min(row1,r)
-    #         col1 = min(col1,c)
-    #         row2 = max(row2,r)
-    #         col2 = max(col2,c)
-    #         #continue
-    #   #print("col/row: %s %s %s %s" % (col1,row1,col2,row2))
-    #   print("col/row: %s %s %s %s" % (col1,row2,col2,row1))
-    #   x,y = RU.calcUpperLeftXYFromColRow(col1,row2,raster.extent,raster.cellSize)
-    #   print("xy: %s %s" % (x,y))
-    #   x,y = RU.calcUpperLeftXYFromColRow(col2,row1,raster.extent,raster.cellSize)
-    #   print("xy: %s %s" % (x,y))
-    #   print("nr col/row: %s %s" % (col2-col1,row2-row1))
-    #   # Get extent.
-    #   minX = raster.extent[0]
-    #   minY = raster.extent[1]
-    #   # print("row")
-    #   # print(raster.raster[row2+1])
-    #   # print(raster.raster[row2+2])
-    #   return RU.calcExtentFromColsRows(minX,minY,raster.cellSize,col1,row1,col2,row2)
-    def getExtentByValue3(raster,value):
-      pass
-    #   print("getExtentByValue2")
-    #   minRow = 9999
-    #   minCol = 9999
-    #   maxRow = -1
-    #   maxCol = -1
-    #   for r in range(raster.nrRows):
-    #     for c in range(raster.nrCols):
-    #       if raster.r[r,c] == value:
-    #         minRow = min(minRow,r)
-    #         minCol = min(minCol,c)
-    #         maxRow = max(maxRow,r)
-    #         maxCol = max(maxCol,c)
-    #         #continue
-    #   #print("col/row: %s %s %s %s" % (col1,row1,col2,row2))
-    #   print("col/row: %s %s %s %s" % (minCol,row2,maxCol,row1))
-    #   x,y = RU.calcUpperLeftXYFromColRow(col1,row2,raster.extent,raster.cellSize)
-    #   print("xy: %s %s" % (x,y))
-    #   x,y = RU.calcUpperLeftXYFromColRow(col2,row1,raster.extent,raster.cellSize)
-    #   print("xy: %s %s" % (x,y))
-    #   print("nr col/row: %s %s" % (col2-col1,row2-row1))
-    #   # Get extent.
-    #   minX = raster.extent[0]
-    #   minY = raster.extent[1]
-    #   # print("row")
-    #   # print(raster.raster[row2+1])
-    #   # print(raster.raster[row2+2])
-    #   return RU.calcExtentFromColsRows(minX,minY,raster.cellSize,col1,row1,col2,row2)
-    # ext = getExtentByValue3(raster,region)
-    # print(ext)
-    #
-    # # subRasterName = r"G:\data\imgluh_out\20210121e\kanweg_region_12b.tif"
-    # # RU.rasterDelete(subRasterName)
-    # # subRas = raster.getDataByExtent(ext)
-    # # print(subRas)
-    # # print(subRas.shape)
-    # # subRaster = Raster(subRasterName)
-    # # subRaster.initRasterEmpty(ext,cellSize,raster.dataType,0)
-    # # subRaster.r = subRas
-    # # print("Writing %s..." % subRasterName)
-    # # subRaster.write()
-    # # del subRaster
 
   #-------------------------------------------------------------------------------
   def testGetExtentByValue_Region12c():
@@ -2670,7 +2321,7 @@ if __name__ == "__main__":
     GLOB.debug = True
     from GlobioModel.Core.CalculationBase import  CalculationBase
 
-    rasterName = r"G:\data\imgluh_20201118\GREG_30min.asc"
+    rasterName = "GREG_30min.asc"
     region = 12
 
     print("#"*40)
@@ -2697,7 +2348,7 @@ if __name__ == "__main__":
     ext = raster.getExtentByValue(region)
     if not ext is None:
       print(ext)
-      subRasterName = r"G:\data\imgluh_out\20210121e\kanweg_region_12b_asc.tif"
+      subRasterName = "tmp.tif"
       RU.rasterDelete(subRasterName)
       subRas = raster.getDataByExtent(ext)
       subRaster = Raster(subRasterName)
@@ -2709,7 +2360,7 @@ if __name__ == "__main__":
 
 
     print("#"*40)
-    newRasterName = r"G:\data\imgluh_out\20210121e\GREG_30min.tif"
+    newRasterName = "GREG_30min.tif"
     if not RU.rasterExists(newRasterName):
       #RU.rasterDelete(newRasterName)
       newRaster = Raster(newRasterName)
@@ -2729,7 +2380,7 @@ if __name__ == "__main__":
     ext = raster.getExtentByValue(region)
     if not ext is None:
       print(ext)
-      subRasterName = r"G:\data\imgluh_out\20210121e\kanweg_region_12b_tif.tif"
+      subRasterName = r"tmp.tif"
       if not RU.rasterExists(subRasterName):
         #RU.rasterDelete(subRasterName)
         subRas = raster.getDataByExtent(ext)

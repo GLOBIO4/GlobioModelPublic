@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 #
@@ -52,15 +52,15 @@ NumberOfCores = -1
 #### WINDOWS
 
 # Set default base directories.
-DIR BaseInDir = G:\Data\
-DIR BaseOutDir = G:\Data\
+DIR BaseInDir = C:\GLOBIO
+DIR BaseOutDir = C:\GLOBIO
 
 # Set default directories.
-DIR InDir = $BaseInDir;\pbl
-DIR LookupDir = P:\Project\Globio4LA\prg\src\Globio\Lookup
+DIR InDir = $BaseInDir;\in
+DIR LookupDir = $BaseInDir;\lookup
+DIR TestDir = $BaseInDir;\test
 DIR OutDir = $BaseOutDir;\out
 DIR TmpDir = $BaseOutDir;\tmp
-DIR TestDir = $BaseOutDir;\testdata
 
 #-------------------------------------------------------------------------------
 # GEO settings.
@@ -146,7 +146,7 @@ STRING CLIMCH_PlantRegressionCoefficients = 2.867|-0.467
 
 # Based on IMAGE GFERTILIZER fertilizer application rate raster, unit Mg/KM2 
 # Only for GLOBIO4 land use category 2 (cropland), to distinguish high intensity
-# cropland (LU value 231) and low intensity cropland (LU value 230)
+# cropland (LU value 11) and low intensity cropland (LU value 12)
 
 # Low intensity cropland application rate threshold (> is high intensity cropland)
 FLOAT GfertilizerThreshold = 10.0

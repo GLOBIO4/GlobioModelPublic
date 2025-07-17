@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Run_LanduseHarmonization_Ref_5min.glo
@@ -23,13 +23,13 @@ BEGIN_RUN Calculations()
   #--------------------------------------------------------------------------
 
   # Define base directory.
-  DIR BaseDir = G:\data
+  DIR BaseDir = 
 
   # Define base input directory.
-  DIR BaseInputDir = $BaseDir;\referentie\v411
+  DIR BaseInputDir = $BaseDir;\in
 
   # Set output directory.
-  OutDir = $BaseDir;\referentie\v411\imgluh_20210126_5min
+  OutDir = $BaseDir;\out
 
   # Set region extent.
   # WHEN CHANGED, ALSO CHANGE RegionFilter SETTINGS!!!

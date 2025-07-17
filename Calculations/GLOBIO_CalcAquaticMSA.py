@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 
 import os
@@ -160,11 +160,8 @@ if __name__ == "__main__":
     # Enable the monitor.    
     GLOB.monitorEnabled = True
     
-    inDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181026"
-    
-    outDir = r"C:\Temp\_Globio4\out"
-    if not os.path.isdir(outDir):
-      outDir = r"G:\data\Globio4LA\data\kanweg\20181031_v1"
+    inDir = r""
+    outDir = r""
 
     pCalc = GLOBIO_CalcAquaticMSA()
     
@@ -185,15 +182,6 @@ if __name__ == "__main__":
     flof = os.path.join(inDir,"flootplain_fractions.tif")
     wetf = os.path.join(inDir,"wetland_fractions.tif")
     out = os.path.join(outDir,"aquatic_msa.tif")
-   
-#     ### ZETTEN DUMMIES
-#     Log.info("USING DUMMY RASTERS!!!")
-#     testDir = r"G:\data\Globio4LA\data\kanweg\20181031_v1"
-#     laks = os.path.join(testDir,"shallow_lake_msa.tif")
-#     lakd = os.path.join(testDir,"deep_lake_msa.tif")
-#     riv = lakd
-#     flo = laks
-#     wet = lakd
 
     if RU.rasterExists(out):
       RU.rasterDelete(out)

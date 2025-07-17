@@ -47,8 +47,8 @@ NumberOfCores = 0
 #### WINDOWS
 
 # Set default base directories.
-DIR BaseInDir = Y:\Globio4Runs
-DIR BaseOutDir = Y:\Globio4Runs
+DIR BaseInDir = C:\GLOBIO
+DIR BaseOutDir = C:\GLOBIO
 
 # Set default directories.
 DIR InDir = $BaseInDir;
@@ -143,7 +143,7 @@ STRING CLIMCH_PlantRegressionCoefficients = 2.867|-0.467
 
 # Based on IMAGE GFERTILIZER fertilizer application rate raster, unit Mg/KM2 
 # Only for GLOBIO4 land use category 2 (cropland), to distinguish high intensity
-# cropland (LU value 231) and low intensity cropland (LU value 230)
+# cropland (LU value 11) and low intensity cropland (LU value 12)
 
 # Low intensity cropland application rate threshold (> is high intensity cropland)
 FLOAT GfertilizerThreshold = 10.0

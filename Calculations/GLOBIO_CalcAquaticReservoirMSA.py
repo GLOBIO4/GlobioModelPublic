@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 
 import os
@@ -140,9 +140,7 @@ class GLOBIO_CalcAquaticReservoirMSA(CalculationBase):
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
   try:
-    outDir = r"C:\Temp\_Globio4\out"
-    if not os.path.isdir(outDir):
-      outDir = r"G:\Data\out_v3"
+    outDir = r""
     inDir = outDir
 
     pCalc = GLOBIO_CalcAquaticReservoirMSA()

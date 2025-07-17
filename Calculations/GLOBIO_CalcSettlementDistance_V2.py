@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 #
@@ -537,11 +537,11 @@ class GLOBIO_CalcSettlementDistance_V2(CalculationBase):
     #cellSizeName = "10sec"
 
     # Multipoint shapefile.
-    inSettlementsDir = r"G:\Data\Globio4LA\data\luh_20170907\Settlements"
-    inTravelTimeDir = r"G:\Data\Globio4LA\data\referentie\v405\30sec_wrld\in_%s" % (travelTimeRefVersion)
-    inLandcoverDir = r"G:\Data\Globio4LA\data\referentie\v405\%s_%s\in_%s" % (cellSizeName,extentName,landcoverRefVersion)
+    inSettlementsDir = r""
+    inTravelTimeDir = r""
+    inLandcoverDir = r""
     outVersion = "20170911"
-    outDir = r"G:\Data\Globio4LA\data\referentie\v409\%s_wrld\globio_%s" % (cellSizeName,outVersion)
+    outDir = r""
 
     # Use 1 settlements shapefile.
     #self.test = True
@@ -560,7 +560,7 @@ class GLOBIO_CalcSettlementDistance_V2(CalculationBase):
 
     if cellSizeName == "10sec":
       # Gebruik originele esa landcover.
-      inLandcoverDir = r"G:\Data\Globio4LA\data\web_20161104\esa"
+      inLandcoverDir = r""
       landcoverRasterName = "ESACCI-LC-L4-LCCS-Map-300m-P5Y-2010-v1.6.1.tif"
 
     minTravelTimeMin = 5

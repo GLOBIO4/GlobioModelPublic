@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 18 jan 2019, ES, ARIS B.V.
@@ -256,9 +256,9 @@ if __name__ == "__main__":
     ext = GLOB.constants[extentName].value
     cs = GLOB.constants[cellSizeName].value
 
-    inLuDir = r"G:\data\Globio4LA\data\referentie\v407\10sec_wrld\landalloc_20170830"
-    inFrDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181123"
-    outDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181123"
+    inLuDir = r""
+    inFrDir = r""
+    outDir = r""
 
     if os.path.isdir("/root"):
       inLuDir = UT.toLinux(inLuDir)

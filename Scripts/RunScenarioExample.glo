@@ -1,0 +1,27 @@
+#-------------------------------------------------------------------------------
+# RUNSCENARIOEXAMPLE.GLO
+#
+# Example for running the scenario defined in ScenarioExample.glo in a parametrized manner
+# 
+#-------------------------------------------------------------------------------
+
+INCLUDE ScenarioExample.glo
+
+#-------------------------------------------------------------------------------
+BEGIN_RUN Calculation()
+
+  DIR BaseInDir = 
+  DIR BaseOutDir = 
+  
+  LIST STRING Year = 2010|2020|2030
+
+    InDir = $BaseInDir;\$Year;
+    OutDir = $BaseOutDir;\$Year;
+
+    RUN_SCENARIO ScenarioExample($Year,$InDir,$OutDir)
+
+  END_LIST
+END_RUN
+
+RUN Calculation()
+

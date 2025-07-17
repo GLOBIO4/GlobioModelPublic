@@ -1,0 +1,246 @@
+#-------------------------------------------------------------------------------
+# Runs the land use allocation module
+#-------------------------------------------------------------------------------
+
+INCLUDE LanduseAllocation.glo
+
+#-------------------------------------------------------------------------------
+BEGIN_RUN Calculations()
+
+  # Save temporary data (intermediate steps)? 
+  SaveTmpData = False
+  # Overwrite output?
+  OverwriteOutput = False
+
+  # The base directory wherein the project folder is located
+  DIR BaseInDir = 
+
+  # Directory where data is stored across multiple projects
+  DIR SharedDir = 
+
+  # ProjectName should reflect the project folder name under the BaseInDir folder.
+  STRING ProjectName = TemplateProject
+  # ScenarioName should reflect the name of the scenario folder name under the ScenarioRuns folder.
+  STRING ScenarioName = TemplateScenario
+  STRING ScenarioAbbreviation = TmplScn
+
+  # Folder for shared data for all scenarios within the project
+  DIR ProjectSharedDir = $BaseInDir;\$ProjectName;\SharedData
+  # The scenario folder
+  DIR ProjectScenarioDir = $BaseInDir;\$ProjectName;\ScenarioRuns\$ScenarioName;
+
+  InDir = $ProjectScenarioDir;\input
+  OutDir = $ProjectScenarioDir;\output
+  TmpDir = $ProjectScenarioDir;\tmp
+  LookupDir = $BaseInDir;\$ProjectName;\lookup
+
+  # Set the scenario run year to refer to correct input and output data
+  STRING ScenarioYear = 
+  
+  # Set region and resolution
+  # Defined extents: world, wrld, europe, eu, nl
+  Extent = world
+  STRING ExtentStr = WORLD
+  # Defined cell sizes: 10deg 1deg 30min 5min 30sec 10sec
+  CellSize = 10sec
+  STRING CellSizeStr = 10SEC
+
+  #-------------------------------------------------------------------------------
+
+  # Set other input parameters
+  STRING LanduseCodes = 
+  #STRING LanduseCodes = 1|10|11|12|30|21|22|40|0
+  STRING LanduseNames = 
+  #STRING LanduseNames = Urban|Cropland|Cropland high intensity|Cropland low intensity|Forestry|Pasture|Rangeland|Secondary vegetation|Undefined
+  STRING LandusePriorityCodes = 
+  #STRING LandusePriorityCodes = 1|10|30|21|22
+
+  # Raster used as a background (reference) raster in the allocation process
+  RASTER BackgroundLandCover = $SharedDir;\Landcover.tif
+  # Existing land use raster (i.e. of the previous time step. Alternatively, the background land cover can be used)
+  RASTER Landuse = $ProjectSharedDir;\Landuse.tif
+
+  RASTER Regions = $SharedDir;\Regions.tif
+  STRING RegionFilter = NONE
+  STRING RegionExcudeFilter = NONE
+  
+  # Defines which land use codes will be replaced with which land use type when not allocated. E.g. Not-allocated cropland will be replaced with secondary vegetation
+  STRING LanduseReplaceCodes = 
+  #STRING LanduseReplaceCodes = 1|10|30|21|22
+  STRING LanduseReplaceWithCode = 
+  #STRING LanduseReplaceWithCode = 40
+  STRING LanduseUndefinedCode = 
+  #STRING LanduseUndefinedCode = 0
+
+  # Non-allocatable areas and protected areas (optional, NONE otherwise)
+  RASTER NotAllocatableAreas = $SharedDir;\NonAllocatableAreas.tif
+  RASTER PAReduceFactor = $SharedDir;\PAReduceFactor.tif
+  #RASTER PAReduceFactor = NONE
+
+  DIR SuitDir = $ProjectSharedDir;
+  STRING SuitRasterCodes = 
+  #STRING SuitRasterCodes = 1|10|21|22|30
+  RASTERLIST SuitRasterNames = 
+  #RASTERLIST SuitRasterNames = $SuitDir;\SuitUrban.tif|$SuitDir;\SuitCrop.tif|$SuitDir;\SuitPasture.tif|$SuitDir;\SuitRangeland.tif|$SuitDir;\SuitForestry.tif
+    
+  FILE ClaimFileName = $InDir;\Claim_$ScenarioAbbreviation;_$ScenarioYear;.csv
+  STRING ClaimRegionFieldName = Region
+  STRING ClaimLanduseFieldName = Attribute
+  STRING ClaimAreaFieldName = Value
+  # Optionally, a claim lookup can be used to translate the land use classes
+  FILE ClaimLookup = NONE
+  # Optional multipliers for claim areas
+  STRING ClaimAreaMultiplierLanduseCodes = NONE
+  STRING ClaimAreaMultipliers = NONE
+
+  # Next block only necessary when running the ScenSuit or ScenSuitIntensity variant
+  ################################################################################
+  # Scenario specific layers to adjust the suitability to follow a scenario spatial pattern. The value is averaged with the general suitability input.
+  # If no scenario input, then provide the general suitability input, so the suitability remains the same.
+  # The sequence should resemble to the above SuitRasterCodes and SuitRasterNames sequence.
+  # Now testing for crops and intensive pastures
+  #RASTERLIST ScenarioSuitRasterNames = NONE|$InDir;\suit_$ScenarioName;_crop_$ScenarioYear;.tif|$InDir;\suit_$ScenarioName;_pasture_$ScenarioYear;.tif|$InDir;\suit_$ScenarioName;_rangeland_$ScenarioYear;.tif|NONE
+  RASTERLIST ScenarioSuitRasterNames = NONE|NONE|NONE|NONE|NONE
+  # The FLOAT ratio for the weights of the ScenSuitRaster input. 0.5 means the ScenSuit raster accounts for half, 1.0 means the ScenSuit raster will count for 100% and the default suitability raster is ignored.
+  STRING ScenSuitRasterWeights = 0.0|0.0|0.0|0.0|0.0
+  
+  # Cropland and grazing intensity adjustment, based on nitrogen (fertilizer) application. Use path to a raster tif or NONE
+  RASTER FertilizerApplication = $InDir;\FertilizerApplication_$ScenarioYear;.tif
+  #RASTER FertilizerApplication = NONE
+
+  # The GLOBIO default land use code used for cropland
+  STRING LandUseCodeCrops = 
+  #STRING LandUseCodeCrops = 10
+  # The land use codes to use for low and high intensity cropland 
+  STRING LandUseCodeCropsHighIntensive = 
+  #STRING LandUseCodeCropsHighIntensive = 11
+  STRING LandUseCodeCropsLowIntensive = 
+  #STRING LandUseCodeCropsLowIntensive = 12
+
+  # The GLOBIO default land use code used for grazing
+  STRING LandUseCodeGrazing = 
+  #STRING LandUseCodeGrazing = 20
+  # The land use codes to use for low (rangeland) and high (pasture) intensity grazing
+  STRING LandUseCodeGrazingHighIntensive = 
+  #STRING LandUseCodeGrazingHighIntensive = 21
+  STRING LandUseCodeGrazingLowIntensive = 
+  #STRING LandUseCodeGrazingLowIntensive = 22
+
+  # The fertilizer application threshold value in kg/ha, if other than the default value (=10 kg/ha)
+  FLOAT FertilizerThreshold = 
+  ################################################################################
+  
+  # Area raster with the area in km^2 for each cell
+  RASTER CellAreas = $SharedDir;\Area_km2_$CellSizeStr;.tif
+  #RASTER CellAreas = NONE
+
+  # whether to add random noise to the suitability rasters (with fixed seed)
+  BOOLEAN AddNoiseFlag = True
+
+  # Set output raster.
+  RASTER OutAllocatedLanduse = $OutDir;\Landuse_$CellSizeStr;_$ScenarioYear;_$ExtentStr;.tif
+  # Set Cropland intensity output raster.
+  RASTER OutAllocatedLanduseCropInt = $OutDir;\Landuse_$CellSizeStr;_$ScenarioYear;_$ExtentStr;_CroplandIntensity.tif
+  # Set region aggregation output files.
+  FILE OutRegionAreasFileName = $OutDir;\RegionAreas_$CellSizeStr;_$ScenarioYear;_$ExtentStr;.csv
+  #FILE OutRegionAreasFileName = NONE
+  FILE OutRegionLandcoverAreasFileName = $OutDir;\RegionLandcoverAreas_$CellSizeStr;_$ScenarioYear;_$ExtentStr;.csv
+  #FILE OutRegionLandcoverAreasFileName = NONE
+  FILE OutRegionLanduseAreasFileName = $OutDir;\RegionLanduseAreas_$CellSizeStr;_$ScenarioYear;_$ExtentStr;.csv
+    
+  #-------------------------------------------------------------------------------
+  # Start running (run one of three, comment out other two)
+  #-------------------------------------------------------------------------------
+
+  RUN_MODULE CalcDiscreteLanduseAllocation(
+          $Extent,$CellSize,
+          $LanduseCodes,$LanduseNames,
+          $LandusePriorityCodes,
+          $BackgroundLandCover,
+          $Regions,
+          $RegionFilter,$RegionExcudeFilter,
+          $Landuse,
+          $LanduseReplaceCodes,
+          $LanduseReplaceWithCode,$LanduseUndefinedCode,
+          $NotAllocatableAreas,
+          $PAReduceFactor,
+          $SuitRasterCodes,$SuitRasterNames,
+          $ClaimFileName,$ClaimLanduseFieldName,
+          $ClaimRegionFieldName,$ClaimAreaFieldName,
+          $ClaimLookup,
+          $ClaimAreaMultiplierLanduseCodes,
+          $ClaimAreaMultipliers,
+          $CellAreas,
+          $AddNoiseFlag,
+          $OutRegionAreasFileName,
+          $OutRegionLandcoverAreasFileName,
+          $OutRegionLanduseAreasFileName,
+          $OutAllocatedLanduse
+  )
+
+  RUN_MODULE CalcDiscreteLanduseAllocationScenSuit(
+          $Extent,$CellSize,
+          $LanduseCodes,$LanduseNames,
+          $LandusePriorityCodes,
+          $BackgroundLandCover,
+          $Regions,
+          $RegionFilter,$RegionExcudeFilter,
+          $Landuse,
+          $LanduseReplaceCodes,
+          $LanduseReplaceWithCode,$LanduseUndefinedCode,
+          $NotAllocatableAreas,
+          $PAReduceFactor,
+          $SuitRasterCodes,$SuitRasterNames,
+          $ScenarioSuitRasterNames,$ScenSuitRasterWeights,
+          $FertilizerApplication,$FertilizerThreshold,
+          $LandUseCodeCrops,$LandUseCodeCropsLowIntensive,$LandUseCodeCropsHighIntensive,
+          $ClaimFileName,$ClaimLanduseFieldName,
+          $ClaimRegionFieldName,$ClaimAreaFieldName,
+          $ClaimLookup,
+          $ClaimAreaMultiplierLanduseCodes,
+          $ClaimAreaMultipliers,
+          $CellAreas,
+          $AddNoiseFlag,
+          $OutRegionAreasFileName,
+          $OutRegionLandcoverAreasFileName,
+          $OutRegionLanduseAreasFileName,
+          $OutAllocatedLanduse,
+          $OutAllocatedLanduseCropInt
+  )
+
+  RUN_MODULE CalcDiscreteLanduseAllocationScenSuitIntensity(
+          $Extent,$CellSize,
+          $LanduseCodes,$LanduseNames,
+          $LandusePriorityCodes,
+          $BackgroundLandCover,
+          $Regions,
+          $RegionFilter,$RegionExcudeFilter,
+          $Landuse,
+          $LanduseReplaceCodes,
+          $LanduseReplaceWithCode,$LanduseUndefinedCode,
+          $NotAllocatableAreas,
+          $PAReduceFactor,
+          $SuitRasterCodes,$SuitRasterNames,
+          $ScenarioSuitRasterNames,$ScenSuitRasterWeights,
+          $FertilizerApplication,$FertilizerThreshold,
+          $LandUseCodeCrops,$LandUseCodeCropsLowIntensive,$LandUseCodeCropsHighIntensive,
+          $LandUseCodeGrazing,$LandUseCodeGrazingLowIntensive,$LandUseCodeGrazingHighIntensive,
+          $ClaimFileName,$ClaimLanduseFieldName,
+          $ClaimRegionFieldName,$ClaimAreaFieldName,
+          $ClaimLookup,
+          $ClaimAreaMultiplierLanduseCodes,
+          $ClaimAreaMultipliers,
+          $CellAreas,
+          $AddNoiseFlag,
+          $OutRegionAreasFileName,
+          $OutRegionLandcoverAreasFileName,
+          $OutRegionLanduseAreasFileName,
+          $OutAllocatedLanduse,
+          $OutAllocatedLanduseCropInt
+  )
+
+END_RUN
+
+#-------------------------------------------------------------------------------
+
+RUN Calculations()

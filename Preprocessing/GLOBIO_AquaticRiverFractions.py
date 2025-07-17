@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 18 jan 2019, ES, ARIS B.V.
@@ -229,13 +229,13 @@ if __name__ == "__main__":
     cs = GLOB.constants[cellSizeName].value
 
     if extentName == "nl":
-      inDir = r"G:\Data\Globio4LA\data\referentie\v4012\vector\in_20181123"
+      inDir = r""
       inShp = "rivers_nl.shp"
     else:
-      inDir = r"G:\Data\Globio4LA\data\referentie\v4012\vector\in_20181123"
+      inDir = r""
       inShp = "rivers_%s.shp" % extentName
     
-    outDir = r"G:\data\Globio4LA\data\referentie\v4012\%s_%s\in_20181123" % (cellSizeName,extentName)
+    outDir = r""
     out = "river_fractions.tif"
 
     #riverWidthKM = 1.0       # Is 30sec cellsize!!!

@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 
 import os
@@ -129,37 +129,3 @@ class GLOBIO_CalcAquaticWetlandMSA(CalculationBase):
     self.showEndMsg()
 
 #-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
-if __name__ == "__main__":
-  try:
-    
-    # Enable the monitor.    
-    GLOB.monitorEnabled = True
-    
-    inDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181026"
-    
-#    outDir = r"C:\Temp\_Globio4\out"
-#    if not os.path.isdir(outDir):
-#      outDir = r"G:\data\Globio4LA\data\kanweg\20181031_v1"
-#
-#    pCalc = GLOBIO_CalcAquaticWetlandMSA()
-#    
-#    #ext = GLOB.constants["world"].value
-#    ext = GLOB.constants["europe"].value
-#    cs = GLOB.constants["30sec"].value
-#    lu = os.path.join(inDir,"wetlandfloodplain_lu_msa.tif")
-#    frac = os.path.join(inDir,"floodplain_fractions.tif")
-#    out = os.path.join(outDir,"wetland_msa.tif")
-#   
-##     ### ZETTEN DUMMIES
-##     Log.info("USING DUMMY RASTERS!!!")
-##     testDir = r"G:\data\Globio4LA\data\referentie\v407\30sec_wrld\globio_20170830"
-##     wetLU = os.path.join(testDir,"InfraFragmentationMSA.tif")
-
-#     if RU.rasterExists(out):
-#       RU.rasterDelete(out)
-# 
-#     pCalc.run(ext,cs,lu,frac,out)
-  except:
-    MON.cleanup()
-    Log.err()

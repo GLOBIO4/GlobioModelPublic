@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 #
@@ -377,10 +377,10 @@ class GLOBIO_CalcHumanEncroachmentMSA_V2b(CalculationBase):
     # Save output.
     #-----------------------------------------------------------------------------
 
-    #Log.info("Writing %s..." % outRasterName)
+    Log.info("Writing %s..." % outRasterName)
 
     # Save final MSA.
-    #outRaster.writeAs(outRasterName)
+    outRaster.writeAs(outRasterName)
 
     # Close and free the output raster.
     outWbVertMSARaster.close()
@@ -403,14 +403,12 @@ class GLOBIO_CalcHumanEncroachmentMSA_V2b(CalculationBase):
 if __name__ == "__main__":
 
   try:
-    inDir = r"Y:\data\GLOBIO\GLOBIO4\Beheer\Terra\SourceCode\GLOBIO_411_src20180925\src\Globio\Test\Calculations"
-    mapDir = r"Y:\data\GLOBIO\GLOBIO4\Models\Terra\Shared\geodata\GlobalTifs\res_10sec"
-    lookupDir = r"Y:\data\GLOBIO\GLOBIO4\Models\Terra\Shared\LookupGlobal"
-    inSettlementsDir = r"Y:\data\GLOBIO\GLOBIO4\Models\Terra\Shared\geodata\GlobalSettlements\Settlements_W"  
-    inTravelTimeDir = r"Y:\data\GLOBIO\GLOBIO4\Models\Terra\Shared\geodata\GlobalTifs\res_30sec"  
-    outDir = r"Y:\data\GLOBIO\GLOBIO4\Beheer\Terra\SourceCode\GLOBIO_411_src20180925\src\Globio\Test\Calculations"
-    if not os.path.isdir(outDir):
-      outDir = r"S:\hilbersj"
+    inDir = r""
+    mapDir = r""
+    lookupDir = r""
+    inSettlementsDir = r""  
+    inTravelTimeDir = r""  
+    outDir = r""
 
     pCalc = GLOBIO_CalcHumanEncroachmentMSA_V2b()
  

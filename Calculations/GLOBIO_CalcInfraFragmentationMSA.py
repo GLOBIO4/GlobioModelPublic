@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 26 sept 2016, ES, ARIS B.V.
@@ -25,6 +25,7 @@ import GlobioModel.Core.Error as Err
 import GlobioModel.Core.Globals as GLOB
 import GlobioModel.Core.Logger as Log
 import GlobioModel.Core.Monitor as MON
+import GlobioModel.Common.Utils as UT
 
 from GlobioModel.Core.CalculationBase import CalculationBase
 import GlobioModel.Core.CellArea as CellArea
@@ -126,7 +127,9 @@ class GLOBIO_CalcInfraFragmentationMSA(CalculationBase):
     IN STRING INFRAG_WbVertRegressionCoefficients
     IN FLOAT INFRAG_WeightFactor
     IN BOOLEAN CloseRoadConnections
+    IN RASTER NaturalFragmentationMSA
     OUT RASTER InfraFragmentationMSA
+    OUT RASTER NonnaturalFragmentationMSA
     """
 
     self.showStartMsg(args)
@@ -144,7 +147,9 @@ class GLOBIO_CalcInfraFragmentationMSA(CalculationBase):
     wbvertRegressionCoeffsStr = args[5]
     weightFactor = args[6]
     closeRoadConnections = args[7]
-    outRasterName = args[8]
+    naturalFragMSARasterName = args[8]
+    totalFragOutMSARasterName = args[9]
+    nonnaturalFragOutMSARasterName = args[10]
    
     # Check arguments.
     self.checkExtent(extent)
@@ -155,7 +160,9 @@ class GLOBIO_CalcInfraFragmentationMSA(CalculationBase):
     self.checkFloatList(wbvertRegressionCoeffsStr,needCnt=2)
     self.checkFloat(weightFactor,0.0,1.0)
     self.checkBoolean(closeRoadConnections)
-    self.checkRaster(outRasterName,True)
+    self.checkRaster(naturalFragMSARasterName, optional=True)
+    self.checkRaster(totalFragOutMSARasterName, asOutput=True)
+    self.checkRaster(nonnaturalFragOutMSARasterName, asOutput=True, optional=True)
  
     # Convert code and names to arrays.
     wbvertRegressionCoeffs = self.splitFloatList(wbvertRegressionCoeffsStr)
@@ -171,7 +178,7 @@ class GLOBIO_CalcInfraFragmentationMSA(CalculationBase):
     # Set members.
     self.extent = extent
     self.cellSize = cellSize
-    self.outDir = os.path.dirname(outRasterName)
+    self.outDir = os.path.dirname(totalFragOutMSARasterName)
 
     # Enable monitor en show memory and disk space usage.
     MON.showMemDiskUsage(Log,"- ","",self.outDir)
@@ -360,26 +367,55 @@ class GLOBIO_CalcInfraFragmentationMSA(CalculationBase):
     mask = (tmpLUFactorRaster.r == noDataValue)
     outWbVertMSARaster.r[mask] = noDataValue
     regionAreaSumRaster.r[mask] = noDataValue
-    mask = None
     
     # Close and free the landuse raster.
     landuseRaster.close()
     landuseRaster = None
     
     # Write, close and free the region area sum raster.
-    Log.info("Writing input raster....")
-    regionAreaSumRaster.writeAs(outRasterName.replace(".tif","_finalinput.tif"))
+    if GLOB.saveTmpData:
+      Log.info("Writing input raster....")
+      regionAreaSumRaster.writeAs(totalFragOutMSARasterName.replace(".tif","_finalinput.tif"))
     regionAreaSumRaster.close()
     regionAreaSumRaster = None
     
-    # Save tmp files?
-    if GLOB.saveTmpData:
-      # Save mammal MSA.
-      outWbVertMSARaster.writeAs(tmpWbVertMSARasterName)
+    #-----------------------------------------------------------------------------
+    # Calculate nonnatural part of MSA.
+    # The natural (fragmentation due to water) fragmentation loss is added to the 
+    # total fragmentation MSA to get an additional output for only nonnatural
+    # (human-caused) fragmentation MSA
+
+    # Only do this calculation if both input and output raster names are provided
+    if UT.isValueSet(nonnaturalFragOutMSARasterName) and UT.isValueSet(naturalFragMSARasterName):
+      Log.info("Calculating nonnatural MSA fragmentation...")
+      naturalFragMSARaster = self.readAndPrepareInRaster(extent, cellSize, naturalFragMSARasterName, "natural fragmentation MSA")
+
+      nonnaturalFragMSARaster = Raster()
+      nonnaturalFragMSARaster.initRaster(extent, cellSize, np.float32, noDataValue)
+      # as a mask, use the combination of the fragmentation out raster and the natural fragmentation raster
+      nonnaturalMask = outWbVertMSARaster.getDataMask() & naturalFragMSARaster.getDataMask()
+      nonnaturalFragMSARaster.r[nonnaturalMask] = outWbVertMSARaster.r[nonnaturalMask] + (1 - naturalFragMSARaster.r[nonnaturalMask])
+      # make sure everything is between 0 and 1
+      nonnaturalFragMSARaster.r[nonnaturalMask] = np.clip(nonnaturalFragMSARaster.r[nonnaturalMask], 0.0, 1.0)
+
+      Log.info("Writing nonnatural MSA fragmentation for wbvert...")
+      nonnaturalFragMSARaster.writeAs(nonnaturalFragOutMSARasterName.replace(".tif", "_wbvert.tif"))
+
+      # calculate the species group average based on the weight factor
+      complWeightFactor = 1.0 - weightFactor
+      nonnaturalFragMSARaster.r[nonnaturalMask] *= weightFactor
+      nonnaturalFragMSARaster.r[nonnaturalMask] += complWeightFactor
+
+      Log.info("Writing nonnatural MSA fragmentation...")
+      nonnaturalFragMSARaster.writeAs(nonnaturalFragOutMSARasterName)
+
+      nonnaturalFragMSARaster.close()
+      del nonnaturalFragMSARaster
+      del nonnaturalMask
       
     # Write away taxonomic group - MSA output
     Log.info("Writing taxonomic group - MSA rasters....")
-    outWbVertMSARaster.writeAs(outRasterName.replace(".tif","_wbvert.tif"))
+    outWbVertMSARaster.writeAs(totalFragOutMSARasterName.replace(".tif","_wbvert.tif"))
 
     #-----------------------------------------------------------------------------
     # Calculate final MSA.
@@ -394,7 +430,7 @@ class GLOBIO_CalcInfraFragmentationMSA(CalculationBase):
     
     # Assign warm-blooded vert. MSA to outRaster (as a referrence).
     outRaster = outWbVertMSARaster
-    mask = (outRaster.r != noDataValue)
+    mask  = outWbVertMSARaster.getDataMask()
 
     complWeightFactor = 1.0 - weightFactor
     outRaster.r[mask] *= weightFactor
@@ -408,8 +444,8 @@ class GLOBIO_CalcInfraFragmentationMSA(CalculationBase):
     #-----------------------------------------------------------------------------
       
     # Save the output raster.
-    #Log.info("Writing fragmentation by infrastructure MSA...")
-    #outRaster.writeAs(outRasterName)
+    Log.info("Writing fragmentation by infrastructure MSA...")
+    outRaster.writeAs(totalFragOutMSARasterName)
            
     # Close and free the output raster.
     outWbVertMSARaster.close()
@@ -427,12 +463,10 @@ class GLOBIO_CalcInfraFragmentationMSA(CalculationBase):
 if __name__ == "__main__":
 
   try:
-    inDir = r"Y:\data\GLOBIO\GLOBIO4\Beheer\Terra\SourceCode\GLOBIO_411_src20180925\src\Globio\Test\Calculations"
-    mapDir = r"Y:\data\GLOBIO\GLOBIO4\Models\Terra\Shared\geodata\GlobalTifs\res_10sec"
-    lookupDir = r"Y:\data\GLOBIO\GLOBIO4\Models\Terra\Shared\LookupGlobal"
-    outDir = r"Y:\data\GLOBIO\GLOBIO4\Beheer\Terra\SourceCode\GLOBIO_411_src20180925\src\Globio\Test\Calculations"
-    if not os.path.isdir(outDir):
-      outDir = r"S:\hilbersj"
+    inDir = r""
+    mapDir = r""
+    lookupDir = r""
+    outDir = r""
 
     pCalc = GLOBIO_CalcInfraFragmentationMSA()
  

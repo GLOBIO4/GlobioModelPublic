@@ -289,6 +289,22 @@ BEGIN_MODULE CalcAquaticWetlandLossFractions(
 END_MODULE
 
 #-------------------------------------------------------------------------------
+BEGIN_MODULE CalcAquaticWetlandUnavoidableLossFractions(
+                        IN EXTENT Extent,
+                        IN CELLSIZE CellSize,
+                        IN RASTER Landuse10sec,
+                        IN RASTER WetlandFractions,
+                        OUT RASTER WetlandUnavoidableLossFractions,
+                        OUT RASTER WetlandUnavoidableActualFractions)
+  GLOBIO_CalcAquaticWetlandUnavoidableLossFractions(
+                        $Extent,$CellSize,
+                        $Landuse10sec,
+                        $WetlandFractions,
+                        $WetlandUnavoidableLossFractions,
+                        $WetlandUnavoidableActualFractions)
+END_MODULE
+
+#-------------------------------------------------------------------------------
 BEGIN_MODULE CalcAquaticWetlandMSA(
                         IN EXTENT Extent,
                         IN CELLSIZE CellSize,

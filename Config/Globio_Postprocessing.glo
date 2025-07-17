@@ -1,0 +1,83 @@
+#-------------------------------------------------------------------------------
+#
+# GLOBIO_POSTPROCESSING.GLO
+#
+# Defines the postprocessing modules of GLOBIO
+#
+#-------------------------------------------------------------------------------
+
+BEGIN_MODULE AggregateNdeposition(
+    IN EXTENT extent,
+    IN CELLSIZE cellsize,
+    IN RASTER ndep_raster,
+    IN RASTER area_raster,
+    IN RASTER region_raster,
+    OUT FILE region_ndep_table
+  )
+  GLOBIO_AggregateNdeposition(
+    $extent,
+    $cellsize,
+    $ndep_raster,
+    $area_raster,
+    $region_raster,
+    $region_ndep_table
+  )
+END_MODULE
+
+BEGIN_MODULE CalcBIFs(
+    IN FILE region_name_map,
+    IN FILE iso_region_map,
+    IN FILE iso_tm5_map,
+    IN FILE iso_landuse_areas,
+    IN FILE iso_road_lengths,
+    IN FILE iso_nitrogen_deposition,
+    IN FILE iso_nitrogen_emissions,
+    IN FILE MSA_loss_area_LU_plants,
+    IN FILE MSA_loss_area_LU_wbvert,
+    IN FILE MSA_loss_area_CC_plants,
+    IN FILE MSA_loss_area_CC_wbvert,
+    IN FILE MSA_loss_area_MD_wbvert,
+    IN FILE MSA_loss_area_RD_wbvert,
+    IN FILE MSA_loss_area_IF_full_wbvert,
+    IN FILE MSA_loss_area_IF_noroads_wbvert,
+    IN FILE MSA_loss_area_IF_nolu_wbvert,
+    IN FILE MSA_loss_area_ND_plants,
+    IN FILE NH3_TM5_source_receptor_matrix,
+    IN FILE NOx_TM5_source_receptor_matrix,
+    IN STRING landuse_codes,
+    IN STRING landuse_names,
+    IN STRING frag_landuse_codes,
+    IN STRING mining_landuse_code,
+    IN FLOAT GMTI,
+    IN FLOAT IAGTP,
+    OUT FILE BIF_summary
+  )
+  GLOBIO_CalcBIFs(
+    $region_name_map,
+    $iso_region_map,
+    $iso_tm5_map,
+    $iso_landuse_areas,
+    $iso_road_lengths,
+    $iso_nitrogen_deposition,
+    $iso_nitrogen_emissions,
+    $MSA_loss_area_LU_plants,
+    $MSA_loss_area_LU_wbvert,
+    $MSA_loss_area_CC_plants,
+    $MSA_loss_area_CC_wbvert,
+    $MSA_loss_area_MD_wbvert,
+    $MSA_loss_area_RD_wbvert,
+    $MSA_loss_area_IF_full_wbvert,
+    $MSA_loss_area_IF_noroads_wbvert,
+    $MSA_loss_area_IF_nolu_wbvert,
+    $MSA_loss_area_ND_plants,
+    $NH3_TM5_source_receptor_matrix,
+    $NOx_TM5_source_receptor_matrix,
+    $landuse_codes,
+    $landuse_names,
+    $frag_landuse_codes,
+    $mining_landuse_code,
+    $GMTI,
+    $IAGTP,
+    $BIF_summary
+  )
+END_MODULE

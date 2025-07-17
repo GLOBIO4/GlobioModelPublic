@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #===============================================================================
 # RUN_AQUATIC_PREPROCESSING_ALL.GLO
@@ -26,16 +26,16 @@ INCLUDE Globio_Aquatic_Preprocessing.glo
 BEGIN_RUN Calculations()
 
   # Set input directories.
-  DIR InDrainDir = /data/pbl_20181023/VBarbarossa/flo1k_hydrography
-  DIR InLakeDir = /data/pbl_20181023/HydroLakes/shapefile
-  DIR InShpDir = /data/referentie/v4012/vector/in_20181123
-  DIR InRasDir = /data/referentie/v4012/30sec_wrld/in_20181026
-  DIR InRas5Dir = /data/referentie/v4012/5min_wrld/in_20181026
-  DIR InCatchDir = /data/referentie/v4012/30sec_wrld/in_20181123
+  DIR InDrainDir = 
+  DIR InLakeDir = 
+  DIR InShpDir = 
+  DIR InRasDir = 
+  DIR InRas5Dir = 
+  DIR InCatchDir = 
 
   # Set output directories.
-  DIR OutShpDir = /data/referentie/v4012/vector/in_20181123
-  DIR OutRasDir = /data/referentie/v4012/30sec_wrld/in_20181123
+  DIR OutShpDir = 
+  DIR OutRasDir = 
 
   # Set output for logging.
   OutDir = $OutRasDir

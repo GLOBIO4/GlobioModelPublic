@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #
 # All RaterUtils methods are implemented for using with the GDAL libs. Some
@@ -2250,8 +2250,7 @@ if __name__ == "__main__":
       
     driverName = "GTiff"
 
-    #outDir = r"G:\Data\Globio4LA\data\kanweg"
-    outDir = r"C:\Temp\_Globio4LA\data\kanweg"
+    outDir = r""
     
     if not os.path.isdir(outDir):
       os.makedirs(outDir)

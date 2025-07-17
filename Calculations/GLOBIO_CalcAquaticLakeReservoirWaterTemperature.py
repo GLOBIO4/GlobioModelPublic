@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: nov 2018, ES, ARIS B.V.
@@ -292,8 +292,8 @@ if __name__ == "__main__":
     #csName = "5min"
     cs = GLOB.constants[csName].value
 
-    inDir = r"G:\Data\Globio4LA\data\referentie\v4012\%s_wrld\test_20181119" % csName
-    outDir = r"G:\data\Globio4LA\data\kanweg"
+    inDir = r""
+    outDir = r""
     
     if os.path.isdir("/root"):
       inDir = UT.toLinux(inDir)

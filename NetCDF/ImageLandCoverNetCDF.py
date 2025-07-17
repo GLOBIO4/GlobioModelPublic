@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Remarks:
@@ -9,7 +9,7 @@
 #          can not be used (does not work).
 #
 # Example:
-#          G:\data\imgluh_20201118\GLANDCOVER_30MIN.nc#ImageLandCoverNetCDF|1970|Cropland
+#          C:\data\GLANDCOVER_30MIN.nc#ImageLandCoverNetCDF|1970|Cropland
 #
 # Modified: 11 jan 2021, ES, ARIS B.V.
 #           - Version 4.1.1
@@ -57,18 +57,18 @@ if __name__ == "__main__":
   #GLOB.SHOW_TRACEBACK_ERRORS = True
 
   #-------------------------------------------------------------------------------
-  # Reading raster: G:\data\imgluh_20201118\GLANDCOVER_30MIN.nc#ImageLandCoverNetCDF|1970|Cropland
-  # G:\data\imgluh_20201118\GLANDCOVER_30MIN.nc
+  # Reading raster: GLANDCOVER_30MIN.nc#ImageLandCoverNetCDF|1970|Cropland
+  # GLANDCOVER_30MIN.nc
   # True
   # ImageLandCoverNetCDF
-  # ['G:\\data\\imgluh_20201118\\GLANDCOVER_30MIN.nc', '1970', 'Cropland']
+  # ['GLANDCOVER_30MIN.nc', '1970', 'Cropland']
   # float32
   def testCreateInstance():
     import GlobioModel.Common.Utils as UT
 
     GLOB.SHOW_TRACEBACK_ERRORS = True
 
-    inRasterName = r"G:\data\imgluh_20201118\GLANDCOVER_30MIN.nc"
+    inRasterName = "GLANDCOVER_30MIN.nc"
     inRasterName += "#ImageLandCoverNetCDF"
     inRasterName += "|1970|Cropland"
 

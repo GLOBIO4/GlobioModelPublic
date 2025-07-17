@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #----------------------------------------------------------------------------------
 # Script to obtain percentiles of MSA values in a region: JH, PBL
@@ -27,7 +27,7 @@ import GlobioModel.Core.RasterUtils as RU
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-class GLOBIO_CalcMSAregion_V2_percentile(CalculationBase):
+class GLOBIO_CalcMSAregion_percentile(CalculationBase):
   """
   Calculates MSA percentiles per region
   """
@@ -321,13 +321,11 @@ class GLOBIO_CalcMSAregion_V2_percentile(CalculationBase):
 if __name__ == "__main__":
 
   try:
-    inDir = r"Y:\data\GLOBIO\GLOBIO4\Beheer\Terra\SourceCode\GLOBIO_411_src20180925\src\Globio\Test\Calculations"
-    lookupDir = r"Y:\data\GLOBIO\GLOBIO4\Models\Terra\Shared\LookupGlobal"
-    outDir = r"Y:\data\GLOBIO\GLOBIO4\Beheer\Terra\SourceCode\GLOBIO_411_src20180925\src\Globio\Test\Calculations"
-    if not os.path.isdir(outDir):
-      outDir = r"S:\hilbersj"
+    inDir = r""
+    lookupDir = r""
+    outDir = r""
 
-    pCalc = GLOBIO_CalcMSAregion_V2_percentile()
+    pCalc = GLOBIO_CalcMSAregion_percentile()
 
     ext = [-40,-39,5,6] #GLOB.constants["world"].value
     lu = os.path.join(inDir,"ESACCI_LC_1992_v207.tif")

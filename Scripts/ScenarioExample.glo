@@ -1,0 +1,22 @@
+#-------------------------------------------------------------------------------
+# SCENARIOEXAMPLE.GLO
+#
+# Example for scenarios which can be used to parametrize GLOBIO runs
+# 
+#-------------------------------------------------------------------------------
+
+BEGIN_SCENARIO ScenarioExample(
+        IN STRING ScenarioYear, 
+        IN DIR InDir,
+        IN DIR OutDir)
+
+    MSG(Calculating dominant land use for scenario year $ScenarioYear;)
+
+    EXTENT Extent = world
+    RASTER Landuse = $InDir;\Landuse.tif
+    FILE DominantLanduseLookup = 
+    RASTER DominantLanduse = $OutDir;\DominantLanduse.tif
+
+    RUN_MODULE CalcDominantLanduse($Extent,$Landuse,$DominantLanduseLookup,$DominantLanduse)
+
+END_SCENARIO

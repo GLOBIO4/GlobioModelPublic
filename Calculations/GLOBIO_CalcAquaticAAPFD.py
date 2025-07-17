@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: mar 2022, MB, PBL
@@ -134,7 +134,7 @@ class GLOBIO_CalcAquaticAAPFD(CalculationBase):
     refMeanRaster = Raster()
     refMeanRaster.initRaster(extent,cellSize,np.float32,noDataValue,0.0)
     refMonthCntRaster = Raster()
-    refMonthCntRaster.initRaster(extent,cellSize,np.int16,0,0)
+    refMonthCntRaster.initRaster(extent,cellSize,np.int16,noDataValue,0)
 
     #refMeanRaster = 5.0
     
@@ -151,7 +151,7 @@ class GLOBIO_CalcAquaticAAPFD(CalculationBase):
       # Select mean > 0.0.
       dataMask = np.logical_and(dataMask,refRaster.r > 0.0) 
 
-      refMeanRaster.r[dataMask] += refRaster.r[dataMask]
+      refMeanRaster.r[dataMask] = refMeanRaster.r[dataMask] + refRaster.r[dataMask]
       refMonthCntRaster.r[dataMask] += 1
       #refMeanRaster.r[dataMask] = refMeanRaster.r[dataMask] + refRaster.r[dataMask]
       #refMeanRaster.r += 5.0
@@ -200,7 +200,7 @@ class GLOBIO_CalcAquaticAAPFD(CalculationBase):
       dataMask = np.logical_and(dataMask,fracMask)  
          
       # Calculate sum ((Q - Qref) / Qmean)^2.
-      outRaster.r[dataMask] += np.square((scenRaster.r[dataMask] - refRaster.r[dataMask]) / refMeanRaster.r[dataMask])  
+      outRaster.r[dataMask] += np.square( (scenRaster.r[dataMask] - refRaster.r[dataMask]) / refMeanRaster.r[dataMask])  
 
       # Clear mask.
       dataMask = None
@@ -212,8 +212,8 @@ class GLOBIO_CalcAquaticAAPFD(CalculationBase):
       refRaster = None
 
     # Close and free the reference annual mean raster  
-    refMeanRaster.close()
-    refMeanRaster = None
+    #refMeanRaster.close()
+    #refMeanRaster = None
 
     # Calculate squareroot of sum.
     outRaster.r = np.sqrt(outRaster.r)  
@@ -228,10 +228,13 @@ class GLOBIO_CalcAquaticAAPFD(CalculationBase):
     # Save the AAPFD raster.
     Log.info("Writing AAPFD raster...")
     outRaster.write()
+    refMeanRaster.write()
 
     # Cleanup.
     outRaster.close()
     outRaster = None
+    refMeanRaster.close()
+    refMeanRaster = None
           
     # Show used memory and disk space.
     MON.showMemDiskUsage()
@@ -242,9 +245,9 @@ class GLOBIO_CalcAquaticAAPFD(CalculationBase):
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
   try:
-    outDir = r"C:\Temp\_Globio4\out"
+    outDir = r""
     if not os.path.isdir(outDir):
-      outDir = r"G:\Data\out_v3"
+      outDir = r""
     inDir = outDir
 
     pCalc = GLOBIO_CalcAquaticAAPFD()

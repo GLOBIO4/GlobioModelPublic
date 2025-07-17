@@ -1,0 +1,151 @@
+#-------------------------------------------------------------------------------
+# Calculates aggregates per region for some terrestrial module outputs
+#-------------------------------------------------------------------------------
+
+BEGIN_RUN Calculations()
+
+  # Save temporary data (intermediate steps)? 
+  SaveTmpData = False
+  # Overwrite output?
+  OverwriteOutput = False
+
+  # The base directory wherein the project folder is located
+  DIR BaseInDir = 
+
+  # Directory where data is stored across multiple projects
+  DIR SharedDir = 
+
+  # ProjectName should reflect the project folder name under the BaseInDir folder.
+  STRING ProjectName = TemplateProject
+  # ScenarioName should reflect the name of the scenario folder name under the ScenarioRuns folder.
+  STRING ScenarioName = TemplateScenario
+  STRING ScenarioAbbreviation = TmplScn
+
+  # Folder for shared data for all scenarios within the project
+  DIR ProjectSharedDir = $BaseInDir;\$ProjectName;\SharedData
+  # The scenario folder
+  DIR ProjectScenarioDir = $BaseInDir;\$ProjectName;\ScenarioRuns\$ScenarioName;
+
+  InDir = $ProjectScenarioDir;\input
+  OutDir = $ProjectScenarioDir;\output
+  TmpDir = $ProjectScenarioDir;\tmp
+  LookupDir = $BaseInDir;\$ProjectName;\lookup
+
+  # Set the scenario run year to refer to correct input and output data
+  STRING ScenarioYear = 2020
+  
+  # Set region and resolution
+  # Defined extents: world, wrld, europe, eu, nl
+  Extent = world
+  STRING ExtentStr = WORLD
+  # Defined cell sizes: 10deg 1deg 30min 5min 30sec 10sec
+  CellSize = 10sec
+  STRING CellSizeStr = 10SEC
+
+  #-------------------------------------------------------------------------------
+  
+  # Shared input for both wbvert, plants and overall
+  RASTER LandUse = $OutDir;\Landuse_$CellSizeStr;_$ScenarioYear;_$ExtentStr;.tif
+  RASTER AreaRaster = $SharedDir;\Area_km2_$CellSizeStr;.tif
+  RASTER RegionRaster = $SharedDir;\Regions.tif
+  STRING RegionFilter = NONE
+  STRING RegionExcludeFilter = NONE
+
+  # input files
+  # wbvert
+  RASTER TerrestrialMSA_wbvert = $OutDir;\TerrestrialMSA_$ScenarioYear;_$ExtentStr;_wbvert.tif
+  RASTER LanduseMSA_contribution_wbvert = $OutDir;\LanduseMSA_$ScenarioYear;_$ExtentStr;_split_wbvert.tif
+  RASTER HumanEncroachmentMSA_contribution_wbvert = $OutDir;\HumanEncroachmentMSA_$ScenarioYear;_$ExtentStr;_split_wbvert.tif
+  RASTER ClimateChangeMSA_contribution_wbvert = $OutDir;\ClimateChangeMSA_$ScenarioYear;_$ExtentStr;_split_wbvert.tif
+  RASTER InfraDisturbanceMSA_contribution_wbvert = $OutDir;\InfraDisturbanceMSA_$ScenarioYear;_$ExtentStr;_split_wbvert.tif
+  RASTER InfraFragmentationMSA_contribution_wbvert = $OutDir;\InfraFragmentationMSA_$ScenarioYear;_$ExtentStr;_split_wbvert.tif  
+  RASTERLIST MSAContributions_wbvert = $TerrestrialMSA_wbvert;|$LanduseMSA_contribution_wbvert;|$HumanEncroachmentMSA_contribution_wbvert;|$ClimateChangeMSA_contribution_wbvert;|$InfraDisturbanceMSA_contribution_wbvert;|$InfraFragmentationMSA_contribution_wbvert;
+  # plants
+  RASTER TerrestrialMSA_plants = $OutDir;\TerrestrialMSA_$ScenarioYear;_$ExtentStr;_plants.tif
+  RASTER LanduseMSA_contribution_plants = $OutDir;\LanduseMSA_$ScenarioYear;_$ExtentStr;_split_plants.tif
+  RASTER ClimateChangeMSA_contribution_plants = $OutDir;\ClimateChangeMSA_$ScenarioYear;_$ExtentStr;_split_plants.tif
+  RASTER NDepositionMSA_contribution_plants = $OutDir;\NitrogenDepositionMSA_$ScenarioYear;_$ExtentStr;_split_plants.tif
+  RASTERLIST MSAContributions_plants = $TerrestrialMSA_plants;|$LanduseMSA_contribution_plants;|$NDepositionMSA_contribution_plants;|$ClimateChangeMSA_contribution_plants;
+  # overall
+  RASTER TerrestrialMSA = $OutDir;\TerrestrialMSA_$ScenarioYear;_$ExtentStr;.tif
+  RASTER LanduseMSA_contribution = $OutDir;\LanduseMSA_$ScenarioYear;_$ExtentStr;_split.tif
+  RASTER HumanEncroachmentMSA_contribution = $OutDir;\HumanEncroachmentMSA_$ScenarioYear;_$ExtentStr;_split.tif
+  RASTER NDepositionMSA_contribution = $OutDir;\NitrogenDepositionMSA_$ScenarioYear;_$ExtentStr;_split.tif
+  RASTER ClimateChangeMSA_contribution = $OutDir;\ClimateChangeMSA_$ScenarioYear;_$ExtentStr;_split.tif
+  RASTER InfraDisturbanceMSA_contribution = $OutDir;\InfraDisturbanceMSA_$ScenarioYear;_$ExtentStr;_split.tif
+  RASTER InfraFragmentationMSA_contribution = $OutDir;\InfraFragmentationMSA_$ScenarioYear;_$ExtentStr;_split.tif
+  RASTERLIST MSAContributions = $TerrestrialMSA;|$LanduseMSA_contribution;|$HumanEncroachmentMSA_contribution;|$NDepositionMSA_contribution;|$ClimateChangeMSA_contribution;|$InfraDisturbanceMSA_contribution;|$InfraFragmentationMSA_contribution;
+  
+  # output files
+  # wbvert
+  FILE OutRegionAreasFileName_wbvert = $OutDir;\RegionAreas_$ScenarioYear;_$ExtentStr;_wbvert.csv
+  FILE OutRegionLandUseAreasFileName_wbvert = $OutDir;\RegionLandUseAreas_$ScenarioYear;_$ExtentStr;_wbvert.csv
+  FILE OutRegionMSAAreasFileName_wbvert = $OutDir;\MSARegionsAreas_$ScenarioYear;_$ExtentStr;_wbvert.csv
+  FILE OutRegionLUAreasFileName_wbvert = $OutDir;\LanduseMSARegionsAreas_$ScenarioYear;_$ExtentStr;_wbvert.csv
+  FILE OutRegionHEAreasFileName_wbvert = $OutDir;\HumanEncroachmentMSARegionsAreas_$ScenarioYear;_$ExtentStr;_wbvert.csv
+  FILE OutRegionCCAreasFileName_wbvert = $OutDir;\ClimateChangeMSARegionsAreas_$ScenarioYear;_$ExtentStr;_wbvert.csv
+  FILE OutRegionIDAreasFileName_wbvert = $OutDir;\InfraDisturbanceMSARegionsAreas_$ScenarioYear;_$ExtentStr;_wbvert.csv
+  FILE OutRegionIFAreasFileName_wbvert = $OutDir;\InfraFragmentationMSARegionsAreas_$ScenarioYear;_$ExtentStr;_wbvert.csv
+  STRING OutRegionMSAAreasFilenames_wbvert = $OutRegionMSAAreasFileName_wbvert;|$OutRegionLUAreasFileName_wbvert;|$OutRegionHEAreasFileName_wbvert;|$OutRegionCCAreasFileName_wbvert;|$OutRegionIDAreasFileName_wbvert;|$OutRegionIFAreasFileName_wbvert;
+  # plants
+  FILE OutRegionAreasFileName_plants = $OutDir;\RegionAreas_$ScenarioYear;_$ExtentStr;_plants.csv
+  FILE OutRegionLandUseAreasFileName_plants = $OutDir;\RegionLandUseAreas_$ScenarioYear;_$ExtentStr;_plants.csv
+  FILE OutRegionMSAAreasFileName_plants = $OutDir;\MSARegionsAreas_$ScenarioYear;_$ExtentStr;_plants.csv
+  FILE OutRegionLUAreasFileName_plants = $OutDir;\LanduseMSARegionsAreas_$ScenarioYear;_$ExtentStr;_plants.csv
+  FILE OutRegionNDepAreasFileName_plants = $OutDir;\NitrogenDepositionMSARegionsAreas_$ScenarioYear;_$ExtentStr;_plants.csv
+  FILE OutRegionCCAreasFileName_plants = $OutDir;\ClimateChangeMSARegionsAreas_$ScenarioYear;_$ExtentStr;_plants.csv
+  STRING OutRegionMSAAreasFileNames_plants = $OutRegionMSAAreasFileName_plants;|$OutRegionLUAreasFileName_plants;|$OutRegionNDepAreasFileName_plants;|$OutRegionCCAreasFileName_plants;
+  # overall
+  FILE OutRegionAreasFileName = $OutDir;\RegionAreas_$ScenarioYear;_$ExtentStr;.csv
+  FILE OutRegionLandUseAreasFileName = $OutDir;\RegionLandUseAreas_$ScenarioYear;_$ExtentStr;.csv
+  FILE OutRegionMSAAreasFileName = $OutDir;\MSARegionsAreas_$ScenarioYear;_$ExtentStr;.csv
+  FILE OutRegionLUAreasFileName = $OutDir;\LanduseMSARegionsAreas_$ScenarioYear;_$ExtentStr;.csv
+  FILE OutRegionHEAreasFileName = $OutDir;\HumanEncroachmentMSARegionsAreas_$ScenarioYear;_$ExtentStr;.csv
+  FILE OutRegionNDepAreasFileName = $OutDir;\NitrogenDepositionMSARegionsAreas_$ScenarioYear;_$ExtentStr;.csv
+  FILE OutRegionCCAreasFileName = $OutDir;\ClimateChangeMSARegionsAreas_$ScenarioYear;_$ExtentStr;.csv
+  FILE OutRegionIDAreasFileName = $OutDir;\InfraDisturbanceMSARegionsAreas_$ScenarioYear;_$ExtentStr;.csv
+  FILE OutRegionIFAreasFileName = $OutDir;\InfraFragmentationMSARegionsAreas_$ScenarioYear;_$ExtentStr;.csv
+  STRING OutRegionMSAAreasFileNames = $OutRegionMSAAreasFileName;|$OutRegionLUAreasFileName;|$OutRegionHEAreasFileName;|$OutRegionNDepAreasFileName;|$OutRegionCCAreasFileName;|$OutRegionIDAreasFileName;|$OutRegionIFAreasFileName;
+  
+  #-------------------------------------------------------------------------------
+  # Start running.
+  #-------------------------------------------------------------------------------  
+
+  # wbvert
+  RUN_MODULE CalcMSAregion(
+          $Extent,$CellSize,
+          $AreaRaster,$LandUse,
+          $RegionRaster,$RegionFilter,$RegionExcludeFilter,
+          $MSAContributions_wbvert,
+          $OutRegionAreasFileName_wbvert,
+          $OutRegionLandUseAreasFileName_wbvert,
+          $OutRegionMSAAreasFileNames_wbvert
+  )
+
+  # plants
+  RUN_MODULE CalcMSAregion(
+          $Extent,$CellSize,
+          $AreaRaster,$LandUse,
+          $RegionRaster,$RegionFilter,$RegionExcludeFilter,
+          $MSAContributions_plants,
+          $OutRegionAreasFileName_plants,
+          $OutRegionLandUseAreasFileName_plants,
+          $OutRegionMSAAreasFileNames_plants
+  )
+
+  # overall                      
+  RUN_MODULE CalcMSAregion(
+          $Extent,$CellSize,
+          $AreaRaster,$LandUse,
+          $RegionRaster,$RegionFilter,$RegionExcludeFilter,
+          $MSAContributions,
+          $OutRegionAreasFileName,
+          $OutRegionLandUseAreasFileName,
+          $OutRegionMSAAreasFileNames
+  )                         
+
+END_RUN
+
+#-------------------------------------------------------------------------------
+
+RUN Calculations()

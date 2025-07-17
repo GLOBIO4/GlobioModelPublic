@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 2 nov 2016, ES, ARIS B.V.
@@ -70,8 +70,6 @@ class Grass(object):
     # Get the user temp dir.
     userTempDir = Utils.getUserTempDir()
     # Make sure the server (in our case Azure VM) has a large scratch-drive.
-    # 20201116
-    #userTempDir = "Y:\\"
 
     # Set grass temp dir.
     grassTempDir = os.path.join(userTempDir,"Grass")

@@ -2,7 +2,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 30 aug 2017, ES, ARIS B.V.
@@ -105,11 +105,12 @@ class GLOBIO_CalcLanduseMSARestoration(CalculationBase):
     #-----------------------------------------------------------------------------
     # Lookup the MSA value for landuse.
     #-----------------------------------------------------------------------------
+    noDataValue = -999.0
 
     # Do lookup.
     lookupFieldTypes = ["I","F"]
-    outRasterWB = self.reclassUniqueValues(luRaster,lookupFileNameWB,lookupFieldTypes,np.float32)
-    outRasterPl = self.reclassUniqueValues(luRaster,lookupFileNamePL,lookupFieldTypes,np.float32)
+    outRasterWB = self.reclassUniqueValues(luRaster,lookupFileNameWB,lookupFieldTypes,np.float32,noDataValue)
+    outRasterPl = self.reclassUniqueValues(luRaster,lookupFileNamePL,lookupFieldTypes,np.float32,noDataValue)
     
     #-----------------------------------------------------------------------------
     # Restoration years update
@@ -147,24 +148,25 @@ class GLOBIO_CalcLanduseMSARestoration(CalculationBase):
     outRasterWB.r[luSecveg_mask] = restYearsWB.r[luSecveg_mask]
     outRasterPl.r[luSecveg_mask] = restYearsPL.r[luSecveg_mask]
 
+    maskWB = (outRasterWB.r != outRasterWB.noDataValue) & (outRasterWB.r != noDataValue)
+    Log.info("Writing %s..." % (outRasterName.replace(".tif","_wbvert.tif")))
+    outRasterWB.writeAs(outRasterName.replace(".tif","_wbvert.tif"))
+
+    maskPl = (outRasterPl.r != outRasterPl.noDataValue) & (outRasterPl.r != noDataValue)
+    Log.info("Writing %s..." % (outRasterName.replace(".tif","_plants.tif")))
+    outRasterPl.writeAs(outRasterName.replace(".tif","_plants.tif"))
+
     # Create the land use MSA raster.
     Log.info("Creating the final land use MSA raster...")
-    noDataValue = -999.0
+    
     outRaster = Raster(outRasterName)
     outRaster.initRaster(extent,cellSize,np.float32,noDataValue)
 
-    mask = (outRasterWB.r != outRasterWB.noDataValue) & (outRasterWB.r != noDataValue)
-    
-    # Writing the 3 rasters to a file
-    outRaster.r[mask] = (outRasterWB.r[mask])
-    Log.info("Writing %s..." % (outRasterName.replace(".tif","_wbvert.tif")))
-    outRaster.writeAs(outRasterName.replace(".tif","_wbvert.tif"))
-    outRaster.r[mask] = (outRasterPl.r[mask])
-    Log.info("Writing %s..." % (outRasterName.replace(".tif","_plants.tif")))
-    outRaster.writeAs(outRasterName.replace(".tif","_plants.tif"))
+    mask = maskWB & maskPl
     outRaster.r[mask] = (outRasterWB.r[mask] + outRasterPl.r[mask])/2
+
     Log.info("Writing %s..." % outRasterName)
-    outRaster.writeAs(outRasterName)
+    outRaster.write()
 
     # Close and free the input rasters.
     del luRaster
@@ -173,6 +175,8 @@ class GLOBIO_CalcLanduseMSARestoration(CalculationBase):
     del restYearsPL
 
     del mask
+    del maskWB
+    del maskPl
     del luSecveg_mask
     del restOngoing_mask
     del restNew_mask
@@ -189,28 +193,3 @@ class GLOBIO_CalcLanduseMSARestoration(CalculationBase):
     self.showEndMsg()
 
 #-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
-if __name__ == "__main__":
-  pass
-  # try:
-  #   inDir = r"Y:\data\GLOBIO\GLOBIO4\Beheer\Terra\SourceCode\GLOBIO_411_src20180925\src\Globio\Test\Calculations"
-  #   lookupDir = r"Y:\data\GLOBIO\GLOBIO4\Models\Terra\Shared\LookupGlobal"
-  #   outDir = r"Y:\data\GLOBIO\GLOBIO4\Beheer\Terra\SourceCode\GLOBIO_411_src20180925\src\Globio\Test\Calculations"
-  #   if not os.path.isdir(outDir):
-  #     outDir = r"S:\hilbersj"
-  #
-  #   pCalc = GLOBIO_CalcLanduseMSA()
-  #
-  #   ext = [-40,-39,5,6] #GLOB.constants["world"].value
-  #   lu = os.path.join(inDir,"ESACCI_LC_1992_v207.tif")
-  #   luwb = os.path.join(lookupDir,"LanduseMSA_v11_WBvert.csv")
-  #   lupl = os.path.join(lookupDir,"LanduseMSA_v11_Plants.csv")
-  #   msa = os.path.join(outDir,"LandUseMSA_test.tif")
-  #
-  #   if RU.rasterExists(msa):
-  #     RU.rasterDelete(msa)
-  #
-  #   pCalc.run(ext,lu,luwb,lupl,msa)
-  #
-  # except:
-  #   Log.err()

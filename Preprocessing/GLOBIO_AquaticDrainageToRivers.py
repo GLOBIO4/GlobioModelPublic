@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 9 nov 2018, ES, ARIS B.V.
@@ -166,16 +166,16 @@ if __name__ == "__main__":
       cs = GLOB.constants[cellSizeName].value
 
       if extentName == "nl":
-        inShpDir = r"G:\Data\Globio4LA\data\referentie\v4012\vector\test_20181109"
+        inShpDir = r""
         inShp = "drainage_lines24.shp"
       else:
-        inShpDir = r"G:\data\Globio4LA\data\pbl_20181023\VBarbarossa\flo1k_hydrography"
+        inShpDir = r""
         inShp = "drainage_lines24.shp"
 
-      inRasDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181026"
+      inRasDir = r""
       inRas = "flo1k_qav_2015.tif"
 
-      outDir = r"G:\data\Globio4LA\data\referentie\v4012\vector\in_20181123"
+      outDir = r""
       outShp = "rivers_%s.shp" % extentName
 
       th = 0.0
@@ -221,16 +221,16 @@ if __name__ == "__main__":
       cs = GLOB.constants[cellSizeName].value
 
       if extentName == "nl":
-        inShpDir = r"G:\Data\Globio4LA\data\referentie\v4012\vector\test_20181109"
+        inShpDir = r""
         inShp = "drainage_lines24.shp"
       else:
-        inShpDir = r"G:\data\Globio4LA\data\pbl_20181023\VBarbarossa\flo1k_hydrography"
+        inShpDir = r""
         inShp = "drainage_lines24.shp"
 
-      inRasDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181026"
+      inRasDir = r""
       inRas = "flo1k_qav_2015.tif"
 
-      outDir = r"G:\data\Globio4LA\data\referentie\v4012\vector\in_20181123"
+      outDir = r""
       outShp = "rivers_%s.shp" % extentName
 
       th = 0.0

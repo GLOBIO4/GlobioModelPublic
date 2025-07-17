@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 9 nov 2019, JH
@@ -36,62 +36,36 @@ class GLOBIO_CalcSplitImpactsMSA(CalculationBase):
     """
     IN EXTENT Extent
     IN CELLSIZE CellSize
-    IN RASTER LanduseMSA
-    IN RASTER HumanEncroachmentMSA
-    IN RASTER NDepositionMSA
-    IN RASTER ClimateChangeMSA
-    IN RASTER InfraDisturbanceMSA
-    IN RASTER InfraFragmentationMSA
+    IN RASTERLIST ImpactsMSA
     IN RASTER TerrestrialMSA
-    OUT RASTER LanduseMSA_contribution
-    OUT RASTER HumanEncroachmentMSA_contribution
-    OUT RASTER NDepositionMSA_contribution
-    OUT RASTER ClimateChangeMSA_contribution
-    OUT RASTER InfraDisturbanceMSA_contribution
-    OUT RASTER InfraFragmentationMSA_contribution
+    OUT RASTERLIST ImpactContributionsMSA
     OUT RASTER TotalLossTerrestrialMSA
     """
     self.showStartMsg(args)
 
     # Check number of arguments.
-    if len(args)<=15:
+    if len(args)!=6:
       Err.raiseGlobioError(Err.InvalidNumberOfArguments2,len(args),self.name)
 
     # Get arguments.
     extent = args[0]
     cellSize = args[1]
-    landuseMSAName = args[2]
-    humanEncMSAName = args[3]
-    nDepMSAName = args[4]
-    climChangeMSAName = args[5]
-    infraDistMSAName = args[6]
-    infraFragMSAName = args[7]
-    terrRasterName = args[8]
-    outRasterNameLU = args[9]
-    outRasterNameHE = args[10]
-    outRasterNameND = args[11]
-    outRasterNameCC = args[12]
-    outRasterNameID = args[13]
-    outRasterNameIF = args[14]
-    outRasterNameTL = args[15]
+    impactsRasterNames = args[2]
+    terrRasterName = args[3]
+    impactContributionsRasterNames = args[4]
+    totalLossRasterName = args[5]
 
     # Check arguments.
     self.checkExtent(extent)
     self.checkCellSize(cellSize)
-    self.checkRaster(landuseMSAName,optional=True)
-    self.checkRaster(humanEncMSAName,optional=True)
-    self.checkRaster(nDepMSAName,optional=True)
-    self.checkRaster(climChangeMSAName,optional=True)
-    self.checkRaster(infraDistMSAName,optional=True)
-    self.checkRaster(infraFragMSAName,optional=True)
+    self.checkRasterList(impactsRasterNames)
     self.checkRaster(terrRasterName)
-    self.checkRaster(outRasterNameLU,asOutput=True,optional=True)
-    self.checkRaster(outRasterNameHE,asOutput=True,optional=True)
-    self.checkRaster(outRasterNameND,asOutput=True,optional=True)
-    self.checkRaster(outRasterNameCC,asOutput=True,optional=True)
-    self.checkRaster(outRasterNameID,asOutput=True,optional=True)
-    self.checkRaster(outRasterNameIF,asOutput=True,optional=True)
-    self.checkRaster(outRasterNameTL,asOutput=True,optional=True)
+    self.checkListCount(impactContributionsRasterNames, impactsRasterNames)
+    self.checkRasterList(impactContributionsRasterNames, asOutput=True)
+    self.checkRaster(totalLossRasterName,asOutput=True,optional=True)
+
+    impactsRasterNames = self.splitStringList(impactsRasterNames)
+    impactContributionsRasterNames = self.splitStringList(impactContributionsRasterNames)
 
     # Align extent.
     extent = RU.alignExtent(extent,cellSize)
@@ -99,33 +73,22 @@ class GLOBIO_CalcSplitImpactsMSA(CalculationBase):
     # Set members.
     self.extent = extent
     self.cellSize = cellSize
-    self.outDir = os.path.dirname(outRasterNameLU)
+    self.outDir = os.path.dirname(totalLossRasterName)
 
     # Enable monitor and show memory and disk space usage.
     MON.showMemDiskUsage(Log,"- ","",self.outDir)
 
-    # Create a list with all msa rasters.
-    msaRasterNames = [landuseMSAName,humanEncMSAName,
-                      nDepMSAName,climChangeMSAName,
-                      infraDistMSAName,infraFragMSAName,terrRasterName]
-    msaDescriptions = ["landuse","human encroachment",
-                       "N-deposition","climate change",
-                       "infrastructure disturbance","infrastructure fragmentation","terrestrial MSA"]
-    msaOutRasterNames = [outRasterNameLU,outRasterNameHE,
-                         outRasterNameND,outRasterNameCC,
-                         outRasterNameID,outRasterNameIF,outRasterNameTL]
-
     # Create summed terrestrial MSA loss raster.
     Log.info("Creating terrestrial MSA loss raster...")
     noDataValue = -999.0
-    outRasterLoss = Raster(msaOutRasterNames[-1])
+    outRasterLoss = Raster(totalLossRasterName)
     outRasterLoss.initRaster(extent,cellSize,np.float32,noDataValue)
 
     # Calculate total MSA.
     Log.info("Calculating total terrestrial MSA loss raster...")
-    for i in range(len(msaRasterNames)-1):
-      msaRasterName = msaRasterNames[i]
-      msaDescription = msaDescriptions[i]
+    for i in range(len(impactsRasterNames)):
+      msaRasterName = impactsRasterNames[i]
+      msaDescription = f"impact msa raster {i}"
 
       if (not self.isValueSet(msaRasterName)):
           continue
@@ -143,10 +106,10 @@ class GLOBIO_CalcSplitImpactsMSA(CalculationBase):
 
           if i == 0:
               firstmask = (msaRaster.r != msaRaster.noDataValue)
-              outRasterLoss.r[firstmask] = (1-msaRaster.r[firstmask])
+              outRasterLoss.r[firstmask] = (1 - msaRaster.r[firstmask])
           else:
               mask = (outRasterLoss.r != outRasterLoss.noDataValue) & (msaRaster.r != msaRaster.noDataValue)
-              outRasterLoss.r[mask] += (1-msaRaster.r[mask])
+              outRasterLoss.r[mask] += (1 - msaRaster.r[mask])
 
           # Clear mask.
           mask = None
@@ -166,24 +129,24 @@ class GLOBIO_CalcSplitImpactsMSA(CalculationBase):
   # Calculate individual MSA impacts.
     Log.info("Calculating individual MSA impacts raster...")
 
-    msaRasterNameOverall = msaRasterNames[-1]
-    msaDescriptionOverall = msaDescriptions[-1]
+    msaRasterNameOverall = terrRasterName
+    msaDescriptionOverall = "terrestrial msa"
     msaRasterOverall = self.readAndPrepareInRaster(extent,cellSize,msaRasterNameOverall,msaDescriptionOverall)
 
-    outRasterLossTotal = self.readAndPrepareInRaster(extent,cellSize,msaOutRasterNames[-1],"msa loss")
+    outRasterLossTotal = self.readAndPrepareInRaster(extent,cellSize,totalLossRasterName,"msa loss")
 
-    for i in range(len(msaRasterNames)-1):
-      msaRasterName = msaRasterNames[i]
-      msaDescription = msaDescriptions[i]
+    for i in range(len(impactsRasterNames)):
+      msaRasterName = impactsRasterNames[i]
+      msaDescription = f"impact msa raster {i}"
 
-      if (not self.isValueSet(msaRasterName)):
+      if (not self.isValueSet(msaRasterName)) or (not self.isValueSet(impactContributionsRasterNames[i])):
           continue
       else:
 
           # Create terrestrial MSA raster.
           # Initialize with noDataValue.
           noDataValue = -999.0
-          outRasterLossInd = Raster(msaOutRasterNames[i])
+          outRasterLossInd = Raster(impactContributionsRasterNames[i])
           outRasterLossInd.initRaster(extent,cellSize,np.float32,noDataValue)
 
           #-----------------------------------------------------------------------------
@@ -228,12 +191,10 @@ class GLOBIO_CalcSplitImpactsMSA(CalculationBase):
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
   try:
-    inDir = r"Y:\data\GLOBIO\GLOBIO4\Beheer\Terra\SourceCode\GLOBIO_411_src20180925\src\Globio\Test\Calculations"
-    mapDir = r"Y:\data\GLOBIO\GLOBIO4\Models\Terra\Shared\geodata\GlobalTifs\res_10sec"
-    lookupDir = r"Y:\data\GLOBIO\GLOBIO4\Models\Terra\Shared\LookupGlobal"
-    outDir = r"Y:\data\GLOBIO\GLOBIO4\Beheer\Terra\SourceCode\GLOBIO_411_src20180925\src\Globio\Test\Calculations"
-    if not os.path.isdir(outDir):
-      outDir = r"S:\hilbersj"
+    inDir = r""
+    mapDir = r""
+    lookupDir = r""
+    outDir = r""
 
     pCalc = GLOBIO_CalcSplitImpactsMSA()
 
@@ -246,6 +207,7 @@ if __name__ == "__main__":
     cc = os.path.join(inDir,"ClimateChangeMSA_test.tif")
     di = os.path.join(inDir,"InfraDisturbanceMSA_test.tif")
     fr = os.path.join(inDir,"InfraFragmentationMSA_test.tif")
+    impacts = "|".join([lu, he, nd, cc, di, fr])
     ter = os.path.join(inDir,"TerrestrialMSA_test.tif")
     luco = os.path.join(outDir,"LanduseMSA_test1.tif")
     heco = os.path.join(outDir,"HumanEncroachmentMSA_test1.tif")
@@ -253,9 +215,10 @@ if __name__ == "__main__":
     ccco = os.path.join(outDir,"ClimateChangeMSA_test1.tif")
     idco = os.path.join(outDir,"InfraDisturbanceMSA_test1.tif")
     ifco = os.path.join(outDir,"InfraFragmentationMSA_test1.tif")
+    contrib = "|".join(luco, heco, ndco, ccco, idco, ifco)
     ttl = os.path.join(outDir,"TotalMSAloss_test1.tif")
 
-    pCalc.run(ext,cs,lu,he,nd,cc,di,fr,ter,luco,heco,ndco,ccco,idco,ifco,ttl)
+    pCalc.run(ext,cs,impacts,ter,contrib,ttl)
 
   except:
     Log.err()

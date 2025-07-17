@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 10 may 2017, ES, ARIS B.V.
@@ -239,14 +239,9 @@ if __name__ == "__main__":
   #-----------------------------------------------------------------------------
   def test1():
     try:
-      # inDir = r"G:\data\referentie\v401\30sec_wrld\out"
-      # refDir = r"G:\data\out_wrld"
-      # # Contains a raster from which 1 is added to the value of one cel.
-      # refDir = r"G:\data\referentie\v000\30sec_wrld\out"
-
       # 20170510
-      refDir = r"G:\data\Globio4LA\data\referentie\v401\30sec_eu\out"
-      inDir = r"G:\data\Globio4LA\data\out\v406\30sec_eu_hetzner\globio_20170509"
+      refDir = r""
+      inDir = r""
 
       pCalc = GLOBIO_CompareRasters()
       RasterName = "TerrestrialMSA.tif"
@@ -323,14 +318,14 @@ if __name__ == "__main__":
       inRas = td.createRasterSuitForestry_v3()
       UT.printArray("inRas",inRas)
 
-      inRasName = r"C:\Temp\test1.tif"
+      inRasName = r""
       RU.rasterDelete(inRasName)
       td.createTestGrid(inRasName,inRas,td.extent,td.cellSize)
 
       refRas = td.createRasterSuitForestry_v2()
       UT.printArray("refRas",refRas)
 
-      refRasName = r"C:\Temp\test2.tif"
+      refRasName = r""
       RU.rasterDelete(refRasName)
       td.createTestGrid(refRasName,refRas,td.extent,td.cellSize)
 
@@ -352,12 +347,11 @@ if __name__ == "__main__":
     import GlobioModel.Common.Utils as UT
 
     try:
-      inRasName = r"G:\data\referentie\v4016\30sec_eu\aq_pre_20201214_linux/scen_streamflow.tif"
-
-      refRasName = r"G:\data\referentie\v410\30sec_eu\aq_pre_nok_20201218/scen_streamflow.tif"
+      inRasName = r""
+      refRasName = r""
 
       pCalc = GLOBIO_CompareRasters()
-      pCalc.run(refRasName,refRasName)
+      pCalc.run(inRasName,refRasName)
 
       del pCalc
     except:

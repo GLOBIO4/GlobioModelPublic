@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 1 feb 2017, ES, ARIS B.V.
@@ -297,6 +297,9 @@ class GLOBIO_CalcDiscreteLanduseAllocationScenSuit(CalculationBase):
       regionMask = (regionRaster.r == region)
       # Get landcover types in region.
       lcTypes = np.unique(landcoverRaster.r[regionMask])
+      # if there are no land cover types in the region, abort since labeled_comprehension will complain
+      if lcTypes.nbytes == 0:
+        continue
       # Calculate sum of areas per landcover type.
       areaSum = scipy.ndimage.labeled_comprehension(areaRaster.r[regionMask],
                                                     landcoverRaster.r[regionMask],
@@ -365,6 +368,9 @@ class GLOBIO_CalcDiscreteLanduseAllocationScenSuit(CalculationBase):
       regionMask = (regionRaster.r == region)
       # Get landuse types in region.
       luTypes = np.unique(landuseRaster.r[regionMask])
+      # if there are no land use types in the region, abort since labeled_comprehension will complain
+      if luTypes.nbytes == 0:
+        continue
       # Calculate sum of areas per landuse type.
       areaSum = scipy.ndimage.labeled_comprehension(areaRaster.r[regionMask],
                                                     landuseRaster.r[regionMask],
@@ -1149,7 +1155,10 @@ class GLOBIO_CalcDiscreteLanduseAllocationScenSuit(CalculationBase):
       currSuitRaster = self.readAndPrepareInRaster(extent,cellSize,
                             landuseType.suitRasterName,
                             landuseType.name + " suitability","- ")
-
+      
+      # Create the suitability mask by selection only cells with data (exclude NoData cells)
+      currSuitMaskLU = (currSuitRaster.r !=currSuitRaster.noDataValue)
+      
       ########### FOR TESTING.
       self.dbgPrintMinMaxNoData(currSuitRaster,"suitability")
       self.dbgPrintArray("currSuitRaster",currSuitRaster.r)
@@ -1241,7 +1250,7 @@ class GLOBIO_CalcDiscreteLanduseAllocationScenSuit(CalculationBase):
         #-----------------------------------------------------------------------------
 
         # Select the cells in the current region.
-        currSuitMask = (regionRaster.r == region)
+        currSuitMask = np.logical_and(currSuitMaskLU,(regionRaster.r == region))
 
         # Check regions.
         if np.sum(currSuitMask) == 0:
@@ -1395,6 +1404,9 @@ class GLOBIO_CalcDiscreteLanduseAllocationScenSuit(CalculationBase):
       # Close and free landuse suitability raster.
       currSuitRaster.close()
       currSuitRaster = None
+
+      # Free suitability LU mask
+      currSuitMaskLU = None
 
     # Close and free the cell area raster.
     areaRaster.close()
@@ -1679,36 +1691,26 @@ class GLOBIO_CalcDiscreteLanduseAllocationScenSuit(CalculationBase):
       outDirType = "referentie"
     else:
       outDirType = "out"
-    outDirTemplate = r"G:\Data\Globio4LA\data\%s\v405\%s_%s\landalloc"
+    outDirTemplate = r""
 
     #-----------------------------------------------------------------------------
     # Setting variables.
     #-----------------------------------------------------------------------------
     
-    inLandcoverDir = r"G:\Data\Globio4LA\data\referentie\v405\%s_%s\in_%s" % (inCellSizeName,inExtentName,landcoverRefVersion)
-    inRegionDir = r"G:\Data\Globio4LA\data\referentie\v405\%s_%s\in_%s" % (inCellSizeName,inExtentName,regionRefVersion)
-    inClaimDir = r"G:\Data\Globio4LA\data\referentie\v405\lookup\in_%s" % (claimRefVersion)
-    inSuitDir = r"G:\Data\Globio4LA\data\referentie\v405\%s_%s\suit_%s" % (inCellSizeName,inExtentName,suitRefVersion)
+    inLandcoverDir = r""
+    inRegionDir = r""
+    inClaimDir = r""
+    inSuitDir = r""
     inLanduseDir = inSuitDir
     inNotAllocDir = inLanduseDir
-    inPaDir = r"G:\Data\Globio4LA\data\referentie\v405\%s_%s\in_%s" % (inCellSizeName,inExtentName,paRefVersion)
+    inPaDir = r""
     areaDir = ""
 
     if cellSizeName == "10sec":
       # Gebruik originele esa landcover.
-      inLandcoverDir = r"G:\Data\Globio4LA\data\web_20161104\esa"
+      inLandcoverDir = r""
       # Gebruik 30sec region.
-      inRegionDir = r"G:\Data\Globio4LA\data\referentie\v405\30sec_wrld\in_%s" % (regionRefVersion)
-
-#    # 10sec en 10sec pa en suit invoer? 
-#    if (cellSizeName=="10sec") and (use10secAll):
-#      inCellSizeName = "10sec"
-#      suitRefVersion = "20170116"
-#      paRefVersion = "20170118"
-#      inSuitDir = r"G:\Data\Globio4LA\data\referentie\v405\%s_%s\suit_%s" % (inCellSizeName,inExtentName,suitRefVersion)
-#      inLanduseDir = inSuitDir
-#      inNotAllocDir = inSuitDir
-#      inPaDir = r"G:\Data\Globio4LA\data\referentie\v405\%s_%s\in_%s" % (inCellSizeName,inExtentName,paRefVersion)
+      inRegionDir = r""
 
     # Linux?
     if linux:

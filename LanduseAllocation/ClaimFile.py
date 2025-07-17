@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: -
@@ -99,8 +99,8 @@ if __name__ == "__main__":
   # OK
   def testReclass():
   
-    fileName = r"P:\Project\Globio4LA\data\PBL_20160916\Claims_2050.csv"
-    lookupFileName = r"P:\Project\Globio4LA\data\PBL_20160916\LanduseClassToLanduse.csv"
+    fileName = "Claims_2050.csv"
+    lookupFileName = "LanduseClassToLanduse.csv"
     
     landuseFieldName = "AggLUClass"
     regionFieldName = "IMGREGCD"

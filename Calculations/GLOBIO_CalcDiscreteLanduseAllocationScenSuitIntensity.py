@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: Dec 2021
@@ -284,6 +284,9 @@ class GLOBIO_CalcDiscreteLanduseAllocationScenSuitIntensity(CalculationBase):
       regionMask = (regionRaster.r == region)
       # Get landcover types in region.
       lcTypes = np.unique(landcoverRaster.r[regionMask])
+      # if there are no land cover types in the region, abort since labeled_comprehension will complain
+      if lcTypes.nbytes == 0:
+        continue
       # Calculate sum of areas per landcover type.
       areaSum = scipy.ndimage.labeled_comprehension(areaRaster.r[regionMask],
                                                     landcoverRaster.r[regionMask],
@@ -352,6 +355,9 @@ class GLOBIO_CalcDiscreteLanduseAllocationScenSuitIntensity(CalculationBase):
       regionMask = (regionRaster.r == region)
       # Get landuse types in region.
       luTypes = np.unique(landuseRaster.r[regionMask])
+      # if there are no land use types in the region, abort since labeled_comprehension will complain
+      if luTypes.nbytes == 0:
+        continue
       # Calculate sum of areas per landuse type.
       areaSum = scipy.ndimage.labeled_comprehension(areaRaster.r[regionMask],
                                                     landuseRaster.r[regionMask],

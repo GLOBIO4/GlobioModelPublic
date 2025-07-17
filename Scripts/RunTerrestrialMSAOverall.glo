@@ -1,0 +1,129 @@
+#-------------------------------------------------------------------------------
+# Combines the MSA impacts into a multi-pressure MSA
+# Step 2 of the terrestrial MSA calculations
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+BEGIN_RUN Calculations()
+
+  # Save temporary data (intermediate steps)? 
+  SaveTmpData = False
+  # Overwrite output?
+  OverwriteOutput = False
+
+  # The base directory wherein the project folder is located
+  DIR BaseInDir = 
+
+  # Directory where data is stored across multiple projects
+  DIR SharedDir = 
+
+  # ProjectName should reflect the project folder name under the BaseInDir folder.
+  STRING ProjectName = TemplateProject
+  # ScenarioName should reflect the name of the scenario folder name under the ScenarioRuns folder.
+  STRING ScenarioName = TemplateScenario
+
+  # Folder for shared data for all scenarios within the project
+  DIR ProjectSharedDir = $BaseInDir;\$ProjectName;\SharedData
+  # The scenario folder
+  DIR ProjectScenarioDir = $BaseInDir;\$ProjectName;\ScenarioRuns\$ScenarioName;
+
+  InDir = $ProjectScenarioDir;\input
+  OutDir = $ProjectScenarioDir;\output
+  TmpDir = $ProjectScenarioDir;\tmp
+  LookupDir = $BaseInDir;\$ProjectName;\lookup
+
+  # Set the scenario run year to refer to correct input and output data
+  STRING ScenarioYear = 2020
+  
+  # Set region and resolution
+  # Defined extents: world, wrld, europe, eu, nl
+  Extent = world
+  STRING ExtentStr = WORLD
+  # Defined cell sizes: 10deg 1deg 30min 5min 30sec 10sec
+  CellSize = 10sec
+  STRING CellSizeStr = 10SEC
+
+  #-------------------------------------------------------------------------------
+  
+  # Climate change module
+  RASTER ClimateChangeMSA = $OutDir;\ClimateChangeMSA_$ScenarioYear;_$ExtentStr;.tif
+  RASTER ClimateChangeMSA_wbvert = $OutDir;\ClimateChangeMSA_$ScenarioYear;_$ExtentStr;_wbvert.tif
+  RASTER ClimateChangeMSA_plants = $OutDir;\ClimateChangeMSA_$ScenarioYear;_$ExtentStr;_plants.tif
+  
+  # Land use module
+  RASTER LanduseMSA = $OutDir;\LanduseMSA_$ScenarioYear;_$ExtentStr;.tif
+  RASTER LanduseMSA_wbvert = $OutDir;\LanduseMSA_$ScenarioYear;_$ExtentStr;_wbvert.tif
+  RASTER LanduseMSA_plants = $OutDir;\LanduseMSA_$ScenarioYear;_$ExtentStr;_plants.tif
+ 
+  # Nitrogen deposition module
+  RASTER NDepositionMSA = $OutDir;\NitrogenDepositionMSA_$ScenarioYear;_$ExtentStr;.tif
+  RASTER NDepositionMSA_plants = $OutDir;\NitrogenDepositionMSA_$ScenarioYear;_$ExtentStr;_plants.tif
+  
+  # Human encroachment module
+  RASTER HumanEncroachmentMSA = $OutDir;\HumanEncroachmentMSA_$ScenarioYear;_$ExtentStr;.tif
+  RASTER HumanEncroachmentMSA_wbvert = $OutDir;\HumanEncroachmentMSA_$ScenarioYear;_$ExtentStr;_wbvert.tif
+  
+  # Infrastructure fragmentation module
+  RASTER InfraFragmentationMSA = $OutDir;\InfraFragmentationMSA_$ScenarioYear;_$ExtentStr;.tif
+  RASTER InfraFragmentationMSA_wbvert = $OutDir;\InfraFragmentationMSA_$ScenarioYear;_$ExtentStr;_wbvert.tif
+  
+  # Infrastructure disturbance module
+  RASTER InfraDisturbanceMSA = $OutDir;\InfraDisturbanceMSA_$ScenarioYear;_$ExtentStr;.tif
+  RASTER InfraDisturbanceMSA_wbvert = $OutDir;\InfraDisturbanceMSA_$ScenarioYear;_$ExtentStr;_wbvert.tif
+
+  # Impact lists
+  RASTERLIST ImpactsMSA = $LanduseMSA;|$HumanEncroachmentMSA;|$NDepositionMSA;|$ClimateChangeMSA;|$InfraDisturbanceMSA;|$InfraFragmentationMSA;
+  RASTERLIST ImpactsMSA_wbvert = $LanduseMSA_wbvert;|$HumanEncroachmentMSA_wbvert;|$ClimateChangeMSA_wbvert;|$InfraDisturbanceMSA_wbvert;|$InfraFragmentationMSA_wbvert;
+  RASTERLIST ImpactsMSA_plants = $LanduseMSA_plants;|$NDepositionMSA_plants;|$ClimateChangeMSA_plants;
+
+  # Area raster
+  RASTER AreaRaster = $SharedDir;\Areakm2_$CellSizeStr;.tif
+  
+  # Output terrestrial MSA
+  RASTER TerrestrialMSA = $OutDir;\TerrestrialMSA_$ScenarioYear;_$ExtentStr;.tif
+  RASTER TerrestrialMSA_wbvert = $OutDir;\TerrestrialMSA_$ScenarioYear;_$ExtentStr;_wbvert.tif
+  RASTER TerrestrialMSA_plants = $OutDir;\TerrestrialMSA_$ScenarioYear;_$ExtentStr;_plants.tif
+  RASTER TerrestrialMSA_area = $OutDir;\TerrestrialMSAArea_$ScenarioYear;_$ExtentStr;.tif
+
+  #-------------------------------------------------------------------------------
+  # Start running.
+  #-------------------------------------------------------------------------------
+  
+  # The result of this module should be the same as the result of the CalcOverallTerrestrialMSA
+  # so it usually does not need to be run
+  #RUN_MODULE CalcTerrestrialMSA(
+  #        $Extent,$CellSize,
+  #        $ImpactsMSA,
+  #        $TerrestrialMSA
+  #)
+  
+  # wbvert
+  RUN_MODULE CalcTerrestrialMSA(
+          $Extent,$CellSize,
+          $ImpactsMSA_wbvert,
+          $TerrestrialMSA_wbvert
+  )
+
+  # plants
+  RUN_MODULE CalcTerrestrialMSA(
+          $Extent,$CellSize,
+          $ImpactsMSA_plants,
+          $TerrestrialMSA_plants
+  )
+
+  # overall MSA, combining wbvert and plant species groups
+  RUN_MODULE CalcOverallTerrestrialMSA(
+          $Extent,$CellSize,
+          $TerrestrialMSA_wbvert,
+          $TerrestrialMSA_plants,
+          $AreaRaster,
+          $TerrestrialMSA,
+          $TerrestrialMSA_area
+  )
+  
+END_RUN
+
+#-------------------------------------------------------------------------------
+
+RUN Calculations()
+

@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 23 nov 2018, ES, ARIS B.V.
@@ -185,21 +185,21 @@ if __name__ == "__main__":
       cs = GLOB.constants[cellSizeName].value
 
       if extentName == "sp":
-        inShpDir = r"G:\Data\Globio4LA\data\referentie\v4012\vector\test_20190210"
+        inShpDir = r""
       else:
-        inShpDir = r"G:\Data\Globio4LA\data\referentie\v4012\vector\in_20181123"
+        inShpDir = r""
       if extentName == "eu":
         riv = "frag_river_fragments_%s.shp" % "wrld"
       else:
         riv = "frag_river_fragments_%s.shp" % extentName
 
-      inRasDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181123"
+      inRasDir = r""
       catch = "catchments.tif"
 
       if extentName == "sp":
-        outDir = r"G:\data\Globio4LA\data\referentie\v4012\%s_%s\in_20190206" % (cellSizeName,"nl")
+        outDir = r""
       else:
-        outDir = r"G:\data\Globio4LA\data\referentie\v4012\%s_%s\in_20190206" % (cellSizeName,extentName)
+        outDir = r""
       out = "frag_rci.tif"
 
       if os.path.isdir("/root"):
@@ -248,27 +248,23 @@ if __name__ == "__main__":
       cs = GLOB.constants[cellSizeName].value
 
       if extentName == "sp":
-        inShpDir = r"G:\Data\Globio4LA\data\referentie\v4012\vector\test_20190210"
+        inShpDir = r""
       else:
-        inShpDir = r"G:\Data\Globio4LA\data\referentie\v4012\vector\in_20181123"
+        inShpDir = r""
       if extentName == "eu":
         riv = "frag_river_fragments_%s.shp" % "wrld"
       else:
         riv = "frag_river_fragments_%s.shp" % extentName
 
       # 20200908
-      #inRasDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181123"
-      # P:\Project\Globio4LA\data\pbl_20200806\xGlobio-aqua\flo1k_hydrography
-      inRasDir = r"G:\data\Globio4LA\data\pbl_20200806\xGlobio-aqua\flo1k_hydrography"
+      inRasDir = r""
       #catch = "catchments.tif"
       catch = "basins.tif"
 
       if extentName == "sp":
-        #outDir = r"G:\data\Globio4LA\data\referentie\v4012\%s_%s\in_20190206" % (cellSizeName,"nl")
-        outDir = r"G:\data\Globio4LA\data\referentie\v4015\%s_%s\in_20200909" % (cellSizeName,"nl")
+        outDir = r""
       else:
-        #outDir = r"G:\data\Globio4LA\data\referentie\v4012\%s_%s\in_20190206" % (cellSizeName,extentName)
-        outDir = r"G:\data\Globio4LA\data\referentie\v4015\%s_%s\in_20200909" % (cellSizeName,extentName)
+        outDir = r""
       out = "frag_rci.tif"
 
       if os.path.isdir("/root"):

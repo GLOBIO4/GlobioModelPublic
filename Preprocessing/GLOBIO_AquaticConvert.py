@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Usage:
@@ -143,8 +143,8 @@ class GLOBIO_AquaticConvert(CalculationBase):
     Log.info("Extent: %s" % extent)
     Log.info("CellSize: %s" % cellSize)
 
-    inDir = r"G:\data\Globio4LA\data\pbl_20181023\HydroLakes\shapefile"
-    outDir = r"G:\Data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181026"
+    inDir = r""
+    outDir = r""
 
     vectors = [("HydroLAKES_polys_v10",
                 "lake_depth",
@@ -197,7 +197,7 @@ class GLOBIO_AquaticConvert(CalculationBase):
     Log.info("Running: " + UT.getMethodName())
     Log.info("")
 
-    inDir = r"G:\Data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181026"
+    inDir = r""
 
     rasters = [("GLWD","glwd"),("Lake depth","lake_depth")]
                
@@ -236,7 +236,7 @@ class GLOBIO_AquaticConvert(CalculationBase):
     Log.info("")
 
     rasters = [("GLWD",
-                r"G:\data\Globio4LA\data\pbl_20181023\GLWD\GLWD-level3",
+                "GLWD-level3",
                 "glwd_3",
                 "glwd",
                 np.uint8,True)]
@@ -246,7 +246,7 @@ class GLOBIO_AquaticConvert(CalculationBase):
     outCellSize = GLOB.constants[outCellSizeName].value
     outCheckAlignExtent=True
 
-    outDir = r"G:\Data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181026"
+    outDir = r""
     
     # Set members.
     self.outDir = outDir
@@ -300,7 +300,7 @@ class GLOBIO_AquaticConvert(CalculationBase):
     Log.info("")
 
     rasters = [("FLO1K qav",
-                r"G:\data\Globio4LA\data\pbl_20181023\FLO1K\FLO1K_upscaled_5min",
+                "FLO1K_upscaled_5min",
                 "FLO1K.5min.ts.1960.2015.qav.nc",
                 "flo1k_qav_5min",
                 np.float32,True,33)]
@@ -311,7 +311,7 @@ class GLOBIO_AquaticConvert(CalculationBase):
     outCellSizeName = "5min"
     outCellSize = GLOB.constants[outCellSizeName].value
     
-    outDir = r"G:\Data\Globio4LA\data\kanweg"
+    outDir = r""
     
     # Set members.
     self.outDir = outDir
@@ -377,8 +377,8 @@ class GLOBIO_AquaticConvert(CalculationBase):
     Log.info("Extent: %s" % extent)
     Log.info("CellSize: %s" % cellSize)
 
-    inDir = r"P:\Project\Globio4LA\data\pbl_20181023\VBarbarossa\flo1k_hydrography"
-    outDir = r"G:\Data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181026"
+    inDir = r""
+    outDir = r""
 
     vectors = [("drainage_lines24",
                 "rivers",
@@ -446,7 +446,7 @@ class GLOBIO_AquaticConvert(CalculationBase):
       Log.info("NrCols/NrRows: %s %s" % (nrCols,nrRows))
       Log.info("NrCells: %s " % (nrCols*nrRows))
   
-      outDir = r"G:\Data\Globio4LA\data\referentie\v4012\%s_wrld\in_20181026\shp" % cellSizeName
+      outDir = r""
 
       if os.path.isdir("/root"):
         outDir = UT.toLinux(outDir)
@@ -499,7 +499,7 @@ class GLOBIO_AquaticConvert(CalculationBase):
       Log.info("NrCols/NrRows: %s %s" % (nrCols,nrRows))
       Log.info("NrCells: %s " % (nrCols*nrRows))
   
-      outDir = r"G:\Data\Globio4LA\data\referentie\v4012\%s_wrld\test_20181119" % cellSizeName
+      outDir = r""
 
       if os.path.isdir("/root"):
         outDir = UT.toLinux(outDir)
@@ -556,7 +556,7 @@ class GLOBIO_AquaticConvert(CalculationBase):
       Log.info("NrCols/NrRows: %s %s" % (nrCols,nrRows))
       Log.info("NrCells: %s " % (nrCols*nrRows))
   
-      outDir = r"G:\Data\Globio4LA\data\referentie\v4012\%s_wrld\test_20181119" % cellSizeName
+      outDir = r""
 
       if os.path.isdir("/root"):
         outDir = UT.toLinux(outDir)
@@ -603,17 +603,17 @@ class GLOBIO_AquaticConvert(CalculationBase):
     # rasterName,inDir,inRasterFileName,outRasterFileName,
     # outDataType,netCDFNoDataValue,subDatasetNr,outCompress,outBandNr
     rasters = [("FLO1K qav",
-                r"G:\data\Globio4LA\data\pbl_20181023\FLO1K",
+                "FLO1K",
                 "FLO1K.ts.1960.2015.qav.nc",
                 "flo1k_qav_2015",
                 np.float32,-1,None,True,56),
                ("FLO1K qma",
-                r"G:\data\Globio4LA\data\pbl_20181023\FLO1K",
+                "FLO1K",
                 "FLO1K.ts.1960.2015.qma.nc",
                 "flo1k_qma_2015",
                 np.float32,-1,None,True,56),
                ("FLO1K qmi",
-                r"G:\data\Globio4LA\data\pbl_20181023\FLO1K",
+                "FLO1K",
                 "FLO1K.ts.1960.2015.qmi.nc",
                 "flo1k_qmi_2015",
                 np.float32,-1,None,True,56)]
@@ -625,7 +625,7 @@ class GLOBIO_AquaticConvert(CalculationBase):
     outExtent = GLOB.constants[outExtentName].value
     outCellSize = GLOB.constants[outCellSizeName].value
     
-    outDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181026"
+    outDir = r""
     
     if os.path.isdir("/root"):
       outDir = UT.toLinux(outDir)
@@ -705,17 +705,17 @@ class GLOBIO_AquaticConvert(CalculationBase):
     # rasterName,inDir,inRasterFileName,outRasterFileName,
     # outDataType,netCDFNoDataValue,subDatasetNr,outCompress,outBandNr
     rasters = [("PCR-GLOBWB qav",
-                r"G:\data\Globio4LA\data\pbl_20181023\VBarbarossa\pcrglobwb_discharge",
+                "pcrglobwb_discharge",
                 "qav_longTerm_1960_2015.nc",
                 "pcrglobwb_qav_2015",
                 np.float32,1e+20,1,True,1),
                ("PCR-GLOBWB qma",
-                r"G:\data\Globio4LA\data\pbl_20181023\VBarbarossa\pcrglobwb_discharge",
+                "pcrglobwb_discharge",
                 "qma_longTerm_1960_2015.nc",
                 "pcrglobwb_qma_2015",
                 np.float32,1e+20,1,True,1),
                ("PCR-GLOBWB qmi",
-                r"G:\data\Globio4LA\data\pbl_20181023\VBarbarossa\pcrglobwb_discharge",
+                "pcrglobwb_discharge",
                 "qmi_longTerm_1960_2015.nc",
                 "pcrglobwb_qmi_2015",
                 np.float32,1e+20,1,True,1)]
@@ -727,7 +727,7 @@ class GLOBIO_AquaticConvert(CalculationBase):
     outExtent = GLOB.constants[outExtentName].value
     outCellSize = GLOB.constants[outCellSizeName].value
     
-    outDir = r"G:\data\Globio4LA\data\referentie\v4012\5min_wrld\in_20181026"
+    outDir = r""
     
     # Set members.
     self.outDir = outDir
@@ -800,7 +800,7 @@ class GLOBIO_AquaticConvert(CalculationBase):
     Log.info("")
 
     rasters = [("Basins",
-                r"G:\data\Globio4LA\data\pbl_20181023\VBarbarossa\flo1k_hydrography",
+                "flo1k_hydrography",
                 "basins.tif",
                 "catchments",
                 np.uint32,True)]
@@ -812,7 +812,7 @@ class GLOBIO_AquaticConvert(CalculationBase):
     extent = GLOB.constants[outExtentName].value
     cellSize = GLOB.constants[outCellSizeName].value
 
-    outDir = r"G:\Data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181123"
+    outDir = r""
     
     # Set members.
     self.outDir = outDir
@@ -882,11 +882,11 @@ class GLOBIO_AquaticConvert(CalculationBase):
     Log.info("")
 
     rasters = [("dams",
-                r"G:\data\Globio4LA\data\pbl_20181023\GRAND",
+                "GRAND",
                 "GRanD_reallocated.csv",
                 "dams_wrld")]
 
-    outDir = r"G:\Data\Globio4LA\data\referentie\v4012\vector\in_20181123"
+    outDir = r""
     
     # Set members.
     self.outDir = outDir
@@ -992,11 +992,11 @@ class GLOBIO_AquaticConvert(CalculationBase):
     cellSize = GLOB.constants[cellSizeName].value
 
     rasters = [("flowdirection",
-                r"G:\data\Globio4LA\data\pbl_20181023\VBarbarossa\Flowdirection",
+                "Flowdirection",
                 "dir30sec_d8taudem.tif",
                 "river_flowdirection.tif")]
 
-    outDir = r"G:\Data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181123"
+    outDir = r""
     
     # Set members.
     self.outDir = outDir
@@ -1065,32 +1065,32 @@ class GLOBIO_AquaticConvert(CalculationBase):
     cellSize = GLOB.constants[cellSizeName].value
 
     rasters = [("nconc_2015",
-                r"G:\data\Globio4LA\data\pbl_20181023\Johan",
+                r"",
                 "nconc_2015.tif",
                 "nconc_2015.tif"),
                ("nconc_2050",
-                r"G:\data\Globio4LA\data\pbl_20181023\Johan",
+                r"",
                 "nconc_2050.tif",
                 "nconc_2050.tif"),
                ("pconc_2015",
-                r"G:\data\Globio4LA\data\pbl_20181023\Johan",
+                r"",
                 "pconc_2015.tif",
                 "pconc_2015.tif"),
                ("pconc_2050",
-                r"G:\data\Globio4LA\data\pbl_20181023\Johan",
+                r"",
                 "pconc_2050.tif",
                 "pconc_2050.tif"),
                ("AvgTemp_2015",
-                r"G:\data\Globio4LA\data\pbl_20181023\Johan",
+                r"",
                 "AvgTemp_2015.tif",
                 "avgtemp_2015.tif"),
                ("AvgTemp_2050",
-                r"G:\data\Globio4LA\data\pbl_20181023\Johan",
+                r"",
                 "AvgTemp_2050.tif",
                 "avgtemp_2050.tif")
     ]
 
-    outDir = r"G:\Data\Globio4LA\data\referentie\v4012\30min_wrld\in_20181123"
+    outDir = r""
     
     # Set members.
     self.outDir = outDir
@@ -1182,7 +1182,7 @@ class GLOBIO_AquaticConvert(CalculationBase):
                 0.9)               
     ]
 
-    outDir = r"G:\Data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181123"
+    outDir = r""
     
     # Set members.
     self.outDir = outDir
@@ -1246,7 +1246,7 @@ class GLOBIO_AquaticConvert(CalculationBase):
                 17.1)
     ]
 
-    outDir = r"G:\Data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181123"
+    outDir = r""
     
     # Set members.
     self.outDir = outDir
@@ -1315,7 +1315,7 @@ class GLOBIO_AquaticConvert(CalculationBase):
                 0.9)
     ]
 
-    outDir = r"G:\Data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181123"
+    outDir = r""
     
     # Set members.
     self.outDir = outDir

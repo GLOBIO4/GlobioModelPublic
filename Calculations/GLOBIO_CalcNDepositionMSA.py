@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 28 apr 2016, ES, ARIS B.V.
@@ -236,8 +236,8 @@ class GLOBIO_CalcNDepositionMSA(CalculationBase):
     outMask = None    
 
     # Save the N-deposition MSA raster.
-    #Log.info("Writing N-deposition MSA raster...")
-    #outRaster.writeAs(outRasterName)
+    Log.info("Writing N-deposition MSA raster...")
+    outRaster.writeAs(outRasterName)
 
     # Cleanup.
     outRaster.close()
@@ -252,11 +252,9 @@ class GLOBIO_CalcNDepositionMSA(CalculationBase):
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
   try:
-    inDir = r"Y:\data\GLOBIO\GLOBIO4\Beheer\Terra\SourceCode\GLOBIO_411_src20180925\src\Globio\Test\Calculations"
-    lookupDir = r"Y:\data\GLOBIO\GLOBIO4\Models\Terra\Shared\LookupGlobal"
-    outDir = r"Y:\data\GLOBIO\GLOBIO4\Beheer\Terra\SourceCode\GLOBIO_411_src20180925\src\Globio\Test\Calculations"
-    if not os.path.isdir(outDir):
-      outDir = r"S:\hilbersj"
+    inDir = r""
+    lookupDir = r""
+    outDir = r""
 
     pCalc = GLOBIO_CalcNDepositionMSA()
 

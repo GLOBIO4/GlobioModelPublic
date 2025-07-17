@@ -1,0 +1,139 @@
+#-------------------------------------------------------------------------------
+# Splits the overall MSA into contributions per pressure
+# Step 3 of the terrestrial MSA calculations
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+BEGIN_RUN Calculations()
+
+  # Save temporary data (intermediate steps)? 
+  SaveTmpData = False
+  # Overwrite output?
+  OverwriteOutput = False
+
+  # The base directory wherein the project folder is located
+  DIR BaseInDir = 
+
+  # Directory where data is stored across multiple projects
+  DIR SharedDir = 
+
+  # ProjectName should reflect the project folder name under the BaseInDir folder.
+  STRING ProjectName = TemplateProject
+  # ScenarioName should reflect the name of the scenario folder name under the ScenarioRuns folder.
+  STRING ScenarioName = TemplateScenario
+
+  # Folder for shared data for all scenarios within the project
+  DIR ProjectSharedDir = $BaseInDir;\$ProjectName;\SharedData
+  # The scenario folder
+  DIR ProjectScenarioDir = $BaseInDir;\$ProjectName;\ScenarioRuns\$ScenarioName;
+
+  InDir = $ProjectScenarioDir;\input
+  OutDir = $ProjectScenarioDir;\output
+  TmpDir = $ProjectScenarioDir;\tmp
+  LookupDir = $BaseInDir;\$ProjectName;\lookup
+
+  # Set the scenario run year to refer to correct input and output data
+  STRING ScenarioYear = 2020
+  
+  # Set region and resolution
+  # Defined extents: world, wrld, europe, eu, nl
+  Extent = world
+  STRING ExtentStr = WORLD
+  # Defined cell sizes: 10deg 1deg 30min 5min 30sec 10sec
+  CellSize = 10sec
+  STRING CellSizeStr = 10SEC
+
+  #-------------------------------------------------------------------------------
+  
+  RASTER ClimateChangeMSA = $OutDir;\ClimateChangeMSA_$ScenarioYear;_$ExtentStr;.tif
+  RASTER ClimateChangeMSA_wbvert = $OutDir;\ClimateChangeMSA_$ScenarioYear;_$ExtentStr;_wbvert.tif
+  RASTER ClimateChangeMSA_plants = $OutDir;\ClimateChangeMSA_$ScenarioYear;_$ExtentStr;_plants.tif
+
+  RASTER LanduseMSA = $OutDir;\LanduseMSA_$ScenarioYear;_$ExtentStr;.tif
+  RASTER LanduseMSA_wbvert = $OutDir;\LanduseMSA_$ScenarioYear;_$ExtentStr;_wbvert.tif
+  RASTER LanduseMSA_plants = $OutDir;\LanduseMSA_$ScenarioYear;_$ExtentStr;_plants.tif
+
+  RASTER NDepositionMSA = $OutDir;\NitrogenDepositionMSA_$ScenarioYear;_$ExtentStr;.tif
+  RASTER NDepositionMSA_plants = $OutDir;\NitrogenDepositionMSA_$ScenarioYear;_$ExtentStr;_plants.tif
+
+  RASTER HumanEncroachmentMSA = $OutDir;\HumanEncroachmentMSA_$ScenarioYear;_$ExtentStr;.tif
+  RASTER HumanEncroachmentMSA_wbvert = $OutDir;\HumanEncroachmentMSA_$ScenarioYear;_$ExtentStr;_wbvert.tif
+
+  RASTER InfraFragmentationMSA = $OutDir;\InfraFragmentationMSA_$ScenarioYear;_$ExtentStr;.tif
+  RASTER InfraFragmentationMSA_wbvert = $OutDir;\InfraFragmentationMSA_$ScenarioYear;_$ExtentStr;_wbvert.tif
+
+  RASTER InfraDisturbanceMSA = $OutDir;\InfraDisturbanceMSA_$ScenarioYear;_$ExtentStr;.tif
+  RASTER InfraDisturbanceMSA_wbvert = $OutDir;\InfraDisturbanceMSA_$ScenarioYear;_$ExtentStr;_wbvert.tif
+
+  # Impact lists
+  RASTERLIST ImpactsMSA = $LanduseMSA;|$HumanEncroachmentMSA;|$NDepositionMSA;|$ClimateChangeMSA;|$InfraDisturbanceMSA;|$InfraFragmentationMSA;
+  RASTERLIST ImpactsMSA_wbvert = $LanduseMSA_wbvert;|$HumanEncroachmentMSA_wbvert;|$ClimateChangeMSA_wbvert;|$InfraDisturbanceMSA_wbvert;|$InfraFragmentationMSA_wbvert;
+  RASTERLIST ImpactsMSA_plants = $LanduseMSA_plants;|$NDepositionMSA_plants;|$ClimateChangeMSA_plants;
+  
+  # Overall terrestrial MSA
+  RASTER TerrestrialMSA = $OutDir;\TerrestrialMSA_$ScenarioYear;_$ExtentStr;.tif
+  RASTER TerrestrialMSA_wbvert = $OutDir;\TerrestrialMSA_$ScenarioYear;_$ExtentStr;_wbvert.tif
+  RASTER TerrestrialMSA_plants = $OutDir;\TerrestrialMSA_$ScenarioYear;_$ExtentStr;_plants.tif
+
+  # Split MSA contributions
+  # wbvert
+  RASTER LanduseMSA_contribution_wbvert = $OutDir;\LanduseMSA_$ScenarioYear;_$ExtentStr;_split_wbvert.tif
+  RASTER HumanEncroachmentMSA_contribution_wbvert = $OutDir;\HumanEncroachmentMSA_$ScenarioYear;_$ExtentStr;_split_wbvert.tif
+  RASTER ClimateChangeMSA_contribution_wbvert = $OutDir;\ClimateChangeMSA_$ScenarioYear;_$ExtentStr;_split_wbvert.tif
+  RASTER InfraDisturbanceMSA_contribution_wbvert = $OutDir;\InfraDisturbanceMSA_$ScenarioYear;_$ExtentStr;_split_wbvert.tif
+  RASTER InfraFragmentationMSA_contribution_wbvert = $OutDir;\InfraFragmentationMSA_$ScenarioYear;_$ExtentStr;_split_wbvert.tif  
+  RASTERLIST ImpactsMSAContributions_wbvert = $LanduseMSA_contribution_wbvert;|$HumanEncroachmentMSA_contribution_wbvert;|$ClimateChangeMSA_contribution_wbvert;|$InfraDisturbanceMSA_contribution_wbvert;|$InfraFragmentationMSA_contribution_wbvert;
+  RASTER TotalLossTerrestrialMSA_wbvert = $OutDir;\TotalLossTerrestrialMSA_$ScenarioYear;_$ExtentStr;_wbvert.tif
+  # plants
+  RASTER LanduseMSA_contribution_plants = $OutDir;\LanduseMSA_$ScenarioYear;_$ExtentStr;_split_plants.tif
+  RASTER ClimateChangeMSA_contribution_plants = $OutDir;\ClimateChangeMSA_$ScenarioYear;_$ExtentStr;_split_plants.tif
+  RASTER NDepositionMSA_contribution_plants = $OutDir;\NitrogenDepositionMSA_$ScenarioYear;_$ExtentStr;_split_plants.tif
+  RASTERLIST ImpactsMSAContributions_plants = $LanduseMSA_contribution_plants;|$NDepositionMSA_contribution_plants;|$ClimateChangeMSA_contribution_plants;
+  RASTER TotalLossTerrestrialMSA_plants = $OutDir;\TotalLossTerrestrialMSA_$ScenarioYear;_$ExtentStr;_plants.tif
+  # overall
+  RASTER LanduseMSA_contribution = $OutDir;\LanduseMSA_$ScenarioYear;_$ExtentStr;_split.tif
+  RASTER HumanEncroachmentMSA_contribution = $OutDir;\HumanEncroachmentMSA_$ScenarioYear;_$ExtentStr;_split.tif
+  RASTER NDepositionMSA_contribution = $OutDir;\NitrogenDepositionMSA_$ScenarioYear;_$ExtentStr;_split.tif
+  RASTER ClimateChangeMSA_contribution = $OutDir;\ClimateChangeMSA_$ScenarioYear;_$ExtentStr;_split.tif
+  RASTER InfraDisturbanceMSA_contribution = $OutDir;\InfraDisturbanceMSA_$ScenarioYear;_$ExtentStr;_split.tif
+  RASTER InfraFragmentationMSA_contribution = $OutDir;\InfraFragmentationMSA_$ScenarioYear;_$ExtentStr;_split.tif
+  RASTERLIST ImpactsMSAContributions = $LanduseMSA_contribution;|$HumanEncroachmentMSA_contribution;|$NDepositionMSA_contribution;|$ClimateChangeMSA_contribution;|$InfraDisturbanceMSA_contribution;|$InfraFragmentationMSA_contribution;
+  RASTER TotalLossTerrestrialMSA = $OutDir;\TotalLossTerrestrialMSA_$ScenarioYear;_$ExtentStr;.tif
+
+  #-------------------------------------------------------------------------------
+  # Start running.
+  #-------------------------------------------------------------------------------
+
+  # wbvert                        
+  RUN_MODULE CalcSplitImpactsMSA(
+          $Extent,$CellSize,
+          $ImpactsMSA_wbvert,
+          $TerrestrialMSA_wbvert,
+          $ImpactsMSAContributions_wbvert,
+          $TotalLossTerrestrialMSA_wbvert
+  )
+
+  # plants
+  RUN_MODULE CalcSplitImpactsMSA(
+          $Extent,$CellSize,
+          $ImpactsMSA_plants,
+          $TerrestrialMSA_plants,
+          $ImpactsMSAContributions_plants,
+          $TotalLossTerrestrialMSA_plants
+  )
+
+  # overall
+  RUN_MODULE CalcSplitImpactsMSA(
+          $Extent,$CellSize,
+          $ImpactsMSA,
+          $TerrestrialMSA,
+          $ImpactsMSAContributions,
+          $TotalLossTerrestrialMSA
+  )
+  
+END_RUN
+
+#-------------------------------------------------------------------------------
+
+RUN Calculations()
+

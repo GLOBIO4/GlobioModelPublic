@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 30 aug 2017, ES, ARIS B.V.
@@ -106,11 +106,9 @@ class GLOBIO_CalcSettlements(CalculationBase):
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
   try:
-    inDir = r"Q:\Data\Globio4\G_data\pbl\tif"
-    lookupDir = r"P:\Project\Globio4\data\Lookup"
-    outDir = r"C:\Temp\_Globio4\out"
-    if not os.path.isdir(outDir):
-      outdir = r"G:\Data\out_v3"
+    inDir = r""
+    lookupDir = r""
+    outDir = r""
 
     pCalc = GLOBIO_CalcSettlements()
     ext = GLOB.extent_World

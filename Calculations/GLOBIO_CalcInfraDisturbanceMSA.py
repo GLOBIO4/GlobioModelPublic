@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 25 apr 2016, ES, ARIS B.V.
@@ -38,21 +38,20 @@ class GLOBIO_CalcInfraDisturbanceMSA(CalculationBase):
   """
   #-------------------------------------------------------------------------------
   # Remark:
-  #   When SettlementDistance is specified the following parameters are
+  #   When InfrastructureDistance is specified the following parameters are
   #   not needed:
-  #   - Roads
+  #   - Infrastructure
   #   - MaximumDistanceKM
   #   - Landuse
-  #   - LookupFile
+  #   - WaterLookupFile
   #-------------------------------------------------------------------------------
   def run(self,*args):
     """
     IN EXTENT Extent
     IN RASTER Landuse
-    IN STRING INFRADIST_LandcoverExlCodes
-    IN FILE WaterLookupFile
-    IN RASTER SettlementDistance
-    IN RASTER Roads
+    IN STRING INFRADIST_LandcoverExclCodes
+    IN RASTERLIST InfraDistances
+    IN RASTERLIST Infrastructures
     IN FLOAT INFRADIST_MaximumDistanceKM
     IN STRING INFRADIST_WbVertRegressionCoefficients
     IN FLOAT INFRADIST_WeightFactor
@@ -61,50 +60,49 @@ class GLOBIO_CalcInfraDisturbanceMSA(CalculationBase):
     self.showStartMsg(args)
 
     # Check number of arguments.
-    if len(args)<=9:
+    if len(args) != 9:
       Err.raiseGlobioError(Err.InvalidNumberOfArguments2,len(args),self.name)
 
     # Get arguments.
     extent = args[0]
     landuseRasterName = args[1]
-    landcoverExlCodesStr= args[2]
-    lookupFileName = args[3]
-    settDistanceRasterName = args[4]
-    roadsRasterName = args[5]
-    maxDistanceKM = args[6]
-    wbvertRegressionCoeffsStr = args[7]
-    weightFactor = args[8]
-    outRasterName = args[9]
+    landcoverExclCodesStr= args[2]
+    infraDistanceRasterNames = args[3]
+    infraRasterNames = args[4]
+    maxDistanceKM = args[5]
+    wbvertRegressionCoeffsStr = args[6]
+    weightFactor = args[7]
+    outRasterName = args[8]
 
     # Check arguments.
     self.checkExtent(extent)
-    self.checkRaster(settDistanceRasterName,optional=True)
-    self.checkRaster(landuseRasterName)
-    self.checkIntegerList(landcoverExlCodesStr)
-    self.checkLookup(lookupFileName)
-    # A settlement distance raster specified?
-    if self.isValueSet(settDistanceRasterName):
-      # Set the flag.
-      calcSettlementDistance = False
+    self.checkRasterList(infraDistanceRasterNames, optional=True)
+    if self.isValueSet(infraDistanceRasterNames):
+      infraDistanceRasterNames = self.splitStringList(infraDistanceRasterNames)
     else:
-      # Set the flag.
-      calcSettlementDistance = True
-      # The next parameters are needed and must be valid.
-      self.checkRaster(roadsRasterName)
+      infraDistanceRasterNames = []
+    self.checkRaster(landuseRasterName)
+    self.checkIntegerList(landcoverExclCodesStr)
+    self.checkRasterList(infraRasterNames, optional=True)
+    if self.isValueSet(infraRasterNames):
+      # maxDistanceKM is required when passing a raster
       self.checkFloat(maxDistanceKM,0,99999)
+      infraRasterNames = self.splitStringList(infraRasterNames)
+    else:
+      infraRasterNames = []
     self.checkFloatList(wbvertRegressionCoeffsStr,needCnt=2)
     self.checkFloat(weightFactor,0.0,1.0)
     self.checkRaster(outRasterName,True)
+
+    if len(infraDistanceRasterNames) == 0 and len(infraRasterNames) == 0:
+      Err.raiseGlobioError(Err.UserDefined1, "Either 'InfraDistances' or 'Infrastructures' argument should contain at least one raster")
     
     # Convert code and names to arrays.
-    landcoverExlCodes = self.splitIntegerList(landcoverExlCodesStr)
+    landcoverExclCodes = self.splitIntegerList(landcoverExclCodesStr)
     wbvertRegressionCoeffs = self.splitFloatList(wbvertRegressionCoeffsStr)
 
     # Get the minimum cellsize for the output raster.
-    if calcSettlementDistance:
-      inRasterNames = [roadsRasterName,landuseRasterName]
-    else:
-      inRasterNames = [settDistanceRasterName,landuseRasterName]
+    inRasterNames = infraDistanceRasterNames + infraRasterNames + [landuseRasterName]
     cellSize = self.getMinimalCellSize(inRasterNames)
     Log.info("Using cellsize: %s" % cellSize)
 
@@ -118,132 +116,123 @@ class GLOBIO_CalcInfraDisturbanceMSA(CalculationBase):
 
     # Enable monitor en show memory and disk space usage.
     MON.showMemDiskUsage(Log,"- ","",self.outDir)
-
-    # Set temporary raster names.
-    tmpWbVertMSARasterName = os.path.join(self.outDir,"tmp_wbvertmsa.tif")
-    
-    # Remove temporary data.
-    if RU.rasterExists(tmpWbVertMSARasterName):
-      RU.rasterDelete(tmpWbVertMSARasterName)
    
-    #-----------------------------------------------------------------------------
-    # Calculate nearest distance to roads. 
-    #-----------------------------------------------------------------------------
-   
-    # Need to calculate settlement distances?
-    if calcSettlementDistance:
-    
-      # Set temporary raster names.
-      tmpRoadsRasterName = os.path.join(self.outDir,"tmp_infradist_roads.tif")
-      tmpDistanceRasterName = os.path.join(self.outDir,"tmp_infradist_roadsdist.tif")
-      
-      #-----------------------------------------------------------------------------
-      # Read the roads raster and prepare, and save.
-      #-----------------------------------------------------------------------------
+    tmpCombInfraDistanceRasterName = os.path.join(self.outDir,"tmp_combinfradistance.tif")
+    if RU.rasterExists(tmpCombInfraDistanceRasterName):
+      Log.info("Delete %s" % tmpCombInfraDistanceRasterName)
+      RU.rasterDelete(tmpCombInfraDistanceRasterName)
 
-      Log.info("Reading roads raster...")
-      
+    noDataValue = -999.0
+    combinedInfraDistanceRaster = Raster(tmpCombInfraDistanceRasterName)
+    combinedInfraDistanceRaster.initRaster(extent, cellSize, np.float32, noDataValue)
+
+    # First use the provided distance rasters to calculate a raster with minimum distances
+    firstDistanceRaster = True
+    for i, infraDistanceRasterName in enumerate(infraDistanceRasterNames):
+
+      if not self.isValueSet(infraDistanceRasterName):
+        continue
+
+      Log.info(f"Reading infra distance raster {infraDistanceRasterName}")
+      infraDistanceRaster = self.readAndPrepareInRaster(extent, cellSize, infraDistanceRasterName, f"distance {i}")
+      self.fuseDistanceRasters(combinedInfraDistanceRaster, infraDistanceRaster, existingIsEmpty=firstDistanceRaster)
+      if firstDistanceRaster:
+        firstDistanceRaster = False
+
+    # Second, go over the non-distance rasters to first calculate distance and then fuse
+    for i, infraRasterName in enumerate(infraRasterNames):
+
+      if not self.isValueSet(infraRasterName):
+        continue
+
+      tmpInfraRasterName = os.path.join(self.outDir, f"tmp_infra_{i}.tif")
+      tmpInfraDistanceRasterName = os.path.join(self.outDir, f"tmp_infradistance_{i}.tif")
+
+      # Read the infra raster
+      Log.info(f"Reading infra raster {infraRasterName}")
       # Reads the raster and resizes to extent and resamples to cellsize.
-      tmpRaster = self.readAndPrepareInRaster(extent,cellSize,roadsRasterName,"roads")
+      tmpInfraRaster = self.readAndPrepareInRaster(extent,cellSize,infraRasterName,f"infra {i}")
 
       # Replace 0 with nodata for buffering.
-      tmpRaster.r[tmpRaster.r==0] = tmpRaster.noDataValue
+      tmpInfraRaster.r[tmpInfraRaster.r==0] = tmpInfraRaster.noDataValue
 
-      # Check the temporary roads raster.
-      if RU.rasterExists(tmpRoadsRasterName):
-        RU.rasterDelete(tmpRoadsRasterName)
+      # Check the temporary infra raster.
+      if RU.rasterExists(tmpInfraRasterName):
+        Log.info("Delete %s" % tmpInfraRasterName)
+        RU.rasterDelete(tmpInfraRasterName)
 
-      # Save the temporary roads raster.
-      Log.info("Writing %s..." % tmpRoadsRasterName)
-      tmpRaster.writeAs(tmpRoadsRasterName)
+      # Save the temporary infra raster.
+      Log.info("Writing %s..." % tmpInfraRasterName)
+      tmpInfraRaster.writeAs(tmpInfraRasterName)
 
       # Close and free the temporary raster.
-      tmpRaster.close()
-      tmpRaster = None
-                         
-      Log.info("Calculating nearest distance to roads...")
-      
+      tmpInfraRaster.close()
+      tmpInfraRaster = None
+
+      Log.info(f"Calculating nearest distance to infrastructure {i}...")
+
       # Check the temporary distance raster.
-      if RU.rasterExists(tmpDistanceRasterName):
-        RU.rasterDelete(tmpDistanceRasterName)
+      if RU.rasterExists(tmpInfraDistanceRasterName):
+        Log.info("Delete %s" % tmpInfraDistanceRasterName)
+        RU.rasterDelete(tmpInfraDistanceRasterName)
         
-      # Calculate nearest distance to settlements. 
+      # Calculate nearest distance to infrastructure. 
       gr = Grass()
       gr.init()
-      gr.distance_V1(extent,cellSize,tmpRoadsRasterName,tmpDistanceRasterName)
+      gr.distance_V1(extent,cellSize,tmpInfraRasterName,tmpInfraDistanceRasterName)
       gr = None
           
       # Read distance raster.
-      Log.info("Reading roads distance...")
-      distanceRaster = Raster(tmpDistanceRasterName)
+      Log.info(f"Reading infra distance raster {tmpInfraDistanceRasterName}...")
+      distanceRaster = Raster(tmpInfraDistanceRasterName)
       distanceRaster.read()
     
       # Limit distance to maximum value.
       maxDistanceM = maxDistanceKM * 1000.0
-      mask = (distanceRaster.r >= maxDistanceM)
-      distanceRaster.r[mask] = maxDistanceM
-        
-      # Cleanup mask.
-      mask = None
-    
-      # Select valid distance values.
-      noDataValue = distanceRaster.noDataValue
-      distMask = (distanceRaster.r > 0.0) & (distanceRaster.r != noDataValue)
-      zerodistMask = (distanceRaster.r == 0.0) & (distanceRaster.r != noDataValue)
+      maxDistMask = (distanceRaster.r >= maxDistanceM)
+      distanceRaster.r[maxDistMask] = maxDistanceM
+      del maxDistMask
     
       # Convert distance meters to kilometers.
+      distMask = (distanceRaster.r > 0.0) & (distanceRaster.r != distanceRaster.noDataValue)
       distanceRaster.r[distMask] /= 1000.0
-      
-      # Reads the landuse raster and resizes to extent and resamples to cellsize.
-      landuseRaster = self.readAndPrepareInRaster(extent,cellSize,landuseRasterName,"landuse")
-      
-      # Do lookup to filter out water areas.
-      lookupFieldTypes = ["I","F"]
-      tmpLUFactorRaster = self.reclassUniqueValues(landuseRaster,
-                                                   lookupFileName,lookupFieldTypes,
-                                                   np.float32)
 
-      #Reclassify water areas to NoData
-      noDataValue = -999.0
-      mask = (tmpLUFactorRaster.r == noDataValue)
-      distanceRaster.r[mask] = noDataValue
-      mask = None
-    
-      # Close and free the roads distance raster.
-      # 20210104
-      # tmpRoadsRasterName.close()
-      # tmpRoadsRasterName = None
-      # tmpDistanceRasterName.close()
-      # tmpDistanceRasterName = None
-      
-      # Close and free the landuse raster.
-      landuseRaster.close()
-      landuseRaster = None
-      tmpLUFactorRaster.close()
-      tmpLUFactorRaster = None
-      
-      #-----------------------------------------------------------------------------
-      # Remove temporary rasters.
-      #-----------------------------------------------------------------------------
       if not GLOB.saveTmpData:
-        if RU.rasterExists(tmpRoadsRasterName):
-          RU.rasterDelete(tmpRoadsRasterName)
-        if RU.rasterExists(tmpDistanceRasterName):
-          RU.rasterDelete(tmpDistanceRasterName)
-          
-    else:
-      Log.info("Reading road distances...")
+        if RU.rasterExists(tmpInfraRasterName):
+          RU.rasterDelete(tmpInfraRasterName)
+        if RU.rasterExists(tmpInfraDistanceRasterName):
+          RU.rasterDelete(tmpInfraDistanceRasterName)
 
-      #-----------------------------------------------------------------------------
-      # Read the roads raster and prepare, and save.
-      #-----------------------------------------------------------------------------
-      # Reads the raster and resizes to extent and resamples to cellsize.
-      distanceRaster = self.readAndPrepareInRaster(extent,cellSize,settDistanceRasterName,"road distances")
-      
-      # Select valid distance values.
-      noDataValue = distanceRaster.noDataValue
-      distMask = (distanceRaster.r > 0.0) & (distanceRaster.r != noDataValue)
-      zerodistMask = (distanceRaster.r == 0.0) & (distanceRaster.r != noDataValue)
+      self.fuseDistanceRasters(combinedInfraDistanceRaster, distanceRaster, existingIsEmpty=firstDistanceRaster)
+      # Clear flag if not already cleared
+      if firstDistanceRaster:
+        firstDistanceRaster = False
+
+      Log.info(f"Writing {tmpInfraDistanceRasterName}...")
+      distanceRaster.write()
+      distanceRaster.close()
+      del distanceRaster
+
+    # check if anything was processed
+    if firstDistanceRaster:
+      Err.raiseGlobioError(Err.UserDefined1, "No distance raster could be calculated")
+
+    Log.info("Adapting distance raster based on landcover exclude codes...")
+
+    # Reads the landuse raster and resizes to extent and resamples to cellsize.
+    landuseRaster = self.readAndPrepareInRaster(extent,cellSize,landuseRasterName,"landuse")
+    # Reclassify LC exclusion pixels to noDataValue 
+    for landcoverExclCode in landcoverExclCodes:
+      mask = (landuseRaster.r == landcoverExclCode)
+      combinedInfraDistanceRaster.r[mask] = combinedInfraDistanceRaster.noDataValue
+    del mask
+    # Close and free the landuse raster.
+    landuseRaster.close()
+    del landuseRaster
+
+    # Select valid distance values.
+    distMask = (combinedInfraDistanceRaster.r > 0.0) & (combinedInfraDistanceRaster.r != combinedInfraDistanceRaster.noDataValue)
+    zerodistMask = (combinedInfraDistanceRaster.r == 0.0) & (combinedInfraDistanceRaster.r != combinedInfraDistanceRaster.noDataValue)
 
     #-----------------------------------------------------------------------------
     # Calculate mammal MSA.
@@ -252,96 +241,60 @@ class GLOBIO_CalcInfraDisturbanceMSA(CalculationBase):
     Log.info("Calculating warm-blooded vert. MSA...")
 
     # Create raster with default MSA value 1.
-    noDataValue = -999.0
-    outWbVertMSARaster = Raster()
-    outWbVertMSARaster.initRaster(extent,cellSize,np.float32,noDataValue)
+    msaNoDataValue = -999.0
+    outWbvertMSARaster = Raster()
+    outWbvertMSARaster.initRaster(extent,cellSize,np.float32,msaNoDataValue)
 
     # Set regression coefficients.
     b0 = wbvertRegressionCoeffs[0]
     b1 = wbvertRegressionCoeffs[1]
        
-    outWbVertMSARaster.r[distMask] = 1/(1+np.exp(-b0 - b1 * np.log10(distanceRaster.r[distMask]) - 3 * b1))
+    outWbvertMSARaster.r[distMask] = 1/(1+np.exp(-b0 - b1 * np.log10(combinedInfraDistanceRaster.r[distMask]) - 3 * b1))
 
     # Set cells to 0 where distance = 0.0.
-    outWbVertMSARaster.r[zerodistMask] = 0.0
+    outWbvertMSARaster.r[zerodistMask] = 0.0
 
     # Set all cells with values <0 to 0.0.
-    mask = (outWbVertMSARaster.r != noDataValue) & (outWbVertMSARaster.r < 0.0)
-    outWbVertMSARaster.r[mask] = 0.0
+    mask = (outWbvertMSARaster.r != msaNoDataValue) & (outWbvertMSARaster.r < 0.0)
+    outWbvertMSARaster.r[mask] = 0.0
 
     # Set all cells with values >1 to 1.0.
-    mask = (outWbVertMSARaster.r != noDataValue) & (outWbVertMSARaster.r > 1.0)
-    outWbVertMSARaster.r[mask] = 1.0
+    mask = (outWbvertMSARaster.r != msaNoDataValue) & (outWbvertMSARaster.r > 1.0)
+    outWbvertMSARaster.r[mask] = 1.0
 
     # Cleanup mask.
-    mask = None
-    distMask = None
-    zerodistMask = None
-    
-    #-----------------------------------------------------------------------------
-    # Read the landuse raster and prepare.
-    #-----------------------------------------------------------------------------
-    
-    Log.info("Filter out land uses and water areas...")
-    
-    # Reads the landuse raster and resizes to extent and resamples to cellsize.
-    landuseRaster = self.readAndPrepareInRaster(extent,cellSize,landuseRasterName,"landuse")
-
-    # Filter out water areas
-    lookupFieldTypes = ["I","F"]
-    tmpLUFactorRaster = self.reclassUniqueValues(landuseRaster,
-                                                 lookupFileName,lookupFieldTypes,
-                                                 np.float32)
-
-    #Reclassify water areas to NoData
-    noDataValue = -999.0
-    mask = (tmpLUFactorRaster.r == noDataValue)
-    outWbVertMSARaster.r[mask] = noDataValue
-    mask = None
-    
-    #JM: previous location of landuseRaster reading in
-
-    # Select specified landcover types (selected = 1).
-    for landcoverExlCode in landcoverExlCodes:
-      mask = (outWbVertMSARaster.r != noDataValue) & (landuseRaster.r == landcoverExlCode)
-      outWbVertMSARaster.r[mask] = noDataValue
-      distanceRaster.r[mask] = distanceRaster.noDataValue
-
-    # Cleanup mask.
-    mask = None
-    
-    # Close and free the landuse raster.
-    landuseRaster.close()
-    landuseRaster = None
+    del mask
+    del distMask
+    del zerodistMask
     
     # Close and free the distance raster.
     Log.info("Writing input raster....")
-    distanceRaster.writeAs(outRasterName.replace(".tif","_finalinput.tif"))
-    distanceRaster.close()
-    distanceRaster = None
-
-    # Save tmp files?
     if GLOB.saveTmpData:
-      # Save mammal MSA.
-      outWbVertMSARaster.writeAs(tmpWbVertMSARasterName)
+      combinedInfraDistanceRaster.write()
+    combinedInfraDistanceRaster.close()
+    del combinedInfraDistanceRaster
+
+    if not GLOB.saveTmpData:
+      Log.info("Delete %s" % tmpCombInfraDistanceRasterName)
+      RU.rasterDelete(tmpCombInfraDistanceRasterName)
 
     # Write away taxonomic group - MSA output
     Log.info("Writing taxonomic group - MSA rasters....")
-    outWbVertMSARaster.writeAs(outRasterName.replace(".tif","_wbvert.tif"))
+    outWbvertMSARaster.writeAs(outRasterName.replace(".tif","_wbvert.tif"))
     
     #-----------------------------------------------------------------------------
     # Calculate final MSA.
     #
-    # Disturbance MSA = (Warm-blooded Vert. MSA * 1/3) + 2/3
+    # Disturbance MSA = (Warm-blooded Vert. MSA * 1/N) + (N-1)/N
     #
-    # For the overall MSA, we need to add 2/3. This is because we assume that
-    # for the other 2 taxonomic groups, there is no disturbance impact (MSA = 1).
+    # For the overall MSA, we need to correct. This is because we assume that
+    # for the other N-1 taxonomic groups, there is no disturbance impact (MSA = 1).
     #-----------------------------------------------------------------------------
 
-    Log.info("Creating the disturbance by infrastructure MSA raster...")
+    Log.info("Creating the overall disturbance by infrastructure MSA raster...")
     
     # Assign warm-blooded vert. MSA to outRaster (as a referrence).
-    outRaster = outWbVertMSARaster
+    outRaster = outWbvertMSARaster
     mask = (outRaster.r != noDataValue)
 
     complWeightFactor = 1.0 - weightFactor
@@ -349,52 +302,61 @@ class GLOBIO_CalcInfraDisturbanceMSA(CalculationBase):
     outRaster.r[mask] += complWeightFactor
     
     # Clear mask.
-    mask = None 
+    del mask
 
     #-----------------------------------------------------------------------------
     # Save output.
     #-----------------------------------------------------------------------------
 
     # Save the disturbance by infrastructure MSA raster.
-    #Log.info("Writing MSA of disturbance by infrastructure raster...")
+    Log.info("Writing overall MSA of disturbance by infrastructure raster...")
     # Save final MSA.
-    #outRaster.writeAs(outRasterName)
+    outRaster.writeAs(outRasterName)
 
     # Cleanup.
-    outWbVertMSARaster.close()
-    outWbVertMSARaster = None
+    outWbvertMSARaster.close()
+    outWbvertMSARaster = None
     outRaster.close()
-    outRaster = None
-
-    # Cleanup temporary files.
-    if not GLOB.saveTmpData:
-      if RU.rasterExists(tmpWbVertMSARasterName):
-        RU.rasterDelete(tmpWbVertMSARasterName)
+    del outRaster
         
     # Show used memory and disk space.
     MON.showMemDiskUsage()
 
     self.showEndMsg()
 
+  def fuseDistanceRasters(self, existingRaster : Raster, newRaster : Raster, existingIsEmpty : bool = False):
+    Log.info("Fusing distance raster...")
+    newNoDataMask = newRaster.getNoDataMask()
+    existingNoDataMask = existingRaster.getNoDataMask()
+    # if read raster has different nodataval, replace it first
+    if newRaster.noDataValue != existingRaster.noDataValue:
+      newRaster.r[newNoDataMask] = existingRaster.noDataValue
+    if existingIsEmpty:
+      # copy the initial distance raster
+      existingRaster.r = newRaster.r
+    else:
+      # take the element-wise minimum, and take the union of the nodata masks
+      existingRaster.r = np.minimum(existingRaster.r, newRaster.r)
+      existingRaster.r[existingNoDataMask] = existingRaster.noDataValue
+      existingRaster.r[newNoDataMask] = existingRaster.noDataValue
+
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
   try:
-    inDir = r"Y:\data\GLOBIO\GLOBIO4\Beheer\Terra\SourceCode\GLOBIO_411_src20180925\src\Globio\Test\Calculations"
-    mapDir = r"Y:\data\GLOBIO\GLOBIO4\Models\Terra\Shared\geodata\GlobalTifs\res_10sec"
-    lookupDir = r"Y:\data\GLOBIO\GLOBIO4\Models\Terra\Shared\LookupGlobal"
-    outDir = r"Y:\data\GLOBIO\GLOBIO4\Beheer\Terra\SourceCode\GLOBIO_411_src20180925\src\Globio\Test\Calculations"
-    if not os.path.isdir(outDir):
-      outDir = r"S:\hilbersj"
+    inDir = r""
+    mapDir = r""
+    lookupDir = r""
+    outDir = r""
 
     pCalc = GLOBIO_CalcInfraDisturbanceMSA()
 
-    ext = GLOB.extent_World
-    roads = os.path.join(mapDir,"GRIP4_5types_10sec.tif")
+    ext = GLOB.extent_NL
+    infra = os.path.join(mapDir,"GRIP4_5types_10sec.tif")
     dist = os.path.join(mapDir,"GRIP4_distance_km_10sec.tif")
     maxdist = 150
-    lu = os.path.join(inDir,"ESACCI_LC_1992_v207.tif")
-    lookup = os.path.join(lookupDir,"LanduseNDepFactor_Globio4.csv")    
+    lu = os.path.join(mapDir,"ESACCI_LC_1992_v207.tif")
+    lookup = os.path.join(lookupDir,"LanduseNDepFactor_Globio4.csv")
     wbvertRegressionCoeffs = "1.06|0.36"
     wf = 0.33333333
     msa = os.path.join(outDir,"InfraDisturbanceMSA.tif")
@@ -402,7 +364,7 @@ if __name__ == "__main__":
     if RU.rasterExists(msa):
       RU.rasterDelete(msa)
 
-    pCalc.run(ext,dist,roads,maxdist,lu,lookup,wbvertRegressionCoeffs,wf,msa)
+    pCalc.run(ext,dist,infra,maxdist,lu,lookup,wbvertRegressionCoeffs,wf,msa)
 
   except:
     Log.err()

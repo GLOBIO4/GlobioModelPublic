@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Finds connected rivers with dams. 
@@ -195,13 +195,13 @@ if __name__ == "__main__":
     ext = GLOB.constants[extentName].value
     cs = GLOB.constants[cellSizeName].value
 
-    inDir = r"G:\data\Globio4LA\data\referentie\v4012\vector\in_20181123"
+    inDir = r""
     if (extentName == "eu") or extentName == "neu":
       inShp = "frag_rivers_%s.shp" % "wrld"
     else:
       inShp = "frag_rivers_%s.shp" % extentName
     
-    outDir = r"G:\data\Globio4LA\data\referentie\v4012\vector\in_20181123"
+    outDir = r""
     outShp = "frag_rivers_connected_%s.shp" % extentName
     
     if os.path.isdir("/root"):

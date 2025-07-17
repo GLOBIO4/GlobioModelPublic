@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 25 apr 2016, ES, ARIS B.V.
@@ -350,7 +350,7 @@ class CalculationBase(object):
           # Create full ouput path.
           os.makedirs(outDir)
         else:
-          Err.raiseGlobioError(Err.FileAlreadyExists1,fileName)
+          Err.raiseGlobioError(Err.DirectoryNotFound1,outDir)
     else:
       if not RU.rasterExists(fileName):
         Err.raiseGlobioError(Err.FileNotFound1,fileName)

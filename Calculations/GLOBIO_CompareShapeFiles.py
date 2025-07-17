@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 4 jan 2021, ES, ARIS B.V.
@@ -132,8 +132,8 @@ if __name__ == "__main__":
   #-----------------------------------------------------------------------------
   def test1():
     try:
-      refDir = r"G:\data\referentie\v4016\vector\aq_pre_20201214_linux"
-      inDir = r"G:\data\referentie\v410\vector\aq_pre_nok_20201218"
+      refDir = r""
+      inDir = r""
 
       pCalc = GLOBIO_CompareShapeFiles()
       shapeFileName = "rivers_wrld.shp"
@@ -145,44 +145,5 @@ if __name__ == "__main__":
       Log.err()
 
   #-----------------------------------------------------------------------------
-  # def test2():
-  #   import GlobioModel.Common.Utils as UT
-  #   import GlobioModel.ArisPythonTest.TestData as TD
-  #
-  #   try:
-  #     td = TD.TestData()
-  #
-  #     inRas = td.createRasterSuitForestry_v3()
-  #     UT.printArray("inRas",inRas)
-  #
-  #     inRasName = r"C:\Temp\test1.tif"
-  #     RU.rasterDelete(inRasName)
-  #     td.createTestGrid(inRasName,inRas,td.extent,td.cellSize)
-  #
-  #     refRas = td.createRasterSuitForestry_v2()
-  #     UT.printArray("refRas",refRas)
-  #
-  #     refRasName = r"C:\Temp\test2.tif"
-  #     RU.rasterDelete(refRasName)
-  #     td.createTestGrid(refRasName,refRas,td.extent,td.cellSize)
-  #
-  #     pCalc = GLOBIO_CompareRasters()
-  #     pCalc.run(refRasName,refRasName)
-  #
-  #     pCalc = GLOBIO_CompareRasters()
-  #     pCalc.run(inRasName,refRasName)
-  #
-  #     del pCalc
-  #     del inRas
-  #     del refRas
-  #
-  #   except:
-  #     Log.err()
 
-  #-----------------------------------------------------------------------------
-  #-----------------------------------------------------------------------------
-  #
-  # run41 Calculations\GLOBIO_CompareShapeFiles.py
-  #
   test1()
-  #test2()

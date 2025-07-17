@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 30 aug 2017, ES, ARIS B.V.
@@ -18,6 +18,7 @@ import GlobioModel.Core.Logger as Log
 import GlobioModel.Core.Monitor as MON
 
 from GlobioModel.Core.CalculationBase import CalculationBase
+from GlobioModel.Core.Raster import Raster
 import GlobioModel.Core.RasterUtils as RU
 
 #-------------------------------------------------------------------------------
@@ -33,27 +34,30 @@ class GLOBIO_CalcLanduseBiomesMSA(CalculationBase):
     IN EXTENT Extent
     IN RASTER Landuse
     IN RASTER Biomes
-    IN FILE LanduseBiomesMSALookup
+    IN FILE LanduseBiomesMSALookup_WBvert
+    IN FILE LanduseBiomesMSALookup_Plants
     OUT RASTER LanduseMSA
     """
     self.showStartMsg(args)
     
     # Check number of arguments.
-    if len(args)<=4:
+    if len(args)<=5:
       Err.raiseGlobioError(Err.InvalidNumberOfArguments2,len(args),self.name)
     
     # Get arguments.
     extent = args[0]
     luRasterName = args[1]
     bioRasterName = args[2]
-    lookupFileName = args[3]
-    outRasterName = args[4]
+    lookupFileNameWB = args[3]
+    lookupFileNamePl = args[4]
+    outRasterName = args[5]
   
     # Check arguments.
     self.checkExtent(extent)
     self.checkRaster(luRasterName)
     self.checkRaster(bioRasterName)
-    self.checkLookup(lookupFileName)
+    self.checkLookup(lookupFileNameWB)
+    self.checkLookup(lookupFileNamePl)
     self.checkRaster(outRasterName,True)
 
     # Get the minimum cellsize for the output raster.
@@ -90,26 +94,55 @@ class GLOBIO_CalcLanduseBiomesMSA(CalculationBase):
     # Lookup the MSA value for landuse and biomes.
     #-----------------------------------------------------------------------------
 
+    noDataValue = -999.0
+
     # Do lookup.
     lookupFieldTypes = ["I","I","F"]
     lookupMainFieldName = "LANDUSE"
-    outRaster = self.reclassUniqueValuesTwoKeys(luRaster,bioRaster,
-                                          lookupFileName,lookupFieldTypes,
-                                          lookupMainFieldName,np.float32)
+    Log.info("Calculate MSA land use for warmblooded vertebrates...")
+    outRasterWB = self.reclassUniqueValuesTwoKeys(luRaster,bioRaster,
+                                          lookupFileNameWB,lookupFieldTypes,
+                                          lookupMainFieldName,np.float32,noDataValue)
+    maskWB = (outRasterWB.r != outRasterWB.noDataValue) & (outRasterWB.r != noDataValue)
+    Log.info("Writing %s..." % (outRasterName.replace(".tif","_wbvert.tif")))
+    outRasterWB.writeAs(outRasterName.replace(".tif","_wbvert.tif"))
   
+    Log.info("Calculate MSA land use for plant species...")
+    outRasterPl = self.reclassUniqueValuesTwoKeys(luRaster,bioRaster,
+                                          lookupFileNamePl,lookupFieldTypes,
+                                          lookupMainFieldName,np.float32,noDataValue)
+    maskPl = (outRasterPl.r != outRasterPl.noDataValue) & (outRasterPl.r != noDataValue)
+    Log.info("Writing %s..." % (outRasterName.replace(".tif","_plants.tif")))
+    outRasterPl.writeAs(outRasterName.replace(".tif","_plants.tif"))
+    
     # Close and free the input rasters.
     luRaster.close()
-    luRaster = None
+    del luRaster
     bioRaster.close()
-    bioRaster = None
+    del bioRaster
  
-    # Save the output raster.
+    # Create the land use MSA raster.
+    Log.info("Creating the final land use MSA raster...")
+    
+    outRaster = Raster(outRasterName)
+    outRaster.initRaster(extent,cellSize,np.float32,noDataValue)
+
+    mask = maskWB & maskPl
+    outRaster.r[mask] = (outRasterWB.r[mask] + outRasterPl.r[mask]) / 2
+    
     Log.info("Writing %s..." % outRasterName)
-    outRaster.writeAs(outRasterName)
-           
-    # Close and free the output raster.
+    outRaster.write()
+
+    # Close and free the output rasters and masks
+    del maskWB
+    del maskPl
+    del mask
     outRaster.close()
-    outRaster = None
+    outRasterWB.close()
+    outRasterPl.close()
+    del outRaster
+    del outRasterWB
+    del outRasterPl
       
     # Show used memory and disk space.
     MON.showMemDiskUsage()
@@ -120,11 +153,9 @@ class GLOBIO_CalcLanduseBiomesMSA(CalculationBase):
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
   try:
-    inDir = r"Q:\Data\Globio4\G_data\pbl\tif"
-    lookupDir = r"P:\Project\Globio4\data\Lookup"
-    outDir = r"C:\Temp\_Globio4\out"
-    if not os.path.isdir(outDir):
-      outDir = r"G:\Data\out_v3"
+    inDir = r""
+    lookupDir = r""
+    outDir = r""
     
     pCalc = GLOBIO_CalcLanduseBiomesMSA()
     ext = GLOB.extent_World

@@ -1,1 +1,4 @@
 *.pyc
+/.vscode/*
+*/__pycache__/
+globio.env

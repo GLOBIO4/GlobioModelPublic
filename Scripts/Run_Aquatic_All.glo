@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #===============================================================================
 # RUN_AQUATIC_ALL.GLO
@@ -17,12 +17,12 @@ INCLUDE Globio_Aquatic.glo
 BEGIN_RUN Calculations()
 
   # Set input directory.
-  InDir = /data/referentie/v4012/30sec_wrld/in_20190126
-  DIR InLuDir = /data/referentie/v407/10sec_wrld/landalloc_20170830
-  DIR InNPDir = /data/referentie/v4012/30min_wrld/in_20190126
+  InDir = 
+  DIR InLuDir = 
+  DIR InNPDir = 
 
   # Set output directory.
-  OutDir = /data/referentie/v4012/30sec_wrld/aquatic_20190126
+  OutDir = 
 
   # Set region.
   #Extent = nl

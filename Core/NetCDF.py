@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 #
@@ -562,7 +562,7 @@ if __name__ == "__main__":
   # Basic NetCDF info.
   def test1():
     try:
-      fileName = r"G:\data\imgluh_20201118\GLANDCOVER_30MIN.nc"
+      fileName = "GLANDCOVER_30MIN.nc"
 
       extent = GLOB.extent_World
 
@@ -595,7 +595,7 @@ if __name__ == "__main__":
   # Time NetCDF info.
   def test2():
     try:
-      fileName = r"G:\data\imgluh_20201118\GLANDCOVER_30MIN.nc"
+      fileName = "GLANDCOVER_30MIN.nc"
 
       extent = GLOB.extent_World
 
@@ -625,7 +625,7 @@ if __name__ == "__main__":
   # Rasters and landuse codes.
   def test3():
     try:
-      fileName = r"G:\data\imgluh_20201118\GLANDCOVER_30MIN.nc"
+      fileName = "GLANDCOVER_30MIN.nc"
 
       extent = GLOB.extent_World
 
@@ -711,7 +711,7 @@ if __name__ == "__main__":
   # Rasters and landuse codes.
   def test4():
     try:
-      fileName = r"G:\data\imgluh_20201118\GLANDCOVER_30MIN.nc"
+      fileName = "GLANDCOVER_30MIN.nc"
 
       extent = GLOB.extent_World
 
@@ -774,7 +774,7 @@ if __name__ == "__main__":
   #-------------------------------------------------------------------------------
   # Rasters and landuse codes.
   def testBasicInfo5():
-    fileName = r"G:\data\imgluh_20201118\GLANDCOVER_30MIN.nc"
+    fileName = "GLANDCOVER_30MIN.nc"
 
     try:
       extent = GLOB.extent_World
@@ -791,7 +791,7 @@ if __name__ == "__main__":
   def testInfo7():
 
     # Image data (NetCDF).
-    inDir = r"G:\data\imgluh_20201118"
+    inDir = r""
     ncFileName = os.path.join(inDir,"GLANDCOVER_30MIN.nc")
     imgLandcoverNamesNetCDFVarName = "NGLNDCOV"
     imgYearNetCDFVarName = "TIME"
@@ -855,7 +855,7 @@ if __name__ == "__main__":
   def testReadInfo1():
 
     # Image data (NetCDF).
-    inDir = r"G:\data\imgluh_20201118"
+    inDir = r""
     ncFileName = os.path.join(inDir,"GLANDCOVER_30MIN.nc")
     imgLandcoverNamesNetCDFVarName = "NGLNDCOV"
     imgYearNetCDFVarName = "TIME"
@@ -915,7 +915,7 @@ if __name__ == "__main__":
     GLOB.debug = True
 
     # Image data (NetCDF).
-    inDir = r"G:\data\imgluh_20201118"
+    inDir = r""
     ncFileName = os.path.join(inDir,"GLANDCOVER_30MIN.nc")
     imgLandcoverNamesNetCDFVarName = "NGLNDCOV"
     imgYearNetCDFVarName = "TIME"

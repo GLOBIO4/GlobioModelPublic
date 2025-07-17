@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 #
@@ -837,31 +837,30 @@ class GLOBIO_CalcESH(CalculationBase):
     #-----------------------------------------------------------------------------
     #extent=[-180,-90,180,90]
     #cellSize=0.027778
-    #tmpEOOShapeFileName = r"C:\Y\ESH\Range_maps\Split\EO_10004.shp"
     #linux = False
 
     extentName = "wrld"
     extent = GLOB.constants[extentName].value
-    speciesdata = r"C:\Y\ESH\Species_data\Species_data.csv"
-    transmatrix = r"C:\Y\ESH\TransformationMatrix.csv"
-    elematrix = r"C:\Y\ESH\Elevation_data_mammals.csv"
-    habitatdir = r"C:\Y\ESH\Habitat_data\Habitat_suitability_mammals.csv"
-    rangesdir = r"C:\Y\ESH\Range_maps\Split"
+    speciesdata = r""
+    transmatrix = r""
+    elematrix = r""
+    habitatdir = r""
+    rangesdir = r""
     speciesids = "13451"
     suitabilitiesstr = "Suitable"
     presencecodes = "1"
     origincodes = "1|2|6"
     seasonalitycodes = "1|2|3"
-    landuse = r"C:\Y\ESH\Input_rasters\Globio4_landuse_10sec_2015_World_agri_int.tif"
-    arearaster = r"C:\Y\ESH\Input_rasters\areakm2_10sec.tif"
-    elevationraster = r"C:\Y\ESH\Input_rasters\Elevation_meter_10sec.tif"
+    landuse = r""
+    arearaster = r""
+    elevationraster = r""
     batchnumber=1
     addmcpflag = True
     
     outVersion = speciesids
-    outeshfilename = r"C:\Y\ESH\testesh_%s" % (outVersion)
-    outaoofilename = r"C:\Y\ESH\testaoo_%s" % (outVersion)
-    outeshpatchesfilename = r"C:\Y\ESH\testeshpatches_%s" % (outVersion)
+    outeshfilename = r""
+    outaoofilename = r""
+    outeshpatchesfilename = r""
     
     # Check output area files.
     # for fileName in [outeshfilename]:
@@ -881,9 +880,9 @@ class GLOBIO_CalcESH(CalculationBase):
     #          outeshfilename,outaoofilename,outeshpatchesfilename,batchnumber)
 
     species = 13451
-    inRasterName = r"C:\Y\ESH\tmp_species_1.tif"
-    outRasterName = r"C:\Y\ESH\tmp_aoo_check_1.tif"
-    clipShapefileName = r"C:\Y\ESH\tmp_EOO_1.shp"
+    inRasterName = r""
+    outRasterName = r""
+    clipShapefileName = r""
     self.calcSpeciesAOO(species,inRasterName,outRasterName,clipShapefileName)             
       
 #-------------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 30 aug 2017, ES, ARIS B.V.
@@ -83,40 +83,41 @@ class GLOBIO_CalcLanduseMSA(CalculationBase):
     # Lookup the MSA value for landuse.
     #-----------------------------------------------------------------------------
 
+    noDataValue = -999.0
+
     # Do lookup.
     lookupFieldTypes = ["I","F"]
     outRasterWB = self.reclassUniqueValues(luRaster,lookupFileNameWB,lookupFieldTypes,
-                                           np.float32)
+                                           np.float32, noDataValue)
+    maskWB = (outRasterWB.r != outRasterWB.noDataValue) & (outRasterWB.r != noDataValue)
+    Log.info("Writing %s..." % (outRasterName.replace(".tif","_wbvert.tif")))
+    outRasterWB.writeAs(outRasterName.replace(".tif","_wbvert.tif"))
      
     outRasterPl = self.reclassUniqueValues(luRaster,lookupFileNamePl,lookupFieldTypes,
-                                           np.float32)   
+                                           np.float32, noDataValue)
+    maskPl = (outRasterPl.r != outRasterPl.noDataValue) & (outRasterPl.r != noDataValue)
+    Log.info("Writing %s..." % (outRasterName.replace(".tif","_plants.tif")))
+    outRasterPl.writeAs(outRasterName.replace(".tif","_plants.tif"))
         
     # Create the land use MSA raster.
     Log.info("Creating the land use MSA raster...")
-    noDataValue = -999.0
     outRaster = Raster(outRasterName)
     outRaster.initRaster(extent,cellSize,np.float32,noDataValue)
    
-    mask = (outRasterWB.r != outRasterWB.noDataValue) & (outRasterWB.r != noDataValue)
-    
-    outRaster.r[mask] = (outRasterWB.r[mask])
-    Log.info("Writing %s..." % (outRasterName.replace(".tif","_wbvert.tif")))
-    outRaster.writeAs(outRasterName.replace(".tif","_wbvert.tif")) 
-    outRaster.r[mask] = (outRasterPl.r[mask])
-    Log.info("Writing %s..." % (outRasterName.replace(".tif","_plants.tif")))
-    outRaster.writeAs(outRasterName.replace(".tif","_plants.tif"))
-    
+    mask = maskWB & maskPl
     outRaster.r[mask] = (outRasterWB.r[mask]+ outRasterPl.r[mask])/2
 
     # Close and free the input rasters.
     luRaster.close()
     luRaster = None
     
-    mask = None
+    del maskWB
+    del maskPl
+    del mask
  
     # Save the output raster.
-    #Log.info("Writing %s..." % outRasterName)
-    #outRaster.writeAs(outRasterName)
+    Log.info("Writing %s..." % outRasterName)
+    outRaster.write()
 	      
     # Close and free the output raster.
     outRaster.close()
@@ -135,11 +136,9 @@ class GLOBIO_CalcLanduseMSA(CalculationBase):
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
   try:
-    inDir = r"Y:\data\GLOBIO\GLOBIO4\Beheer\Terra\SourceCode\GLOBIO_411_src20180925\src\Globio\Test\Calculations"
-    lookupDir = r"Y:\data\GLOBIO\GLOBIO4\Models\Terra\Shared\LookupGlobal"
-    outDir = r"Y:\data\GLOBIO\GLOBIO4\Beheer\Terra\SourceCode\GLOBIO_411_src20180925\src\Globio\Test\Calculations"
-    if not os.path.isdir(outDir):
-      outDir = r"S:\hilbersj"
+    inDir = r""
+    lookupDir = r""
+    outDir = r""
 
     pCalc = GLOBIO_CalcLanduseMSA()
 

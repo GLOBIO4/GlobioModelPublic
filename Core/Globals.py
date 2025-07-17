@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 #
@@ -91,10 +91,10 @@ from GlobioModel.Core.Types import TypeList
 from GlobioModel.Core.Variables import VariableList
 
 # Version information.
-globioVersion = "4.1"
+globioVersion = "4.3"
 globioSubSubVersion = "1"
 globioBuildVersion = "1"
-globioReleaseDate = "feb 2021"
+globioReleaseDate = "mar 2024"
 appVersion = "1.1"
 appSubSubVersion = "0"
 appReleaseDate = "feb 2021"
@@ -149,6 +149,7 @@ userTempDir = UT.getUserTempDir()
 calculationPaths = [
   "GlobioModel.Calculations",
   "GlobioModel.Preprocessing",
+  "GlobioModel.Postprocessing",
   "GlobioModel.LanduseHarmonization",
   "GlobioModel.Calculations_REF",
   "GlobioModel.Preprocessing_REF",

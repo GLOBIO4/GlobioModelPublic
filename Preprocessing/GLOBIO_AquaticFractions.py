@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Usage:
@@ -77,8 +77,10 @@ class GLOBIO_AquaticFractions(CalculationBase):
     outRasterProperties[lakeDeepRasterName] = [(aqLakeDeepRasterName,None)]
     outRasterProperties[reservShallRasterName] = [(aqReservShallRasterName,None)]
     outRasterProperties[reservDeepRasterName] = [(aqReservDeepRasterName,None)]
-    outRasterProperties[glwdRasterName] = [(aqFloodpRasterName,floodpWaterTypes),
-                                           (aqWetlRasterName,wetlWaterTypes)]
+    #outRasterProperties[glwdRasterName] = [(aqFloodpRasterName,floodpWaterTypes),
+    #                                       (aqWetlRasterName,wetlWaterTypes)]
+    outRasterProperties[glwdRasterName] = [(aqFloodpRasterName,None),
+                                           (aqWetlRasterName,None)]
     
     # Sort from high to low. Priority 6 = high, 1 = low.
     # 20201209
@@ -161,7 +163,7 @@ class GLOBIO_AquaticFractions(CalculationBase):
         totMask = (totRaster.r > 1.0)
         
         # Cells found?
-        if totMask.any():
+        if np.any(totMask):
           
           # Create surplus raster.
           surplusRaster = Raster()   
@@ -569,10 +571,10 @@ if __name__ == "__main__":
       #extentName = "nl"
       cellSizeName = "30sec"
 
-      inDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181123"
-      inGlwdDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181026"
+      inDir = r""
+      inGlwdDir = r""
 
-      outDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_%s\in_20181123" % extentName
+      outDir = r""
 
       # Input.
       rivfrac = "river_fractions.tif"
@@ -659,31 +661,11 @@ if __name__ == "__main__":
 
       ext = GLOB.constants[extentName].value
       cs = GLOB.constants[cellSizeName].value
-
-      #  [-25.0, 33.0, 45.0, 72.0]
-      #  0.5
-      #  /home/vbarbarossa/share_d/Globio/output/river_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/output/shallow_lake_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/output/deep_lake_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/output/shallow_reservoir_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/output/deep_reservoir_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/input/glwd_ras_EU.tif
-      #  4|5
-      #  6|7|8|9|10|11|12
-      #  None
-      #  /home/vbarbarossa/share_d/Globio/output/aq_river_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/output/aq_floodplain_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/output/aq_shallow_lake_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/output/aq_deep_lake_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/output/aq_shallow_reservoir_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/output/aq_deep_reservoir_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/output/aq_wetland_fractions.tif
       
-      inDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181123"
-      inGlwdDir = r"G:\data\Globio4LA\data\pbl_20200806\globio_data"
+      inDir = r""
+      inGlwdDir = r""
 
-      #outDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_%s\in_20181123" % extentName
-      outDir = r"G:\data\Globio4LA\data\referentie\v4015\%s_%s\in_20200909" % (cellSizeName,extentName)
+      outDir = r""
 
       # Input.
       rivfrac = "river_fractions.tif"

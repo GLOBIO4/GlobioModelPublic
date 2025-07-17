@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 30 aug 2017, ES, ARIS B.V.
@@ -38,41 +38,28 @@ class GLOBIO_CalcTerrestrialMSA(CalculationBase):
     """
     IN EXTENT Extent
     IN CELLSIZE CellSize
-    IN RASTER LanduseMSA
-    IN RASTER HumanEncroachmentMSA
-    IN RASTER NDepositionMSA
-    IN RASTER ClimateChangeMSA
-    IN RASTER InfraDisturbanceMSA
-    IN RASTER InfraFragmentationMSA
+    IN RASTERLIST ImpactsMSA
     OUT RASTER TerrestrialMSA
     """
     self.showStartMsg(args)
     
     # Check number of arguments.
-    if len(args)<=8:
+    if len(args)!=4:
       Err.raiseGlobioError(Err.InvalidNumberOfArguments2,len(args),self.name)
     
     # Get arguments.
     extent = args[0]
     cellSize = args[1]
-    landuseMSAName = args[2]
-    humanEncMSAName = args[3]
-    nDepMSAName = args[4]
-    climChangeMSAName = args[5]
-    infraDistMSAName = args[6]
-    infraFragMSAName = args[7]
-    outRasterName = args[8]
+    impactsMSANames = args[2]
+    outRasterName = args[3]
 
     # Check arguments.
     self.checkExtent(extent)
     self.checkCellSize(cellSize)
-    self.checkRaster(landuseMSAName,optional=True)
-    self.checkRaster(humanEncMSAName,optional=True)
-    self.checkRaster(nDepMSAName,optional=True)
-    self.checkRaster(climChangeMSAName,optional=True)
-    self.checkRaster(infraDistMSAName,optional=True)
-    self.checkRaster(infraFragMSAName,optional=True)
+    self.checkRasterList(impactsMSANames)
     self.checkRaster(outRasterName,True)
+
+    impactsMSANames = self.splitStringList(impactsMSANames)
 
     # Align extent.
     extent = RU.alignExtent(extent,cellSize)
@@ -84,14 +71,6 @@ class GLOBIO_CalcTerrestrialMSA(CalculationBase):
 
     # Enable monitor en show memory and disk space usage.
     MON.showMemDiskUsage(Log,"- ","",self.outDir)
-
-    # Create a list with all msa rasters.
-    msaRasterNames = [landuseMSAName,humanEncMSAName,
-                      nDepMSAName,climChangeMSAName,
-                      infraDistMSAName,infraFragMSAName]  
-    msaDescriptions = ["landuse","human encroachment",
-                       "N-deposition","climate change",
-                       "infrastructure disturbance","infrastructure fragmentation"]  
     
     # Create terrestrial MSA raster.
     Log.info("Creating terrestrial MSA raster...")
@@ -101,9 +80,9 @@ class GLOBIO_CalcTerrestrialMSA(CalculationBase):
 
     # Calculate total MSA.
     Log.info("Calculating terrestrial MSA raster...")
-    for i in range(len(msaRasterNames)):
-      msaRasterName = msaRasterNames[i]
-      msaDescription = msaDescriptions[i]
+    for i in range(len(impactsMSANames)):
+      msaRasterName = impactsMSANames[i]
+      msaDescription = f"impact msa raster {i}"
 
       if (not self.isValueSet(msaRasterName)):
           continue
@@ -149,12 +128,10 @@ class GLOBIO_CalcTerrestrialMSA(CalculationBase):
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
   try:
-    inDir = r"Y:\data\GLOBIO\GLOBIO4\Beheer\Terra\SourceCode\GLOBIO_411_src20180925\src\Globio\Test\Calculations"
-    mapDir = r"Y:\data\GLOBIO\GLOBIO4\Models\Terra\Shared\geodata\GlobalTifs\res_10sec"
-    lookupDir = r"Y:\data\GLOBIO\GLOBIO4\Models\Terra\Shared\LookupGlobal"
-    outDir = r"Y:\data\GLOBIO\GLOBIO4\Beheer\Terra\SourceCode\GLOBIO_411_src20180925\src\Globio\Test\Calculations"
-    if not os.path.isdir(outDir):
-      outDir = r"S:\hilbersj"
+    inDir = r""
+    mapDir = r""
+    lookupDir = r""
+    outDir = r""
 
     pCalc = GLOBIO_CalcTerrestrialMSA()
     
@@ -166,11 +143,12 @@ if __name__ == "__main__":
     cc = os.path.join(inDir,"ClimateChangeMSA_test.tif")
     di = os.path.join(inDir,"InfraDisturbanceMSA_test.tif")
     fr = os.path.join(inDir,"InfraFragmentationMSA_test.tif")
+    impacts = "|".join([str(i) for i in [lu, he, nd, cc, di, fr]])
     out = os.path.join(outDir,"TerrestrialMSA_test.tif")
-    
+
     if RU.rasterExists(out):
       RU.rasterDelete(out)
 
-    pCalc.run(ext,cs,lu,he,nd,cc,di,fr,out)
+    pCalc.run(ext,cs,impacts,out)
   except:
     Log.err()

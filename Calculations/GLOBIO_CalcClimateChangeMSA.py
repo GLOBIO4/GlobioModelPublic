@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 1 feb 2017, ES, ARIS B.V.
@@ -282,7 +282,7 @@ class GLOBIO_CalcClimateChangeMSA(CalculationBase):
 
     mask = (outWbVertMSARaster.r != outWbVertMSARaster.noDataValue)
     
-    outRaster.r[mask] = (outWbVertMSARaster.r[mask]+ outPlantMSARaster.r[mask])/2
+    outRaster.r[mask] = (outWbVertMSARaster.r[mask] + outPlantMSARaster.r[mask]) / 2.0
 
     # Save temporary data?
     if GLOB.saveTmpData:
@@ -296,8 +296,8 @@ class GLOBIO_CalcClimateChangeMSA(CalculationBase):
     tmpLUFactorRaster = None
     
     #Write final raster
-    #Log.info("Writing %s..." % outRasterName)
-    #outRaster.write()
+    Log.info("Writing %s..." % outRasterName)
+    outRaster.write()
 
     # Cleanup.
     outRaster.close()
@@ -316,12 +316,10 @@ class GLOBIO_CalcClimateChangeMSA(CalculationBase):
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
   try:
-    inDir = r"C:\Globio4"
-    lookupDir = r"C:\Globio4"
-    outDir = r"C:\Globio4"
-    luDir = r"C:\Y\ESH\Input_rasters"
-    if not os.path.isdir(outDir):
-      outDir = r"S:\hilbersj"
+    inDir = r""
+    lookupDir = r""
+    outDir = r""
+    luDir = r""
 
     pCalc = GLOBIO_CalcClimateChangeMSA()
 

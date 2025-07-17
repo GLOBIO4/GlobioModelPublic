@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 
 #-------------------------------------------------------------------------------
@@ -425,9 +425,7 @@ if __name__ == "__main__":
   # OK
   def testRead():
   
-    #fileName = r"P:\Project\Globio4LA\data\PBL_20160919\Claims_2050.csv"
-    #fileName = r"C:\data\Globio4LA\data\referentie\v405\lookup\in_20161214\Claims_2050.csv"
-    fileName = r"P:\Project\Globio4LA\data\testdata\csv\Claims_2050.csv"
+    fileName = r""
     fieldNames = ["IMGREGCD","AggLUClass","totalArea"]
     fieldTypes = ["I","S","F"]
     pCSV = CSVFile()
@@ -435,7 +433,7 @@ if __name__ == "__main__":
     pCSV.read(fileName,fieldNames,fieldTypes)
     pCSV.show()
 
-    fileName = r"P:\Project\Globio4LA\data\testdata\csv\Floats_en.csv"
+    fileName = r""
     fieldNames = ["IMGREGCD","AggLUClass","totalArea"]
     fieldTypes = ["I","S","F"]
     pCSV = CSVFile()
@@ -443,7 +441,7 @@ if __name__ == "__main__":
     pCSV.read(fileName,fieldNames,fieldTypes)
     pCSV.show()
 
-    fileName = r"P:\Project\Globio4LA\data\testdata\csv\Floats_nl.csv"
+    fileName = r""
     fieldNames = ["IMGREGCD","AggLUClass","totalArea"]
     fieldTypes = ["I","S","F"]
     pCSV = CSVFile()
@@ -451,7 +449,7 @@ if __name__ == "__main__":
     pCSV.read(fileName,fieldNames,fieldTypes)
     pCSV.show()
 
-    fileName = r"P:\Project\Globio4LA\data\testdata\csv\Excel_20170522.csv"
+    fileName = r""
     fieldNames = ["VDM_NUMMER","WAARDE_POSITIEBEPALING_LADEN","LADEN_GPS_LOCATIE"]
     fieldTypes = ["I","S","S"]
     print("Reading %s..." % fileName)
@@ -462,9 +460,8 @@ if __name__ == "__main__":
   #-------------------------------------------------------------------------------
   # OK
   def testReadTwoColumns():
-  
-    #fileName = r"P:\Project\Globio4LA\data\PBL_20160919\Claims_2050.csv"
-    fileName = r"P:\Project\Globio4LA\data\testdata\csv\Claims_2050.csv"
+
+    fileName = r""
     fieldNames = ["ImgRegCd","TotalArea"]
     fieldTypes = ["I","F"]
     
@@ -482,26 +479,6 @@ if __name__ == "__main__":
   def testReclass():
     # 20201118
     pass
-  
-    # #fileName = r"P:\Project\Globio4LA\data\PBL_20160919\Claims_2050.csv"
-    # fileName = r"P:\Project\Globio4LA\data\testdata\csv\Claims_2050.csv"
-    # #lookupFileName = r"P:\Project\Globio4LA\data\PBL_20160919\LanduseClassToLanduse.csv"
-    # lookupFileName = r"P:\Project\Globio4LA\data\testdata\csv\LanduseClassToLanduse.csv"
-    # fieldNames = ["IMGREGCD","AggLUClass","totalArea"]
-    # fieldTypes = ["I","S","F"]
-    # keyFieldName = "AggLUClass"
-    # lookupFieldTypes = ["S","S"]
-    # sumFieldName = "totalArea"
-    
-    # pCSV = CSVFile()
-    # pCSV.read(fileName,fieldNames,fieldTypes)
-    # pCSV.show()
-    
-    # pCSV.reclassRowValue(keyFieldName,lookupFileName,lookupFieldTypes)
-    # pCSV.show()
-    
-    # pCSV.aggregateRowValue(sumFieldName)
-    # pCSV.show()
 
   #-------------------------------------------------------------------------------
   # OK
@@ -510,7 +487,7 @@ if __name__ == "__main__":
     # 7;0;504554.53125
     # 7;1;4643.12451171875
 
-    fileName = r"G:\data\imgluh_out\ReferenceClaims2015.csv"
+    fileName = "ReferenceClaims2015.csv"
     fieldNames = ["region","landuse","area_km2"]
     fieldTypes = ["I","I","F"]
 
@@ -550,7 +527,7 @@ if __name__ == "__main__":
     print(line)
 
     print("Writing...")
-    fileName = r"G:\data\imgluh_out\kanweg.csv"
+    fileName = "tmp.csv"
     pCSV.write(fileName,True)
 
     a = ["a","b"]

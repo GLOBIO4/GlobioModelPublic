@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 
 #-------------------------------------------------------------------------------
@@ -102,7 +102,7 @@ STRING NDEP_PlantRegressionCoefficients = 2.195|-0.743
 FLOAT NDEP_WeightFactor = 0.5
 
 # Land cover exclusion codes
-STRING NDEP_LandcoverExlCodes = 1|2|3|4|230|231|232
+STRING NDEP_LandcoverExlCodes = 1|2|6
 
 #-------------------------------------------------------------------------------
 # Human Encroachment settings.
@@ -125,7 +125,7 @@ STRING HUMANENC_WbVertRegressionCoefficients = -0.223|0.876
 FLOAT HUMANENC_WeightFactor = 0.5
 
 # Land cover exclusion codes
-STRING HUMANENC_LandcoverExlCodes = 1|2|3|4|5|230|231|232
+STRING HUMANENC_LandcoverExlCodes = 1|6
 
 #-------------------------------------------------------------------------------
 # Climate Change settings.

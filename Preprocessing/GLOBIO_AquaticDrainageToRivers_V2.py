@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 9 nov 2018, ES, ARIS B.V.
@@ -154,63 +154,4 @@ class GLOBIO_AquaticDrainageToRivers_V2(CalculationBase):
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
-  
   pass
-
-#   #-----------------------------------------------------------------------------
-#   def main():
-#     try:
-#       GLOB.monitorEnabled = True
-#       GLOB.SHOW_TRACEBACK_ERRORS = True
-# 
-#       pCalc = GLOBIO_AquaticDrainageToRivers_V2()
-#       pCalc.debugPrint = False
-# 
-#       extentName = "wrld"
-#       #extentName = "nl"
-#       #extentName = "eu"
-#       #cellSizeName = "30sec"
-# 
-#       ext = GLOB.constants[extentName].value
-#       #cs = GLOB.constants[cellSizeName].value
-# 
-#       if extentName == "nl":
-#         inShpDir = r"G:\Data\Globio4LA\data\referentie\v4012\vector\test_20181109"
-#         inShp = "drainage_lines24.shp"
-#       else:
-#         inShpDir = r"G:\data\Globio4LA\data\pbl_20181023\VBarbarossa\flo1k_hydrography"
-#         inShp = "drainage_lines24.shp"
-# 
-#       inRasDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181026"
-#       inRas = "flo1k_qav_2015.tif"
-# 
-#       outDir = r"G:\data\Globio4LA\data\referentie\v4012\vector\in_20181123"
-#       outShp = "rivers_%s.shp" % extentName
-# 
-#       th = 0.0
-# 
-#       if os.path.isdir("/root"):
-#         inShpDir = UT.toLinux(inShpDir)
-#         inRasDir = UT.toLinux(inRasDir)
-#         outDir = UT.toLinux(outDir)
-# 
-#       # Create outdir.
-#       if not os.path.isdir(outDir):
-#         os.makedirs(outDir)
-# 
-#       # Set input/output data.
-#       inShp = os.path.join(inShpDir,inShp)
-#       inRas = os.path.join(inRasDir,inRas)
-#       outShp = os.path.join(outDir,outShp)
-# 
-#       # Remove output data.
-#       VU.vectorDelete(outShp)
-# 
-#       # Run.
-#       pCalc.run(ext,inShp,inRas,th,outShp)
-#     except:
-#       MON.cleanup()
-#       Log.err()
-#   
-#   #-------------------------------------------------------------------------------
-#   main()

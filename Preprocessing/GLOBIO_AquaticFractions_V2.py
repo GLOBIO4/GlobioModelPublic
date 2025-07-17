@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Usage:
@@ -83,6 +83,9 @@ class GLOBIO_AquaticFractions_V2(CalculationBase):
     outRasterProperties[glwdFldPlainRasterName] = [(aqFloodpRasterName,None)]
     outRasterProperties[glwdWetlandRasterName] = [(aqWetlRasterName, None)]
     
+    for x in outRasterProperties:
+      print(x)
+
     # Sort from high to low. Priority 6 = high, 1 = low.
     # 20201209
     #prioIndices = np.argsort(priorities).tolist()
@@ -92,6 +95,13 @@ class GLOBIO_AquaticFractions_V2(CalculationBase):
     #---------------------------------------------------------------------------
     # Loop input rasters.
     #---------------------------------------------------------------------------
+
+    # Create raster for total fractions.
+    #dataType = np.float32
+    #noDataValue = RU.getNoDataValue(dataType)
+    #value = 0.0
+    #totRaster = Raster()
+    #totRaster.initRaster(extent,cellSize,dataType,noDataValue,value)
 
     # Loop input rasters based on priority order.
     for i in prioIndices:
@@ -104,13 +114,13 @@ class GLOBIO_AquaticFractions_V2(CalculationBase):
       # Read input raster.
       inRaster = Raster(inRasterName)
       inRaster.read()
-
+    
       # Create corresponding output raster(s).
       for outRasterProperty in outRasterProperties[inRasterName]: 
       
         # Get output raster name and GLWD types.
         outRasterName = outRasterProperty[0]
-        #glwdTypes = outRasterProperty[1]
+        glwdTypes = outRasterProperty[1]
 
         # Create output raster.
         dataType = np.float32
@@ -121,18 +131,40 @@ class GLOBIO_AquaticFractions_V2(CalculationBase):
         #---------------------------------------------------------------------------
         # Set output fractions.
         #---------------------------------------------------------------------------
-              
-        # Get input data mask.  
-        dataMask = inRaster.getDataMask()
         
-        # Copy fractions to output.
-        outRaster.r[dataMask] = inRaster.r[dataMask]
+        # Do we need to select on GLWD types?            
+        if not glwdTypes is None:
+          
+          # Create GLWD mask.
+          glwdMask = None
+          for glwdType in glwdTypes:
+            if glwdMask is None:
+              glwdMask = (inRaster.r == glwdType)
+            else:  
+              glwdMask = np.logical_or(glwdMask,(inRaster.r == glwdType))
         
-        # Calculate total of fractions.
-        totRaster.r[dataMask] += inRaster.r[dataMask]
-        
-        # Cleanup.
-        dataMask = None
+          # Set fraction 1.0.
+          outRaster.r[glwdMask] = 1.0
+
+          # Calculate total of fractions.
+          totRaster.r[glwdMask] += 1.0
+
+          # Cleanup.
+          glwdMask = None
+        else:
+          # No selection on GLWD types.
+          
+          # Get input data mask.  
+          dataMask = inRaster.getDataMask()
+
+          # Copy fractions to output.
+          outRaster.r[dataMask] = inRaster.r[dataMask]
+
+          # Calculate total of fractions.
+          totRaster.r[dataMask] += inRaster.r[dataMask]
+
+          # Cleanup.
+          dataMask = None
 
         #---------------------------------------------------------------------------
         # Check if total of fractions > 1.0, then correct.
@@ -142,8 +174,9 @@ class GLOBIO_AquaticFractions_V2(CalculationBase):
         totMask = (totRaster.r > 1.0)
         
         # Cells found?
-        if totMask.any():
+        if np.any(totMask):
           
+          Log.info("Total fraction > 1.0")
           # Create surplus raster.
           surplusRaster = Raster()   
           dataType = np.float32
@@ -177,6 +210,9 @@ class GLOBIO_AquaticFractions_V2(CalculationBase):
         # Cleanup.
         outRaster.close()
         outRaster = None
+
+        #totRaster.close()
+        #totRaster = None
     
   #-----------------------------------------------------------------------------
   def calculateByRatio(self,extent,cellSize,
@@ -505,10 +541,10 @@ if __name__ == "__main__":
       #extentName = "nl"
       cellSizeName = "30sec"
 
-      inDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181123"
-      inGlwdDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181026"
+      inDir = r""
+      inGlwdDir = r""
 
-      outDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_%s\in_20181123" % extentName
+      outDir = r""
 
       # Input.
       rivfrac = "river_fractions.tif"
@@ -595,31 +631,11 @@ if __name__ == "__main__":
 
       ext = GLOB.constants[extentName].value
       cs = GLOB.constants[cellSizeName].value
-
-      #  [-25.0, 33.0, 45.0, 72.0]
-      #  0.5
-      #  /home/vbarbarossa/share_d/Globio/output/river_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/output/shallow_lake_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/output/deep_lake_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/output/shallow_reservoir_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/output/deep_reservoir_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/input/glwd_ras_EU.tif
-      #  4|5
-      #  6|7|8|9|10|11|12
-      #  None
-      #  /home/vbarbarossa/share_d/Globio/output/aq_river_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/output/aq_floodplain_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/output/aq_shallow_lake_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/output/aq_deep_lake_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/output/aq_shallow_reservoir_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/output/aq_deep_reservoir_fractions.tif
-      #  /home/vbarbarossa/share_d/Globio/output/aq_wetland_fractions.tif
       
-      inDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_wrld\in_20181123"
-      inGlwdDir = r"G:\data\Globio4LA\data\pbl_20200806\globio_data"
+      inDir = r""
+      inGlwdDir = r""
 
-      #outDir = r"G:\data\Globio4LA\data\referentie\v4012\30sec_%s\in_20181123" % extentName
-      outDir = r"G:\data\Globio4LA\data\referentie\v4015\%s_%s\in_20200909" % (cellSizeName,extentName)
+      outDir = r""
 
       # Input.
       rivfrac = "river_fractions.tif"

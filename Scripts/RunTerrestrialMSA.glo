@@ -1,0 +1,233 @@
+#-------------------------------------------------------------------------------
+# RUNTERRESTRIALMSA.GLO
+#
+# Runs the terrestial MSA calculations for all pressures, 
+# calculates combined terrestial MSA and split impact MSAs
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+BEGIN_RUN Calculations()
+
+  # Save temporary data (intermediate steps)? 
+  SaveTmpData = False
+  # Overwrite output?
+  OverwriteOutput = False
+
+  # The base directory wherein the project folder is located
+  DIR BaseInDir = 
+
+  # Directory where data is stored across multiple projects
+  DIR SharedDir = 
+
+  # ProjectName should reflect the project folder name under the BaseInDir folder.
+  STRING ProjectName = TemplateProject
+  # ScenarioName should reflect the name of the scenario folder name under the ScenarioRuns folder.
+  STRING ScenarioName = TemplateScenario
+
+  # Folder for shared data for all scenarios within the project
+  DIR ProjectSharedDir = $BaseInDir;\$ProjectName;\SharedData
+  # The scenario folder
+  DIR ProjectScenarioDir = $BaseInDir;\$ProjectName;\ScenarioRuns\$ScenarioName;
+
+  InDir = $ProjectScenarioDir;\input
+  OutDir = $ProjectScenarioDir;\output
+  TmpDir = $ProjectScenarioDir;\tmp
+  LookupDir = $BaseInDir;\$ProjectName;\lookup
+
+  # Set the scenario run year to refer to correct input and output data
+  STRING ScenarioYear = 
+  
+  # Set region and resolution
+  # Defined extents: world, wrld, europe, eu, nl
+  Extent = world
+  STRING ExtentStr = WORLD
+  # Defined cell sizes: 10deg 1deg 30min 5min 30sec 10sec
+  CellSize = 10sec
+  STRING CellSizeStr = 10SEC
+
+  #-------------------------------------------------------------------------------
+
+  # Natural land use module
+  RASTER LandUse = $OutDir;\Landuse_$CellSizeStr;_$ScenarioYear;_$ExtentStr;.tif
+  FILE NaturalLanduseLookup = $LookupDir;\NaturalLanduse.csv
+  RASTER NaturalLanduse = $OutDir;\NaturalLanduse_$ScenarioYear;_$ExtentStr;.tif
+  
+  # Climate change module
+  # Temperature change since pre-industrial times in degrees Celsius
+  FLOAT TemperatureChange = 
+  FILE WaterLookupFile = $LookupDir;\Water.csv
+  RASTER ClimateChangeMSA = $OutDir;\ClimateChangeMSA_$ScenarioYear;_$ExtentStr;.tif
+  
+  # Land use module
+  STRING BaseYear = 
+  STRING RestYear = $ScenarioYear;
+  INTEGER SecVegLuClass = 
+  #INTEGER SecVegLuClass = 40
+  # Provide a raster with the age of the secondary vegetation in the base year, or a dummy land-zero value raster in case of no info (e.g. esa_tefe_zero_land.tif).
+  RASTER BaseRestYears = $InDir;\RestYears_$BaseYear;.tif
+  FILE RestYearsMSALookup_plants = $LookupDir;\RestorationMSA_plants.csv
+  FILE RestYearsMSALookup_wbvert = $LookupDir;\RestorationMSA_wbvert.csv
+  FILE LanduseMSALookup_plants = $LookupDir;\LanduseMSA_plants.csv
+  FILE LanduseMSALookup_wbvert = $LookupDir;\LanduseMSA_wbvert.csv
+  RASTER LanduseMSA = $OutDir;\LanduseMSA_$ScenarioYear;_$ExtentStr;.tif
+  RASTER LanduseMSA_wbvert = $OutDir;\LanduseMSA_$ScenarioYear;_$ExtentStr;_wbvert.tif
+  RASTER LanduseMSA_plants = $OutDir;\LanduseMSA_$ScenarioYear;_$ExtentStr;_plants.tif
+ 
+  # Nitrogen deposition module
+  # Land use codes for which the pressure is NOT included in the output raster
+  STRING NDEP_LandcoverExclCodes = 
+  #STRING NDEP_LandcoverExclCodes = 1|10|11|12|21
+  RASTER Ndep = $InDir;\NitrogenDeposition_$ScenarioName;_$ScenarioYear;.tif
+  RASTER NDepositionMSA = $OutDir;\NitrogenDepositionMSA_$ScenarioYear;_$ExtentStr;.tif
+  
+  # Human encroachment module
+  # Land use codes for which the pressure is NOT included in the output raster
+  STRING HUMANENC_LandcoverExclCodes = 
+  #STRING HUMANENC_LandcoverExclCodes = 1|10|11|12|20|21|22
+  # If you have a prepared settlement distance raster (in km), provide the path. If None, check inputs below.
+  RASTER SettlementDistance = $SharedDir;\SettlementDistances_km.tif  
+  #RASTER SettlementDistance = NONE
+  # if SettlementDistance is not specified the input data below will be used to create it
+  # If you already have a settlement raster, provide the path. If None, provide a folder with point shapefiles below
+  #RASTER SettlementRaster = $SharedDir;\settlements.tif
+  # Shapefiles only used if SettlementRaster is None
+  #DIR InSettlementsDir = $SharedDir;\Settlements
+  # Tropical biome raster to use a mask for the output (value 1 for tropical biomes, rest nodata)
+  RASTER TropBiomeMask = $SharedDir;\TropicalBiomeMask.tif
+  # The water LU code for global runs, to prevent calculating distances for the whole globe. Here ESA 210 value is default
+  STRING MASK_Global_LU_ExclCode = 
+  #STRING MASK_Global_LU_ExclCode = 210
+  # The urban land cover code used to buffer and filter out settlements
+  STRING SettlementLandcoverCodes = 
+  #STRING SettlementLandcoverCodes = 1
+  # The MSA output rasters
+  RASTER HumanEncroachmentMSA = $OutDir;\HumanEncroachmentMSA_$ScenarioYear;_$ExtentStr;.tif
+  
+  # Infrastructure fragmentation module
+  RASTER RoadsRaster = $SharedDir;\GRIP4_5types_10sec.tif
+  BOOLEAN CloseRoadConnections = 
+  #BOOLEAN CloseRoadConnections = False
+  RASTER InfraFragmentationMSA = $OutDir;\InfrastructureFragmentationMSA_$ScenarioYear;_$ExtentStr;.tif
+  RASTER InfraFragmentationMSA_wbvert = $OutDir;\InfrastructureFragmentationMSA_$ScenarioYear;_$ExtentStr;_wbvert.tif
+  
+  # Infrastructure disturbance module
+  STRING INFRADIST_LandcoverExclCodes = 
+  #STRING INFRADIST_LandcoverExclCodes = 1
+  RASTER RoadDistance = $SharedDir;\GRIP4_distance_km_tp123_10sec.tif
+  # if RoadDistance is not specified the input data below will be used to create it
+  RASTER Roads = $SharedDir;\GRIP4_3types_10sec.tif
+  FLOAT MaximumDistanceKM = 
+  #FLOAT MaximumDistanceKM = 150
+  RASTER InfraDisturbanceMSA = $OutDir;\InfrastructureDisturbanceMSA_$ScenarioYear;_$ExtentStr;.tif
+  RASTER InfraDisturbanceMSA_wbvert = $OutDir;\InfrastructureDisturbanceMSA_$ScenarioYear;_$ExtentStr;_wbvert.tif
+  
+  # Terrestrial MSA module
+  RASTER TerrestrialMSA = $OutDir;\TerrestialMSA_$ScenarioYear;_$ExtentStr;.tif
+  RASTER TerrestrialMSA_wbvert = $OutDir;\TerrestialMSA_$ScenarioYear;_$ExtentStr;_wbvert.tif
+  RASTER TerrestrialMSA_plants = $OutDir;\TerrestialMSA_$ScenarioYear;_$ExtentStr;_plants.tif
+  RASTER AreaRaster = $SharedDir;\Areakm2_$CellSizeStr;.tif
+  RASTER TerrestrialMSA_area = $OutDir;\TerrestialMSAArea_$ScenarioYear;_$ExtentStr;.tif
+
+  # Split pressure MSA module
+  # wbvert
+  RASTER LanduseMSA_contribution_wbvert = $OutDir;\LanduseMSA_$ScenarioYear;_$ExtentStr;_split_wbvert.tif
+  RASTER ClimateChangeMSA_contribution_wbvert = $OutDir;\ClimateChangeMSA_$ScenarioYear;_$ExtentStr;_split_wbvert.tif
+  RASTER HumanEncroachmentMSA_contribution = $OutDir;\HumanEncroachmentMSA_$ScenarioYear;_$ExtentStr;_split_wbvert.tif
+  RASTER InfraDisturbanceMSA_contribution = $OutDir;\InfrastructureDisturbanceMSA_$ScenarioYear;_$ExtentStr;_split_wbvert.tif
+  RASTER InfraFragmentationMSA_contribution = $OutDir;\InfrastructureFragmentationMSA_$ScenarioYear;_$ExtentStr;_split_wbvert.tif  
+  RASTER TotalLossTerrestrialMSA_wbvert = $OutDir;\TotalLossTerrestrialMSA_$ScenarioYear;_$ExtentStr;_wbvert.tif
+  # plants
+  RASTER LanduseMSA_contribution_plants = $OutDir;\LanduseMSA_$ScenarioYear;_$ExtentStr;_split_plants.tif
+  RASTER ClimateChangeMSA_contribution_plants = $OutDir;\ClimateChangeMSA_$ScenarioYear;_$ExtentStr;_split_plants.tif
+  RASTER NDepositionMSA_contribution = $OutDir;\NitrogenDepositionMSA_$ScenarioYear;_$ExtentStr;_split_plants.tif
+  RASTER TotalLossTerrestrialMSA_plants = $OutDir;\TotalLossTerrestrialMSA_$ScenarioYear;_$ExtentStr;_plants.tif
+
+  #-------------------------------------------------------------------------------
+  # Start running.
+  #-------------------------------------------------------------------------------
+
+  RUN_MODULE CalcNaturalLanduse(
+          $Extent,
+          $LandUse,
+          $NaturalLanduseLookup,
+          $NaturalLanduse
+  )
+  
+  RUN_MODULE CalcClimateChangeMSA(
+          $Extent,
+          $LandUse,
+          $WaterLookupFile,
+          $TemperatureChange,
+          $CLIMCH_WbVertRegressionCoefficients,
+          $CLIMCH_PlantRegressionCoefficients,
+          $ClimateChangeMSA
+  )
+  
+  # Run either CalcLanduseMSA or CalcLanduseMSARestoration
+  RUN_MODULE CalcLanduseMSA(
+          $Extent,
+          $LandUse,
+          $LanduseMSALookup_wbvert,$LanduseMSALookup_plants,
+          $LanduseMSA
+  )
+  
+  #RUN_MODULE CalcLanduseMSARestoration(
+  #        $Extent,
+  #        $BaseYear,$RestYear,
+  #        $Landuse,
+  #        $SecVegLuClass,$BaseRestYears,
+  #        $LanduseMSALookup_WBvert,$LanduseMSALookup_Plants,
+  #        $RestYearsMSALookup_plants,$RestYearsMSALookup_wbvert,
+  #        $LanduseMSA
+  #)
+  
+
+  RUN_MODULE CalcNDepositionMSA(
+          $Extent,
+          $LandUse,
+          $NDEP_LandcoverExclCodes,$WaterLookupFile,
+          $NDep,
+          $NDEP_PlantRegressionCoefficients,$NDEP_WeightFactor,
+          $NDepositionMSA
+  )
+  
+  RUN_MODULE CalcHumanEncroachmentMSA_V2b(
+          $Extent,$LandUse,
+          $HUMANENC_LandcoverExclCodes,$WaterLookupFile,
+          $SettlementDistance,
+          $InSettlementsDir,$TropBiomeMask,$SettlementLandcoverCodes,
+          $HUMANENC_LandcoverBufferDistanceKM,
+          $HUMANENC_WbVertRegressionCoefficients,
+          $HUMANENC_WeightFactor,
+          $MASK_Global_LU_ExclCode,
+          $SettlementRaster,
+          $HumanEncroachmentMSA
+  )
+  
+  RUN_MODULE CalcInfraFragmentationMSA(
+          $Extent,$LandUse,
+          $WaterLookupFile,
+          $RoadsRaster,
+          $NaturalLanduse,
+          $INFRAG_WbVertRegressionCoefficients,
+          $INFRAG_WeightFactor,
+          $CloseRoadConnections,
+          $InfraFragmentationMSA
+  )
+    
+  RUN_MODULE CalcInfraDisturbanceMSA(
+          $Extent,$LandUse,
+          $INFRADIST_LandcoverExclCodes,
+          $InfraDistances,
+          $Infrastructures,
+          $INFRADIST_MaximumDistanceKM,
+          $INFRADIST_WbVertRegressionCoefficients,
+          $INFRADIST_WeightFactor,$InfraDisturbanceMSA
+  )
+  
+END_RUN
+
+#-------------------------------------------------------------------------------
+
+RUN Calculations()
+

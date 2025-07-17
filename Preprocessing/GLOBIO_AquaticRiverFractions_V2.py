@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 18 jan 2019, ES, ARIS B.V.
@@ -387,54 +387,4 @@ class GLOBIO_AquaticRiverFractions_V2(CalculationBase):
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
-  
   pass
-
-#   try:
-#     GLOB.saveTmpData = False
-#     GLOB.monitorEnabled = True
-#     GLOB.SHOW_TRACEBACK_ERRORS = True
-# 
-#     pCalc = GLOBIO_AquaticRiverFractions_V2()
-#     pCalc.debugPrint = False
-#     
-#     extentName = "wrld"
-#     #extentName = "nl"
-#     cellSizeName = "30sec"
-# 
-#     ext = GLOB.constants[extentName].value
-#     cs = GLOB.constants[cellSizeName].value
-# 
-#     if extentName == "nl":
-#       inDir = r"G:\Data\Globio4LA\data\referentie\v4012\vector\in_20181123"
-#       inShp = "rivers_nl.shp"
-#     else:
-#       inDir = r"G:\Data\Globio4LA\data\referentie\v4012\vector\in_20181123"
-#       inShp = "rivers_%s.shp" % extentName
-#     
-#     outDir = r"G:\data\Globio4LA\data\referentie\v4012\%s_%s\in_20181123" % (cellSizeName,extentName)
-#     out = "river_fractions.tif"
-# 
-#     #riverWidthKM = 1.0       # Is 30sec cellsize!!!
-#     riverWidthKM = 0.1
-#     
-#     if os.path.isdir("/root"):
-#       inDir = UT.toLinux(inDir)
-#       outDir = UT.toLinux(outDir)
-# 
-#     # Create outdir.
-#     if not os.path.isdir(outDir):
-#       os.makedirs(outDir)
-# 
-#     # Set input/output data.
-#     inShp = os.path.join(inDir,inShp)
-#     out = os.path.join(outDir,out)
-# 
-#     # Remove output data.
-#     RU.rasterDelete(out)    
-#     
-#     # Run.
-#     pCalc.run(ext,cs,inShp,riverWidthKM,out)
-#   except:
-#     MON.cleanup()
-#     Log.err()

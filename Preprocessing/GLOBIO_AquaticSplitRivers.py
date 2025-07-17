@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # Modified: 23 nov 2018, ES, ARIS B.V.
@@ -321,11 +321,11 @@ if __name__ == "__main__":
     ext = GLOB.constants[extentName].value
     cs = GLOB.constants[cellSizeName].value
 
-    inDir = r"G:\data\Globio4LA\data\referentie\v4012\vector\in_20181123"
+    inDir = r""
     inRiv = "rivers_%s.shp" % extentName
     inDam = "dams_%s.shp" % extentName
     
-    outDir = r"G:\data\Globio4LA\data\referentie\v4012\vector\in_20181123"
+    outDir = r""
     outRiv = "frag_rivers_%s.shp" % extentName
     outDam = "frag_dams_%s.shp" % extentName
 

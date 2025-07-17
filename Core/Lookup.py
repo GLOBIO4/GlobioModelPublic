@@ -1,7 +1,7 @@
 # ******************************************************************************
 ## GLOBIO - https://www.globio.info
 ## PBL Netherlands Environmental Assessment Agency - https://www.pbl.nl.
-## Reuse permitted under European Union Public License,  EUPL v1.2
+## Reuse permitted under European Union Public License, EUPL v1.2
 # ******************************************************************************
 #-------------------------------------------------------------------------------
 # The dict is modified to preserve the original order of keys.
@@ -220,7 +220,7 @@ class Lookup(dict):
     #with open(fileName,"rb") as f:
     with open(fileName,newline="") as f:
       # Read csv.
-      dialect = csv.Sniffer().sniff(f.read(1024),delimiters=";")
+      dialect = csv.Sniffer().sniff(f.readline(),delimiters=";")
       f.seek(0)
       reader = csv.DictReader(f,dialect=dialect)
       # Get data rows.
@@ -279,7 +279,7 @@ if __name__ == "__main__":
   #-------------------------------------------------------------------------------
   def testLookup():
   
-    fileName = r"P:\Project\Globio4\prg\src\Globio\Lookup\LanduseMSA.csv"
+    fileName = "LanduseMSA.csv"
     fieldTypes = ["I","F"]
     
     #print "--------------"
@@ -293,7 +293,7 @@ if __name__ == "__main__":
   #-------------------------------------------------------------------------------
   def testLookupOrder():
   
-    fileName = r"P:\Project\Globio4\prg\src\Globio\Lookup\PatchAreaMSA.csv"
+    fileName = "PatchAreaMSA.csv"
     fieldTypes = ["F","F"]
     
     lut = Lookup()
@@ -305,8 +305,7 @@ if __name__ == "__main__":
   #-------------------------------------------------------------------------------
   def testLookupPivot():
   
-    #fileName = r"P:\Project\Globio4\prg\src\Globio\Lookup\LanduseBiomeMSA.csv"
-    fileName = r"P:\Project\Globio4\prg\src\Globio\Lookup\TestPivotMSA.csv"
+    fileName = "TestPivotMSA.csv"
     fieldTypes = ["I","I","F"]
     
     #print "--------------"
@@ -321,7 +320,7 @@ if __name__ == "__main__":
 
     lut = None
 
-    fileName = r"P:\Project\Globio4\prg\src\Globio\Lookup\LanduseBiomeMSA.csv"
+    fileName = "LanduseBiomeMSA.csv"
     lut = Lookup()
     lut.loadPivotCSV(fileName,"LANDUSE",fieldTypes)
     lut.show()
@@ -331,7 +330,7 @@ if __name__ == "__main__":
   #-------------------------------------------------------------------------------
   def testLookupOneField():
   
-    fileName = r"P:\Project\Globio4\prg\src\Globio\Lookup\InfraDisturbanceMSA.csv"
+    fileName = "InfraDisturbanceMSA.csv"
     fieldTypes = ["F"]
     
     #print "--------------"
@@ -344,9 +343,8 @@ if __name__ == "__main__":
 
   #-------------------------------------------------------------------------------
   def testLookup20161124():
-  
-    #fileName = r"P:\Project\Globio4LA\data\referentie\v402\30sec_wrld\in_20161124\LandcoverToLanduseCodes.csv"
-    fileName = r"P:\Project\Globio4LA\data\referentie\v402\30sec_wrld\in_20161124\LandcoverToLanduseCodes_nok.csv"
+
+    fileName = "LandcoverToLanduseCodes_nok.csv"
     fieldTypes = ["I","I"]
     
     lut = Lookup()
